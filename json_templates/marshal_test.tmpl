@@ -1,0 +1,121 @@
+{{- /* Go Template */ -}}
+{{define "test"}}
+package {{.Package}}
+
+import (
+    "encoding/json"
+	"reflect"
+	"testing"
+	"log"
+)
+
+type {{.TypeName}}Ref struct {
+{{range $i, $field := .Fields }}
+	{{$field.Name}}  {{ $field.FieldType }} `json:"{{$field.JSONName}}"`
+{{- end}}
+}
+
+func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
+	tests := []struct {
+		name    string
+		fields  {{.TypeName}}Ref
+		want    []byte
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{name: "Test1", fields: {{.TypeName}}Ref{
+		{{range $i, $field := .Fields }}
+			{{$field.Name}}:  {{$.TypeName}}_example.{{$field.Name}},
+        {{- end }}},
+			want: []byte(`{{ marshalexample }}`), wantErr: false},
+	}
+	for _, tt := range tests {
+		y := {{.TypeName}}{
+        {{ range $i, $field := .Fields }}
+			{{$field.Name}}:  tt.fields.{{$field.Name}},
+        {{- end }}
+		}
+		yRef := {{.TypeName}}Ref{
+		{{ range $i, $field := .Fields }}
+			{{$field.Name}}:  tt.fields.{{$field.Name}},
+        {{- end }}
+		}
+		t.Run(tt.name+"_MarshalJSON", func(t *testing.T) {
+			got, err := y.MarshalJSON()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("{{.TypeName}}.MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("{{.TypeName}}.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+			}
+		})
+		t.Run(tt.name+"_json.Marshal", func(t *testing.T) {
+			got, err := json.Marshal(y)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("json.Marshal({{.TypeName}}) error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("json.Marshal({{.TypeName}}) = %v, want %v", string(got), string(tt.want))
+			}
+		})
+		t.Run(tt.name+"_ref", func(t *testing.T) {
+			got, err := json.Marshal(yRef)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("{{.TypeName}}Ref.MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("{{.TypeName}}Ref.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+			}
+		})
+	}
+}
+
+/*
+   Benchmark{{.TypeName}}_MarshalJSON
+*/
+func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
+	tests := []struct {
+		name    string
+		fields  {{.TypeName}}Ref
+	}{
+		// TODO: Add test cases.
+		{name: "Test1", fields: {{.TypeName}}Ref{
+		{{ range $i, $field := .Fields }}
+			{{$field.Name}}:  {{$.TypeName}}_example.{{$field.Name}},
+        {{- end }}},
+		},
+	}
+	for _, tt := range tests {
+		var a1, a2, a3 []byte
+		y := {{.TypeName}}{
+        {{ range $i, $field := .Fields }}
+			{{$field.Name}}:  tt.fields.{{$field.Name}},
+        {{- end }}
+		}
+		yRef := {{.TypeName}}Ref{
+		{{ range $i, $field := .Fields }}
+			{{$field.Name}}:  tt.fields.{{$field.Name}},
+        {{- end }}
+		}
+		b.Run(tt.name+"_MarshalJSON", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				a1, _ = y.MarshalJSON()
+			}
+		})
+		b.Run(tt.name+"_json.Marshal", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				a2, _ = json.Marshal(y)
+			}
+		})
+		b.Run(tt.name+"_ref", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				a3, _ = json.Marshal(yRef)
+			}
+		})
+        log.Printf("MarshalJSON: %v, json.Marshal: %v, ref: %v",a1, a2, a3)
+	}
+}
+{{end}}

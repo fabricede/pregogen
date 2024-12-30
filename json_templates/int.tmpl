@@ -1,0 +1,4 @@
+// {{- /* Go Template */ -}}.
+{{- define "int" -}}
+    strconv.Itoa(int({{.ReceiverName}}.{{.Name}}))
+{{- end -}}

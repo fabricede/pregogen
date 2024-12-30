@@ -1,0 +1,44 @@
+{{- /* Go Template */ -}}
+{{define "bytesBuffer"}}
+package {{.Package}}
+
+import (
+    "bytes"
+{{- range $include := .Includes}}
+    "{{$include}}"
+{{end -}}
+)
+
+func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON() ([]byte, error) {
+    var b bytes.Buffer
+    {{$starttxt := false}}
+    {{range $i, $field := .Fields}}
+    // field {{$field.Name}} is of type {{ $field.FieldType }}
+    {{if eq $field.FieldType "bool" -}}
+    if {{$field.ReceiverName}}.{{$field.Name}} {
+        b.WriteString("{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":true")
+    } else {
+        b.WriteString("{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":false")
+    }
+    {{ else -}}
+    b.WriteString("{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":
+    {{- if eq $field.FieldType "string" -}}\"{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}")
+    {{- end -}}
+    {{if eq $field.FieldType "string"}}
+    b.WriteString({{- template "string" . -}})
+    {{else if eq $field.FieldType "bool"}}
+    {{- $starttxt = false -}}
+    {{else if or (eq $field.FieldType "int") (eq $field.FieldType "int8") (eq $field.FieldType "int16") (eq $field.FieldType "int32") (eq $field.FieldType "int64") (eq $field.FieldType "uint") (eq $field.FieldType "uint8") (eq $field.FieldType "uint16") (eq $field.FieldType "uint32") (eq $field.FieldType "uint64")}}
+    b.WriteString({{- template "int" . -}})
+    {{else if eq $field.FieldType "[]byte"}}
+    b.Write({{- template "bytes" . -}})
+    {{else if or (eq $field.FieldType "float32") (eq $field.FieldType "float64")}}
+    b.WriteString({{- template "float" . -}})
+    {{else}}
+    b.WriteString({{- template "other" . -}})
+    {{end -}}
+    {{end -}}
+    b.WriteString("{{- if $starttxt -}}\"{{- end -}}}")
+    return b.Bytes(), nil
+}
+{{end}}

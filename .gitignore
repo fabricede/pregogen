@@ -1,0 +1,4 @@
+# Ignore Visual Studio Code
+.vscode
+# Ignore generated files
+**/generated_*
