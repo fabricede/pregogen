@@ -31,8 +31,6 @@ func dict(values ...interface{}) (map[string]interface{}, error) {
 	return dict, nil
 }
 
-var jsonData []byte
-
 // marshalexample
 // This function is used in the template to marshal the example value to JSON.
 // to simplfy,

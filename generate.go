@@ -36,6 +36,9 @@ type TemplateData struct {
 	Gentype      string
 }
 
+// jsonData holds the JSON data of the example value for tests.
+var jsonData []byte
+
 func RunGenerator(typeName, fileName, genType string) ([]byte, error) {
 	node, err := parseSourceFile(fileName)
 	if err != nil {
@@ -45,7 +48,7 @@ func RunGenerator(typeName, fileName, genType string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	jsonData, err := marshalExampleValue(value)
+	jsonData, err = marshalExampleValue(value)
 	if err != nil {
 		return nil, err
 	}
