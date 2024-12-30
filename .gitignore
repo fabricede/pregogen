@@ -2,3 +2,7 @@
 .vscode
 # Ignore generated files
 **/generated_*
+
+# Ignore executables
+pregogen
+pregogen.exe

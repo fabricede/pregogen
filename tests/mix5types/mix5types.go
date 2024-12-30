@@ -1,4 +1,4 @@
-//go:generate go run ../../main/main.go -type=YourType1 -file=mix5types.go -gen=test
+//go:generate pregogen -type=YourType1 -file=mix5types.go -gen=append
 package mypac
 
 type YourType1 struct {

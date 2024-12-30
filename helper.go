@@ -31,6 +31,11 @@ func dict(values ...interface{}) (map[string]interface{}, error) {
 	return dict, nil
 }
 
+// Sub subtracts b from a.
+func Sub(a, b int) int {
+	return a - b
+}
+
 // marshalexample
 // This function is used in the template to marshal the example value to JSON.
 // to simplfy,
@@ -45,6 +50,7 @@ func templateFuncs() template.FuncMap {
 	return template.FuncMap{
 		"dict":           dict,
 		"marshalexample": marshalexample,
+		"sub":            Sub,
 	}
 }
 
