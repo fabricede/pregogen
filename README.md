@@ -2,12 +2,12 @@
 
 A code generator for custom JSON methods in Go.
 
-## Goal
-First commit just demonstrate fesability and a 10% inclease in performance over standard librairy
+## Current State
+First commit demonstrates feasibility and a ~10% increase in json Marshal performance over the standard library.
 
 ## Overview
 - Parses Go source files and generates JSON methods using templates.
-- generate multiple implementation with test/benchmack 
+- Generates multiple implementations with tests and benchmarks.
 
 ## Installation
 1. Clone this repository.
