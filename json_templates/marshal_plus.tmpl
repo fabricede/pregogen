@@ -1,4 +1,22 @@
 {{- /* Go Template */ -}}
+{{define "boolValuePlus"}}
+    if {{.Value}} {
+        result = "{{.JSONName}}true"
+    } else {
+        result = "{{.JSONName}}false"
+    }
+{{end}}
+
+{{define "fieldValue"}}
+    {{- if eq .FieldType "string" -}}{{.JSONName}}\""+{{.Value}}+"\""
+    {{- else if eq .FieldType "bool" -}}{{template "boolValuePlus" .}}
+    {{- else if or (eq .FieldType "int") (eq .FieldType "int8") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{.JSONName}}"+{{template "int" .Value}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint8") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{.JSONName}}"+{{template "int" .Value}}
+    {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{.JSONName}}"+{{template "float" .Value}}
+    {{- else -}}{{.JSONName}}"+{{template "other" .Value}}
+    {{- end -}}
+{{end}}
+
 {{define "plus"}}
 package {{.Package}}
 
@@ -9,45 +27,24 @@ import (
 )
 
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON() ([]byte, error) {
-    var _b string
-    {{$starttxt := false}}
-    {{$startbool := false}}
-    {{$FieldsLenght := sub (len .Fields) 1}}
+    {{$lastIndex := sub (len .Fields) 1}}
+    var result string
+    
     {{range $i, $field := .Fields}}
-    /* field {{$field.Name}} is of type {{ $field.FieldType }} */
-    {{if eq $field.FieldType "bool" -}}
-    {{$startbool = true}}
-    if {{$field.ReceiverName}}.{{$field.Name}} {
-        _b = {{- if $i -}}_b + {{- end -}}"{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":true
-    {{- if eq $FieldsLenght $i -}} } {{- end -}}"
-    } else {
-        _b = {{- if $i -}}_b + {{- end -}}"{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":false
-    {{- if eq $FieldsLenght $i -}} } {{- end -}}"
-    }
-    {{ else -}}
-    {{$startbool = false}}
-    _b = {{- if $i -}}_b + {{- end -}}"{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":
-    {{- if eq $field.FieldType "string" -}}\"{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}"
+
+    {{- if not (eq .FieldType "bool") -}}
+        {{- if eq $i 0 -}}
+        result = "{
+        {{- else -}}
+        result += ",
+        {{- end -}}
     {{- end -}}
-    {{- if eq $field.FieldType "string" -}}
-     + {{- template "string" . -}}
-    {{else if eq $field.FieldType "bool"}}
-    {{- $starttxt = false -}}
-    {{- else if or (eq $field.FieldType "int") (eq $field.FieldType "int8") (eq $field.FieldType "int16") (eq $field.FieldType "int32") (eq $field.FieldType "int64") (eq $field.FieldType "uint") (eq $field.FieldType "uint8") (eq $field.FieldType "uint16") (eq $field.FieldType "uint32") (eq $field.FieldType "uint64") -}}
-     + {{- template "int" . -}}
-    {{- else if or (eq $field.FieldType "[]byte") (eq $field.FieldType "byte") -}}
-     + {{- template "bytes" . -}}
-    {{- else if or (eq $field.FieldType "float32") (eq $field.FieldType "float64") -}}
-     + {{- template "float" . -}}
-    {{- else -}}
-     + {{- template "other" . -}}
-    {{end -}}
-    {{end -}}
-    {{- if $startbool -}}
-    {{- else -}}
-     + "{{- if $starttxt -}}\"{{- end -}}}"
-    {{- end -}}
-    /* end */
-    return []byte(_b), nil
+
+    {{- template "fieldValue" dict "FieldType" $field.FieldType "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "IsLast" (eq $i $lastIndex) "IsFirst" (eq $i 0) -}}
+
+    {{end}} {{- /* end of range */ -}}
+    // end of fields
+    result += "}"
+    return []byte(result), nil
 }
 {{end}}

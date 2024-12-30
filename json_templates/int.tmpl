@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "int" -}}
-    strconv.Itoa(int({{.ReceiverName}}.{{.Name}}))
+    strconv.Itoa(int({{ . }}))
 {{- end -}}

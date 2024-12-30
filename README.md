@@ -14,6 +14,34 @@ BenchmarkBoolType_MarshalJSON/Test1_MarshalJSON-8         	34644636	        35.2
 BenchmarkBoolType_MarshalJSON/Test1_json.Marshal-8        	 3460633	       319.7 ns/op	      48 B/op	       2 allocs/op
 BenchmarkBoolType_MarshalJSON/Test1_ref-8                 	 7754834	       148.7 ns/op	      24 B/op	       1 allocs/op
 
+could be break by
+```
+package booltype
+
+const (
+	TRUE  = "{\"boolfield\":true}"
+	FALSE = "{\"boolfield\":false}"
+)
+
+var True = []byte(TRUE)
+var False = []byte(FALSE)
+
+func (b BoolType) MarshalJSON() ([]byte, error) {
+
+	/* field BoolField is of type bool */
+
+	if b.BoolField {
+		return True, nil
+	} else {
+		return False, nil
+	}
+
+}
+```
+BenchmarkBoolType_MarshalJSON/Test1_MarshalJSON-8         	1000000000	         1.114 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBoolType_MarshalJSON/Test1_json.Marshal-8        	 4434020	       274.5 ns/op	      24 B/op	       1 allocs/op
+BenchmarkBoolType_MarshalJSON/Test1_ref-8                 	 8381034	       149.9 ns/op	      24 B/op	       1 allocs/op
+
 results with `append` on mix5types:
 goos: linux
 goarch: amd64

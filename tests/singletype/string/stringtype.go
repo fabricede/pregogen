@@ -1,4 +1,4 @@
-//go:generate pregogen -type=StringType -file=stringtype.go -gen=test
+//go:generate pregogen -type=StringType -file=stringtype.go -gen=plus
 package stringtype
 
 type StringType struct {

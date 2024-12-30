@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "float" -}}
-    strconv.FormatFloat(float64({{.ReceiverName}}.{{.Name}}), 'f', 2, 64)
+    strconv.FormatFloat(float64({{ . }}), 'f', 2, 64)
 {{- end -}}
