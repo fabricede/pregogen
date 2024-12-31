@@ -1,4 +1,4 @@
-//go:generate pregogen -type=BoolType -file=booltype.go -gen=plus
+//go:generate pregogen -type=BoolType -file=booltype.go -gen=append
 package booltype
 
 type BoolType struct {

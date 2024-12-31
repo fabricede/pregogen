@@ -1,4 +1,4 @@
-//go:generate pregogen -type=IntType -file=inttype.go -gen=plus
+//go:generate pregogen -type=IntType -file=inttype.go -gen=append
 package inttype
 
 type IntType struct {

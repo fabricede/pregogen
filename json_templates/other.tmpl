@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "other" -}}
-    fmt.Sprint({{ . }})
+    {{.Header}}{{.JSONName}}{{.Start}}fmt.Sprint({{.Value}}){{.Stop}}{{.Footer}}
 {{- end -}}

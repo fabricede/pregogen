@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "float" -}}
-    strconv.FormatFloat(float64({{ . }}), 'f', 2, 64)
+    {{.Header}}{{.JSONName}}{{.Start}}strconv.FormatFloat(float64({{.Value}}), 'f', 2, 64){{.Stop}}{{.Footer}}
 {{- end -}}

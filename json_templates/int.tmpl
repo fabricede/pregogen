@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "int" -}}
-    strconv.Itoa(int({{ . }}))
+    {{.Header}}{{.JSONName}}{{.Start}}strconv.Itoa(int({{.Value}})){{.Stop}}{{.Footer}}
 {{- end -}}

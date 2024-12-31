@@ -1,4 +1,4 @@
-//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=plus
+//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=append
 package mix3types
 
 type Mix5Types struct {
@@ -15,12 +15,12 @@ var YourType1_example = Mix5Types{
 }
 
 type YourType2 struct {
-	ByteField    rune    `json:"bytefield"`
-	BytesField   []rune  `json:"bytesfield"`
+	RuneField    rune    `json:"runefield"`
+	RunesField   []rune  `json:"runesfield"`
 	Float32Field float32 `json:"float32field"`
 }
 
 // representative example of data stored in target application
 var YourType2_example = YourType2{
-	ByteField: 'b', BytesField: []rune("123"), Float32Field: 12.34,
+	RuneField: 'b', RunesField: []rune("123"), Float32Field: 12.34,
 }

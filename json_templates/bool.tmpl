@@ -1,4 +1,8 @@
 // {{- /* Go Template */ -}}.
-{{- define "bool" -}}
-    strconv.FormatBool({{ . }})
-{{- end -}}
+{{define "bool"}}
+    if {{.Value}} {
+        {{.Header}}{{.JSONName}}{{.Start}}true{{.Stop}}{{.Footer}}
+    } else {
+        {{.Header}}{{.JSONName}}{{.Start}}false{{.Stop}}{{.Footer}}
+    }
+{{end}}

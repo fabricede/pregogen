@@ -8,36 +8,38 @@ import (
 {{end -}}
 )
 
-func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON() ([]byte, error) {
-    var b []byte
+func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_append() ([]byte, error) {
+    {{$lastIndex := sub (len .Fields) 1}}
+    var result []byte
     {{$starttxt := false}}
     {{range $i, $field := .Fields}}
-    // field {{$field.Name}} is of type {{ $field.FieldType }}
-    {{if eq $field.FieldType "bool" -}}
-    if {{$field.ReceiverName}}.{{$field.Name}} {
-        b = append(b, "{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":true"...)
-    } else {
-        b = append(b, "{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":false"...)
-    }
-    {{ else -}}
-    b = append(b, "{{- if $starttxt -}}\"{{- end -}}{{- if $i -}}, {{- else -}}{ {{- end -}}\"{{$field.JSONName}}\":
-    {{- if eq $field.FieldType "string" -}}\"{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}"...)
-    {{- end -}}
-    {{if eq $field.FieldType "string"}}
-    b = append(b, {{- template "string" . -}}...)
-    {{else if eq $field.FieldType "bool"}}
-    {{- $starttxt = false -}}
-    {{else if or (eq $field.FieldType "int") (eq $field.FieldType "int8") (eq $field.FieldType "int16") (eq $field.FieldType "int32") (eq $field.FieldType "int64") (eq $field.FieldType "uint") (eq $field.FieldType "uint8") (eq $field.FieldType "uint16") (eq $field.FieldType "uint32") (eq $field.FieldType "uint64")}}
-    b = append(b, {{- template "int" . -}}...)
-    {{else if eq $field.FieldType "[]byte"}}
-    b = append(b, {{- template "bytes" . -}}...)
-    {{else if or (eq $field.FieldType "float32") (eq $field.FieldType "float64")}}
-    b = append(b, {{- template "float" . -}}...)
-    {{else}}
-    b = append(b, {{- template "other" . -}}...)
-    {{end -}}
-    {{end -}}
-    b = append(b, "{{- if $starttxt -}}\"{{- end -}}}"...)
-    return b, nil
+        {{$header := "result = append(result, \"{"}}
+        {{- if $i -}}
+            {{$header = "result = append(result, \","}}
+        {{- end -}}
+        {{- if eq $field.FieldType "string" -}}{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}
+        {{$start := "\"+"}}
+        {{- if eq .FieldType "bool" -}}
+            {{$start = ""}}
+        {{- else if eq .FieldType "string" -}}
+            {{$start = "\\\"\"+"}}
+        {{- end -}}
+        {{$stop := "+\""}}
+        {{- if eq .FieldType "bool" -}}
+            {{$stop = ""}}
+        {{- else if eq .FieldType "string" -}}
+            {{$stop = "+\"\\\""}}
+        {{- end -}}
+        {{$footer := "\"...)"}}
+        {{- if eq $i $lastIndex -}}
+            {{$footer = "}\"...)"}}
+        {{- else if eq $stop "+\"" -}}
+            {{$footer = "...)"}}
+            {{$stop = ""}}
+        {{- end -}}
+        {{- template "fieldValue" dict "FieldType" $field.FieldType "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Header" (print $header) "Footer" (printf $footer) "Start" (print $start) "Stop" (printf $stop) -}}
+    {{end}}
+    // final result
+    return result, nil
 }
 {{end}}

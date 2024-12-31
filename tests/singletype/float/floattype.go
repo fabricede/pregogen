@@ -1,4 +1,4 @@
-//go:generate pregogen -type=FloatType -file=floattype.go -gen=plus
+//go:generate pregogen -type=FloatType -file=floattype.go -gen=append
 package floattype
 
 type FloatType struct {

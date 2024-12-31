@@ -1,4 +1,4 @@
 // {{- /* Go Template */ -}}.
 {{- define "string" -}}
-    {{ . }}
+    {{.Header}}{{.JSONName}}{{.Start}}{{.Value}}{{.Stop}}{{.Footer}}
 {{- end -}}
