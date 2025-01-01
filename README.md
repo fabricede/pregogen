@@ -60,6 +60,7 @@ op	     144 B/op	       2 allocs/op
 1. Clone this repository.
 2. Run `go build main/pregogen.go`.
 3. Add executable to the path : `export PATH="$PATH:$(pwd)"`.
+4. To generate tests : `go generate ./...`
 
 ## Usage
 - Use the `-type` flag to specify the struct type.

@@ -2,44 +2,109 @@
 {{define "append"}}
 package {{.Package}}
 
-import (
-{{- range $include := .Includes}}
-    "{{$include}}"
-{{end -}}
-)
+{{- /* set construction variables */ -}}
+{{- $methodVar := "\n\tvar result []byte\n\t" -}}
 
-func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_append() ([]byte, error) {
-    {{$lastIndex := sub (len .Fields) 1}}
-    var result []byte
-    {{$starttxt := false}}
+{{- $methodHeader := "result = append(result, \"," -}}
+{{- $methodHeaderFirst := "result := []byte( \"{" -}}
+{{- $methodHeaderFirstBool := "result = []byte( \"{" -}}
+{{- $methodHeaderUniqueBool := "return ([]byte( \"{" -}}
+
+{{- $methodStart := "\"...)\n\tresult = append(result, " -}}
+{{- $methodStartFirst := "\")\n\tresult = append(result, " -}}
+{{- $methodStartString := "\"...)\n\tresult = append(result, " -}}
+{{- $methodStartFirstString := "\\\"\")\n\tresult = append(result, " -}}
+
+{{- $methodStop := "" -}}
+{{- $methodStopLast := "...)\n\tresult = append(result, \"}" -}}
+{{- $methodStopString := "...)\n\tresult = append(result, \"\\\"" -}}
+
+{{- $methodNextLine := "\n\t" -}}
+
+{{- $methodFooter := "...)" -}}
+{{- $methodFooterLast := "}\"...)" -}}
+{{- $methodFooterBool := "\"...)" -}}
+{{- $methodFooterFirstBool := "\")" -}}
+{{- $methodFooterUniqueBool := "}\")), nil" -}}
+
+{{- $methodFinalReturn := "\n\treturn result, nil" -}}
+
+{{- $imports := (len .Includes) -}}
+{{ if gt $imports 0 }}
+import (
+    {{ range $include := .Includes }}
+    "{{$include}}"
+    {{ end }}
+)
+{{ end }}
+{{ $lastIndex := sub (len .Fields) 1 }}
+
+func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_append() ([]byte, error) { 
+    {{- $previousType := "" -}}
     {{range $i, $field := .Fields}}
-        {{$header := "result = append(result, \"{"}}
-        {{- if $i -}}
-            {{$header = "result = append(result, \","}}
+        {{- if and ( eq $i 0) (eq .FieldType "bool") (gt $lastIndex 0) }}
+            {{- printf $methodVar }}
         {{- end -}}
-        {{- if eq $field.FieldType "string" -}}{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}
-        {{$start := "\"+"}}
-        {{- if eq .FieldType "bool" -}}
-            {{$start = ""}}
+       
+        {{- /* prepare {{.Header}}{{.JSONName}}{{.Start}}...{{.Value}}...{{.Stop}}{{.Footer}} */ -}}
+        {{- /* prepare start of line */ -}}
+        {{- $header := $methodHeader -}}
+        {{- if eq $i 0 -}}
+            {{- $header = $methodHeaderFirst -}}
+            {{- if and (eq .FieldType "bool") (eq $i $lastIndex) -}}
+                {{- $header = $methodHeaderUniqueBool -}}
+            {{- else if and (eq .FieldType "bool") -}}
+                {{- $header = $methodHeaderFirstBool -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $previousType = (print $field.FieldType) -}}
+
+        {{- /* prepare mid line */ -}}
+        {{- $start := $methodStart -}}
+        {{- if eq $i 0 -}}
+            {{- if eq .FieldType "string" -}}
+                {{- $start = $methodStartFirstString -}}
+            {{- else -}}
+                {{- $start = $methodStartFirst -}}
+            {{- end -}}
         {{- else if eq .FieldType "string" -}}
-            {{$start = "\\\"\"+"}}
+            {{- $start = $methodStartString -}}
         {{- end -}}
-        {{$stop := "+\""}}
-        {{- if eq .FieldType "bool" -}}
-            {{$stop = ""}}
-        {{- else if eq .FieldType "string" -}}
-            {{$stop = "+\"\\\""}}
-        {{- end -}}
-        {{$footer := "\"...)"}}
+        {{- $stop := $methodStop -}}
         {{- if eq $i $lastIndex -}}
-            {{$footer = "}\"...)"}}
-        {{- else if eq $stop "+\"" -}}
-            {{$footer = "...)"}}
-            {{$stop = ""}}
+            {{- if eq .FieldType "string" -}}
+                {{- $stop = $methodStopString -}}
+            {{- else  -}}
+                {{- $stop = $methodStopLast -}}
+            {{- end -}}
         {{- end -}}
+
+        {{- /* prepare end of line */ -}}
+        {{- $footer := $methodFooter -}}
+        {{- if eq .FieldType "bool" -}}
+            {{- if and (eq $i $lastIndex) (eq $i 0) -}}
+                {{- $footer = $methodFooterUniqueBool -}}
+            {{- else if and (eq $i $lastIndex) -}}
+                {{- $footer = $methodFooterLast -}}
+            {{- else if and (eq $i 0) -}}
+                {{- $footer = $methodFooterFirstBool -}}
+            {{- else -}}
+                {{- $footer = $methodFooterBool -}}
+            {{- end -}}
+        {{- else if eq $i $lastIndex -}}
+            {{- $footer = $methodFooterLast -}}
+        {{- end -}}
+
+        {{- /* package the line with value */ -}}
         {{- template "fieldValue" dict "FieldType" $field.FieldType "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Header" (print $header) "Footer" (printf $footer) "Start" (print $start) "Stop" (printf $stop) -}}
+
+        {{- if not (eq $previousType "bool") }}
+        {{- printf $methodNextLine -}}
+        {{- end -}}
+
     {{end}}
-    // final result
-    return result, nil
+    {{- if or (gt $lastIndex 0) (not (eq $previousType "bool")) -}}
+    {{ printf $methodFinalReturn }}
+    {{ end }} 
 }
 {{end}}

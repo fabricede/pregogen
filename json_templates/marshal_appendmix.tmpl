@@ -1,22 +1,23 @@
 {{- /* Go Template */ -}}
-{{define "bytesBuffer"}}
+{{define "appendmix"}}
 package {{.Package}}
 
 import (
-    "bytes"
-{{range $include := .Includes}}
+{{- range $include := .Includes}}
     "{{$include}}"
 {{end -}}
 )
 
-func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_bytesBuffer() ([]byte, error) {
-    {{- $lastIndex := sub (len .Fields) 1 }}
-    var result bytes.Buffer
+func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_appendmix() ([]byte, error) {
+    {{$lastIndex := sub (len .Fields) 1}}
+    var result []byte
+    {{$starttxt := false}}
     {{range $i, $field := .Fields}}
-        {{$header := "result.WriteString( \"{"}}
+        {{$header := "result = append(result, \"{"}}
         {{- if $i -}}
-            {{$header = "result.WriteString( \","}}
+            {{$header = "result = append(result, \","}}
         {{- end -}}
+        {{- if eq $field.FieldType "string" -}}{{- $starttxt = true -}}{{- else -}}{{- $starttxt = false -}}{{- end -}}
         {{$start := "\"+"}}
         {{- if eq .FieldType "bool" -}}
             {{$start = ""}}
@@ -29,16 +30,16 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_bytesBuffer() ([]byte, error)
         {{- else if eq .FieldType "string" -}}
             {{$stop = "+\"\\\""}}
         {{- end -}}
-        {{$footer := "\")"}}
+        {{$footer := "\"...)"}}
         {{- if eq $i $lastIndex -}}
-            {{$footer = "}\")"}}
+            {{$footer = "}\"...)"}}
         {{- else if eq $stop "+\"" -}}
-            {{$footer = ")"}}
+            {{$footer = "...)"}}
             {{$stop = ""}}
         {{- end -}}
         {{- template "fieldValue" dict "FieldType" $field.FieldType "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Header" (print $header) "Footer" (printf $footer) "Start" (print $start) "Stop" (printf $stop) -}}
     {{end}}
     // final result
-    return result.Bytes(), nil
+    return result, nil
 }
 {{end}}

@@ -1,16 +1,16 @@
 {{- /* Go Template */ -}}
-{{define "bytesBuffer"}}
+{{define "bytesBuffermix"}}
 package {{.Package}}
 
 import (
     "bytes"
-{{range $include := .Includes}}
+{{- range $include := .Includes}}
     "{{$include}}"
 {{end -}}
 )
 
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_bytesBuffer() ([]byte, error) {
-    {{- $lastIndex := sub (len .Fields) 1 }}
+    {{$lastIndex := sub (len .Fields) 1}}
     var result bytes.Buffer
     {{range $i, $field := .Fields}}
         {{$header := "result.WriteString( \"{"}}

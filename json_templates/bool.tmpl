@@ -1,8 +1,8 @@
 // {{- /* Go Template */ -}}.
 {{define "bool"}}
     if {{.Value}} {
-        {{.Header}}{{.JSONName}}{{.Start}}true{{.Stop}}{{.Footer}}
+        {{.Header}}{{.JSONName}}true{{.Footer}}
     } else {
-        {{.Header}}{{.JSONName}}{{.Start}}false{{.Stop}}{{.Footer}}
+        {{.Header}}{{.JSONName}}false{{.Footer}}
     }
 {{end}}
