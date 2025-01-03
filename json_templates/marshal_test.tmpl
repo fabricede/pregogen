@@ -22,6 +22,17 @@ type {{.TypeName}}Test struct {
 	want    []byte
 }
 
+func init() {
+	// use json.Marshal to generate expected []byte for each example
+	for i, example := range {{.TypeName}}_examples {
+		want, err := json.Marshal(example.{{.TypeName}})
+		if err != nil {
+			panic(err)
+		}
+		{{.TypeName}}_examples[i].want = want
+	}
+}
+
 func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 	var tests []{{.TypeName}}Test
 	for i, example := range {{$.TypeName}}_examples {

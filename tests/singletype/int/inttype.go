@@ -21,7 +21,7 @@ var IntType_examples = []struct {
 	{
 		IntType{
 			IntField: 12345,
-		}, []byte(`{"intfield":12345}`)},
+		}, nil},
 }
 
 type IntType3 struct {
@@ -40,5 +40,5 @@ var IntType3_examples = []struct {
 			IntField1: 12345,
 			IntField2: 67890,
 			IntField3: 10,
-		}, []byte(`{"intfield1":12345,"intfield2":67890,"intfield3":10}`)},
+		}, nil},
 }

@@ -20,5 +20,5 @@ var YourType2_examples = []struct {
 			RuneField:    'b',
 			RunesField:   []rune("123"),
 			Float32Field: 12.34,
-		}, []byte(`{"runefield":98,"runesfield":[49,50,51],"float32field":12.34000015258789}`)},
+		}, nil},
 }

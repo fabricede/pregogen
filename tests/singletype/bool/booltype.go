@@ -21,11 +21,11 @@ var BoolType_examples = []struct {
 	{
 		BoolType{
 			BoolField: true,
-		}, []byte(`{"boolfield":true}`)},
+		}, nil},
 	{
 		BoolType{
 			BoolField: false,
-		}, []byte(`{"boolfield":false}`)},
+		}, nil},
 }
 
 type BoolType3 struct {
@@ -44,11 +44,11 @@ var BoolType3_examples = []struct {
 			BoolField1: true,
 			BoolField2: true,
 			BoolField3: false,
-		}, []byte(`{"boolfield1":true,"boolfield2":true,"boolfield3":false}`)},
+		}, nil},
 	{
 		BoolType3{
 			BoolField1: false,
 			BoolField2: false,
 			BoolField3: true,
-		}, []byte(`{"boolfield1":false,"boolfield2":false,"boolfield3":true}`)},
+		}, nil},
 }

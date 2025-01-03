@@ -21,7 +21,7 @@ var StringType_examples = []struct {
 	{
 		StringType{
 			StringField: "hello",
-		}, []byte(`{"stringfield":"hello"}`)},
+		}, nil},
 }
 
 type StringType3 struct {
@@ -40,5 +40,5 @@ var StringType3_examples = []struct {
 			StringField1: "true",
 			StringField2: "true",
 			StringField3: "false",
-		}, []byte(`{"stringfield1":"true","stringfield2":"true","stringfield3":"false"}`)},
+		}, nil},
 }

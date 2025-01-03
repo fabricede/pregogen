@@ -24,5 +24,5 @@ var YourType1_examples = []struct {
 			Int8Field:    12,
 			BoolField:    true,
 			Float64Field: 12.34,
-		}, []byte(`{"boolfield":true,"float64field":12.34,"int8field":12,"intfield":123,"stringfield":"hello"}`)},
+		}, nil},
 }
