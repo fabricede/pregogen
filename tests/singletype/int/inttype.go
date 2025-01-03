@@ -25,9 +25,9 @@ var IntType_examples = []struct {
 }
 
 type IntType3 struct {
-	IntField1 int `json:"Intfield1"`
-	IntField2 int `json:"Intfield2"`
-	IntField3 int `json:"Intfield3"`
+	IntField1 int `json:"intfield1"`
+	IntField2 int `json:"intfield2"`
+	IntField3 int `json:"intfield3"`
 }
 
 // representative example(s) of data stored in target application

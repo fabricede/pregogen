@@ -1,4 +1,7 @@
+//go:generate pregogen -type=YourType1 -file=mix5types.go -gen=test
 //go:generate pregogen -type=YourType1 -file=mix5types.go -gen=append
+//go:generate pregogen -type=YourType1 -file=mix5types.go -gen=bytesBuffer
+//go:generate pregogen -type=YourType1 -file=mix5types.go -gen=plus
 package mypac
 
 type YourType1 struct {
@@ -9,18 +12,17 @@ type YourType1 struct {
 	StringField  string  `json:"stringfield"`
 }
 
-// representative example of data stored in target application
-var YourType1_example = YourType1{
-	StringField: "hello", IntField: 123, Int8Field: 12, BoolField: true, Float64Field: 12.34,
-}
-
-type YourType2 struct {
-	ByteField    byte    `json:"bytefield"`
-	BytesField   []byte  `json:"bytesfield"`
-	Float32Field float32 `json:"float32field"`
-}
-
-// representative example of data stored in target application
-var YourType2_example = YourType2{
-	ByteField: 'b', BytesField: []byte("123"), Float32Field: 12.34,
+// representative example of data stored in target application (size used for capacity)
+var YourType1_examples = []struct {
+	YourType1
+	want []byte
+}{
+	{
+		YourType1{
+			StringField:  "hello",
+			IntField:     123,
+			Int8Field:    12,
+			BoolField:    true,
+			Float64Field: 12.34,
+		}, []byte(`{"boolfield":true,"float64field":12.34,"int8field":12,"intfield":123,"stringfield":"hello"}`)},
 }

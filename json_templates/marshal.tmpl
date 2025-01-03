@@ -27,7 +27,8 @@
 
 {{- $methodStop := "" -}}
 {{- $methodStopLast := ")\n\tresult.WriteString( \"" -}}
-{{- $methodStopString := ")\n\tresult.WriteString( \"\\\"" -}}
+{{- $methodStopString := ")\n\tresult.WriteString( \"\\\"\"" -}}
+{{- $methodStopLastString := ")\n\tresult.WriteString( \"\\\"" -}}
 
 {{- $methodNextLine := "\n\t" -}}
 
@@ -57,12 +58,13 @@
 
     {{- $methodStart = "\"...)\n\tresult = append(result, " -}}
     {{- $methodStartFirst = "\")\n\tresult = append(result, " -}}
-    {{- $methodStartString = "\"...)\n\tresult = append(result, " -}}
+    {{- $methodStartString = "\\\"\"...)\n\tresult = append(result, " -}}
     {{- $methodStartFirstString = "\\\"\")\n\tresult = append(result, " -}}
 
     {{- $methodStop = "" -}}
     {{- $methodStopLast = "...)\n\tresult = append(result, \"" -}}
-    {{- $methodStopString = "...)\n\tresult = append(result, \"\\\"" -}}
+    {{- $methodStopString = "...)\n\tresult = append(result, \"\\\"\"" -}}
+    {{- $methodStopLastString = "...)\n\tresult = append(result, \"\\\"" -}}
 
     {{- $methodNextLine = "\n\t" -}}
 
@@ -75,7 +77,6 @@
     {{- $methodFinalReturn = "\n\treturn result, nil" -}}
 {{- else if eq .Gentype "plus" -}}
     {{- /* set construction variables */ -}}
-    {{- $method = "plus" -}}
     {{- $methodVar = "\n\tvar result string\n\t" -}}
 
     {{- $methodHeader = "result += \"," -}}
@@ -90,7 +91,8 @@
 
     {{- $methodStop = "" -}}
     {{- $methodStopLast = "+\"" -}}
-    {{- $methodStopString = "+ \"\\\"" -}}
+    {{- $methodStopString = "+ \"\\\"\"" -}}
+    {{- $methodStopLastString = "+ \"\\\"" -}}
 
     {{- $methodNextLine = "\n\t" -}}
 
@@ -126,7 +128,7 @@ import (
 
 
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error) { 
-    {{- $previousType := "" -}}
+    {{$previousType := ""}}
     {{range $i, $field := .Fields}}
         {{- if and ( eq $i 0) (not $uniquebool) (or (eq $method "bytesBuffer") (eq .FieldType "bool")) }}
             {{- printf $methodVar }}
@@ -157,12 +159,14 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
             {{- $start = $methodStartString -}}
         {{- end -}}
         {{- $stop := $methodStop -}}
-        {{- if eq $i $lastIndex -}}
-            {{- if eq .FieldType "string" -}}
+        {{- if eq .FieldType "string" -}}
+            {{- if eq $i $lastIndex -}}
+                {{- $stop = $methodStopLastString -}}
+            {{- else -}}
                 {{- $stop = $methodStopString -}}
-            {{- else  -}}
-                {{- $stop = $methodStopLast -}}
             {{- end -}}
+        {{- else if eq $i $lastIndex -}}
+            {{- $stop = $methodStopLast -}}
         {{- end -}}
 
         {{- /* prepare end of line */ -}}

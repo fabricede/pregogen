@@ -25,9 +25,9 @@ var FloatType_examples = []struct {
 }
 
 type FloatType3 struct {
-	FloatField1 float64 `json:"Floatfield1"`
-	FloatField2 float64 `json:"Floatfield2"`
-	FloatField3 float64 `json:"Floatfield3"`
+	FloatField1 float64 `json:"floatfield1"`
+	FloatField2 float64 `json:"floatfield2"`
+	FloatField3 float64 `json:"floatfield3"`
 }
 
 // representative example(s) of data stored in target application
@@ -40,5 +40,5 @@ var FloatType3_examples = []struct {
 			FloatField1: 123.45,
 			FloatField2: 678.9,
 			FloatField3: 1.0,
-		}, []byte(`{"floatfield1":123.45,"floatfield2":678.9,"floatfield3":1.0}`)},
+		}, []byte(`{"floatfield1":123.45,"floatfield2":678.9,"floatfield3":1}`)},
 }

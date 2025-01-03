@@ -1,18 +1,8 @@
+//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=test
 //go:generate pregogen -type=YourType2 -file=mytypes.go -gen=append
+//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=bytesBuffer
+//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=plus
 package mix3types
-
-type Mix5Types struct {
-	BoolField    bool    `json:"boolfield"`
-	Float64Field float64 `json:"float64field"`
-	Int8Field    int8    `json:"int8field"`
-	IntField     int     `json:"intfield"`
-	StringField  string  `json:"stringfield"`
-}
-
-// representative example of data stored in target application
-var YourType1_example = Mix5Types{
-	StringField: "hello", IntField: 123, Int8Field: 12, BoolField: true, Float64Field: 12.34,
-}
 
 type YourType2 struct {
 	RuneField    rune    `json:"runefield"`
@@ -20,7 +10,15 @@ type YourType2 struct {
 	Float32Field float32 `json:"float32field"`
 }
 
-// representative example of data stored in target application
-var YourType2_example = YourType2{
-	RuneField: 'b', RunesField: []rune("123"), Float32Field: 12.34,
+// representative example of data stored in target application (size used for capacity)
+var YourType2_examples = []struct {
+	YourType2
+	want []byte
+}{
+	{
+		YourType2{
+			RuneField:    'b',
+			RunesField:   []rune("123"),
+			Float32Field: 12.34,
+		}, []byte(`{"runefield":98,"runesfield":[49,50,51],"float32field":12.34000015258789}`)},
 }

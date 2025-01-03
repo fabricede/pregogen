@@ -25,9 +25,9 @@ var StringType_examples = []struct {
 }
 
 type StringType3 struct {
-	StringField1 string `json:"Stringfield1"`
-	StringField2 string `json:"Stringfield2"`
-	StringField3 string `json:"Stringfield3"`
+	StringField1 string `json:"stringfield1"`
+	StringField2 string `json:"stringfield2"`
+	StringField3 string `json:"stringfield3"`
 }
 
 // representative example(s) of data stored in target application
