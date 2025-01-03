@@ -1,18 +1,12 @@
 package pregogen
 
 import (
-	"encoding/json"
 	"fmt"
 	"go/ast"
 	"log"
 	"strings"
 	"text/template"
 )
-
-func marshalExampleValue(expr ast.Expr) ([]byte, error) {
-	goValue := extractValue(expr)
-	return json.Marshal(goValue)
-}
 
 // dict creates a map from a list of pairs.
 // This function is used in the template to create a map of field names and values.
@@ -36,21 +30,11 @@ func Sub(a, b int) int {
 	return a - b
 }
 
-// marshalexample
-// This function is used in the template to marshal the example value to JSON.
-// to simplfy,
-// - json tag should be lowercase of var name to make it work
-// - the declaration of values struct should be in alphabetic order
-func marshalexample() (string, error) {
-	return strings.ToLower(string(jsonData)), nil
-}
-
 // templateFuncs returns a FuncMap with the custom functions.
 func templateFuncs() template.FuncMap {
 	return template.FuncMap{
-		"dict":           dict,
-		"marshalexample": marshalexample,
-		"sub":            Sub,
+		"dict": dict,
+		"sub":  Sub,
 	}
 }
 

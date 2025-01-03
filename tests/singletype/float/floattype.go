@@ -16,14 +16,13 @@ type FloatType struct {
 // representative example of data stored in target application
 var FloatType_examples = []struct {
 	FloatType
-	string
+	want []byte
 }{
 	{
 		FloatType{
 			FloatField: 12.45,
-		}, `{"floatfield":12.45}`},
+		}, []byte(`{"floatfield":12.45}`)},
 }
-var FloatType_example = FloatType_examples[0].FloatType
 
 type FloatType3 struct {
 	FloatField1 float64 `json:"Floatfield1"`
@@ -34,13 +33,12 @@ type FloatType3 struct {
 // representative example(s) of data stored in target application
 var FloatType3_examples = []struct {
 	FloatType3
-	string
+	want []byte
 }{
 	{
 		FloatType3{
 			FloatField1: 123.45,
 			FloatField2: 678.9,
 			FloatField3: 1.0,
-		}, `{"floatfield1":123.45,"floatfield2":678.9,"floatfield3":1.0}`},
+		}, []byte(`{"floatfield1":123.45,"floatfield2":678.9,"floatfield3":1.0}`)},
 }
-var FloatType3_example = FloatType3_examples[0].FloatType3

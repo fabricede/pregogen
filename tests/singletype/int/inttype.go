@@ -16,14 +16,13 @@ type IntType struct {
 // representative example of data stored in target application
 var IntType_examples = []struct {
 	IntType
-	string
+	want []byte
 }{
 	{
 		IntType{
 			IntField: 12345,
-		}, `{"intfield":12345}`},
+		}, []byte(`{"intfield":12345}`)},
 }
-var IntType_example = IntType_examples[0].IntType
 
 type IntType3 struct {
 	IntField1 int `json:"Intfield1"`
@@ -34,13 +33,12 @@ type IntType3 struct {
 // representative example(s) of data stored in target application
 var IntType3_examples = []struct {
 	IntType3
-	string
+	want []byte
 }{
 	{
 		IntType3{
 			IntField1: 12345,
 			IntField2: 67890,
 			IntField3: 10,
-		}, `{"intfield1":12345,"intfield2":67890,"intfield3":10}`},
+		}, []byte(`{"intfield1":12345,"intfield2":67890,"intfield3":10}`)},
 }
-var IntType3_example = IntType3_examples[0].IntType3

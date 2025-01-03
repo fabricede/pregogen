@@ -16,18 +16,17 @@ type BoolType struct {
 // representative example of data stored in target application
 var BoolType_examples = []struct {
 	BoolType
-	string
+	want []byte
 }{
 	{
 		BoolType{
 			BoolField: true,
-		}, `{"boolfield":true}`},
+		}, []byte(`{"boolfield":true}`)},
 	{
 		BoolType{
 			BoolField: false,
-		}, `{"boolfield":false}`},
+		}, []byte(`{"boolfield":false}`)},
 }
-var BoolType_example = BoolType_examples[0].BoolType
 
 type BoolType3 struct {
 	BoolField1 bool `json:"boolfield1"`
@@ -38,19 +37,18 @@ type BoolType3 struct {
 // representative example(s) of data stored in target application
 var BoolType3_examples = []struct {
 	BoolType3
-	string
+	want []byte
 }{
 	{
 		BoolType3{
 			BoolField1: true,
 			BoolField2: true,
 			BoolField3: false,
-		}, `{"boolfield1":true,"boolfield2":true,"boolfield3":false}`},
+		}, []byte(`{"boolfield1":true,"boolfield2":true,"boolfield3":false}`)},
 	{
 		BoolType3{
 			BoolField1: false,
 			BoolField2: false,
 			BoolField3: true,
-		}, `{"boolfield1":false,"boolfield2":false,"boolfield3":true}`},
+		}, []byte(`{"boolfield1":false,"boolfield2":false,"boolfield3":true}`)},
 }
-var BoolType3_example = BoolType3_examples[0].BoolType3

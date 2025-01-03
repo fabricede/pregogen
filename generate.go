@@ -36,28 +36,13 @@ type TemplateData struct {
 	Gentype      string
 }
 
-// jsonData holds the JSON data of the example value for tests.
-var jsonData []byte
-
-func RunGenerator(typeName, fileName, genType string) ([]byte, error) {
+func RunGenerator(typeName, fileName, genType string) error {
 	node, err := parseSourceFile(fileName)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	value, err := findVariableValue(node, typeName)
-	if err != nil {
-		return nil, err
-	}
-	jsonData, err = marshalExampleValue(value)
-	if err != nil {
-		return nil, err
-	}
-
 	err = generateForStruct(node, typeName, genType)
-	if err != nil {
-		return nil, err
-	}
-	return jsonData, nil
+	return err
 }
 
 func generateForStruct(node *ast.File, typeName, genType string) error {

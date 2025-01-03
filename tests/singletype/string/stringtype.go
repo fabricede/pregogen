@@ -16,14 +16,13 @@ type StringType struct {
 // representative example of data stored in target application
 var StringType_examples = []struct {
 	StringType
-	string
+	want []byte
 }{
 	{
 		StringType{
 			StringField: "hello",
-		}, `{"stringfield":"hello"}`},
+		}, []byte(`{"stringfield":"hello"}`)},
 }
-var StringType_example = StringType_examples[0].StringType
 
 type StringType3 struct {
 	StringField1 string `json:"Stringfield1"`
@@ -34,13 +33,12 @@ type StringType3 struct {
 // representative example(s) of data stored in target application
 var StringType3_examples = []struct {
 	StringType3
-	string
+	want []byte
 }{
 	{
 		StringType3{
 			StringField1: "true",
 			StringField2: "true",
 			StringField3: "false",
-		}, `{"stringfield1":"true","stringfield2":"true","stringfield3":"false"}`},
+		}, []byte(`{"stringfield1":"true","stringfield2":"true","stringfield3":"false"}`)},
 }
-var StringType3_example = StringType3_examples[0].StringType3

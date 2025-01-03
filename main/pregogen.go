@@ -18,10 +18,8 @@ func main() {
 
 	log.Println("generate type:", *gentype)
 
-	jsonData, err := pregogen.RunGenerator(*typeName, *fileName, *gentype)
+	err := pregogen.RunGenerator(*typeName, *fileName, *gentype)
 	if err != nil {
 		log.Panic(err)
 	}
-
-	log.Println("JSON output:", string(jsonData))
 }
