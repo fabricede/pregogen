@@ -3,6 +3,7 @@
 package {{.Package}}
 
 {{- /* set construction variables */ -}}
+{{- $method := "append" -}}
 {{- $methodVar := "\n\tvar result []byte\n\t" -}}
 
 {{- $methodHeader := "result = append(result, \"," -}}
@@ -16,7 +17,7 @@ package {{.Package}}
 {{- $methodStartFirstString := "\\\"\")\n\tresult = append(result, " -}}
 
 {{- $methodStop := "" -}}
-{{- $methodStopLast := "...)\n\tresult = append(result, \"}" -}}
+{{- $methodStopLast := "...)\n\tresult = append(result, \"" -}}
 {{- $methodStopString := "...)\n\tresult = append(result, \"\\\"" -}}
 
 {{- $methodNextLine := "\n\t" -}}
@@ -30,7 +31,7 @@ package {{.Package}}
 {{- $methodFinalReturn := "\n\treturn result, nil" -}}
 
 {{- $imports := (len .Includes) -}}
-{{ if gt $imports 0 }}
+{{ if or (gt $imports 0) (eq $method "bytesBuffer") }}
 import (
     {{ range $include := .Includes }}
     "{{$include}}"
@@ -39,10 +40,11 @@ import (
 {{ end }}
 {{ $lastIndex := sub (len .Fields) 1 }}
 
-func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_append() ([]byte, error) { 
+func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error) { 
     {{- $previousType := "" -}}
     {{range $i, $field := .Fields}}
-        {{- if and ( eq $i 0) (eq .FieldType "bool") (gt $lastIndex 0) }}
+        {{- $uniquebool := (and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0)) -}}
+        {{- if and ( eq $i 0) (not $uniquebool) (or (eq $method "bytesBuffer") (eq .FieldType "bool")) }}
             {{- printf $methodVar }}
         {{- end -}}
        

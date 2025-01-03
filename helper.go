@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"log"
+	"os"
 	"strings"
 	"text/template"
 )
@@ -30,11 +31,18 @@ func Sub(a, b int) int {
 	return a - b
 }
 
+// Return.
+func Return() error {
+	os.Exit(0)
+	return nil
+}
+
 // templateFuncs returns a FuncMap with the custom functions.
 func templateFuncs() template.FuncMap {
 	return template.FuncMap{
-		"dict": dict,
-		"sub":  Sub,
+		"dict":   dict,
+		"sub":    Sub,
+		"return": Return,
 	}
 }
 

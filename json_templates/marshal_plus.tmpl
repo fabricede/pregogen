@@ -6,7 +6,7 @@ package {{.Package}}
 {{- $method := "plus" -}}
 {{- $methodVar := "\n\tvar result string\n\t" -}}
 
-{{- $methodHeader := "result = \"," -}}
+{{- $methodHeader := "result += \"," -}}
 {{- $methodHeaderFirst := "result := \"{" -}}
 {{- $methodHeaderFirstBool := "result = \"{" -}}
 {{- $methodHeaderUniqueBool := "return ([]byte( \"{" -}}
@@ -17,7 +17,7 @@ package {{.Package}}
 {{- $methodStartFirstString := "\\\"\"+" -}}
 
 {{- $methodStop := "" -}}
-{{- $methodStopLast := "+\"}" -}}
+{{- $methodStopLast := "+\"" -}}
 {{- $methodStopString := "+ \"\\\"" -}}
 
 {{- $methodNextLine := "\n\t" -}}
@@ -31,7 +31,7 @@ package {{.Package}}
 {{- $methodFinalReturn := "\n\treturn []byte(result), nil" -}}
 
 {{- $imports := (len .Includes) -}}
-{{ if gt $imports 0 }}
+{{ if or (gt $imports 0) (eq $method "bytesBuffer") }}
 import (
     {{ range $include := .Includes }}
     "{{$include}}"
@@ -43,7 +43,8 @@ import (
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error) { 
     {{- $previousType := "" -}}
     {{range $i, $field := .Fields}}
-        {{- if and ( eq $i 0) (eq .FieldType "bool") (gt $lastIndex 0) }}
+        {{- $uniquebool := (and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0)) -}}
+        {{- if and ( eq $i 0) (not $uniquebool) (or (eq $method "bytesBuffer") (eq .FieldType "bool")) }}
             {{- printf $methodVar }}
         {{- end -}}
        
