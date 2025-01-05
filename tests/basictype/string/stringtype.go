@@ -1,12 +1,8 @@
-//go:generate pregogen -type=StringType -file=stringtype.go -gen=test
-//go:generate pregogen -type=StringType -file=stringtype.go -gen=append
-//go:generate pregogen -type=StringType -file=stringtype.go -gen=bytesBuffer
-//go:generate pregogen -type=StringType -file=stringtype.go -gen=plus
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=append
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=plus
 
-//go:generate pregogen -type=StringType3 -file=stringtype.go -gen=test
-//go:generate pregogen -type=StringType3 -file=stringtype.go -gen=append
-//go:generate pregogen -type=StringType3 -file=stringtype.go -gen=bytesBuffer
-//go:generate pregogen -type=StringType3 -file=stringtype.go -gen=plus
 package stringtype
 
 type StringType struct {
@@ -24,6 +20,10 @@ var StringType_examples = []struct {
 		}, nil},
 }
 
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=plus
 type StringType3 struct {
 	StringField1 string `json:"stringfield1"`
 	StringField2 string `json:"stringfield2"`

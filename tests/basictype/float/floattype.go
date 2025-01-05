@@ -1,12 +1,8 @@
-//go:generate pregogen -type=FloatType -file=floattype.go -gen=test
-//go:generate pregogen -type=FloatType -file=floattype.go -gen=append
-//go:generate pregogen -type=FloatType -file=floattype.go -gen=bytesBuffer
-//go:generate pregogen -type=FloatType -file=floattype.go -gen=plus
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=test
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=append
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=plus
 
-//go:generate pregogen -type=FloatType3 -file=floattype.go -gen=test
-//go:generate pregogen -type=FloatType3 -file=floattype.go -gen=append
-//go:generate pregogen -type=FloatType3 -file=floattype.go -gen=bytesBuffer
-//go:generate pregogen -type=FloatType3 -file=floattype.go -gen=plus
 package floattype
 
 type FloatType struct {
@@ -24,6 +20,10 @@ var FloatType_examples = []struct {
 		}, nil},
 }
 
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=plus
 type FloatType3 struct {
 	FloatField1 float64 `json:"floatfield1"`
 	FloatField2 float64 `json:"floatfield2"`

@@ -1,12 +1,8 @@
-//go:generate pregogen -type=IntType -file=inttype.go -gen=test
-//go:generate pregogen -type=IntType -file=inttype.go -gen=append
-//go:generate pregogen -type=IntType -file=inttype.go -gen=bytesBuffer
-//go:generate pregogen -type=IntType -file=inttype.go -gen=plus
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=append
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=plus
 
-//go:generate pregogen -type=IntType3 -file=inttype.go -gen=test
-//go:generate pregogen -type=IntType3 -file=inttype.go -gen=append
-//go:generate pregogen -type=IntType3 -file=inttype.go -gen=bytesBuffer
-//go:generate pregogen -type=IntType3 -file=inttype.go -gen=plus
 package inttype
 
 type IntType struct {
@@ -24,6 +20,10 @@ var IntType_examples = []struct {
 		}, nil},
 }
 
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=plus
 type IntType3 struct {
 	IntField1 int `json:"intfield1"`
 	IntField2 int `json:"intfield2"`

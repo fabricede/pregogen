@@ -1,7 +1,7 @@
-//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=test
-//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=append
-//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=bytesBuffer
-//go:generate pregogen -type=YourType2 -file=mytypes.go -gen=plus
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=test
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=append
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=plus
 package mix3types
 
 type YourType2 struct {
