@@ -4,6 +4,7 @@
 {{- define "fieldValue"}}
     {{- if eq .FieldType "string" -}}{{template "string" .}}
     {{- else if eq .FieldType "bool" -}}{{template "bool" .}}
+    {{- else if eq .FieldType "[]bool" -}}{{template "array" .}}
     {{- else if or (eq .FieldType "int") (eq .FieldType "int8") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "int" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint8") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "int" .}}
     {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "float" .}}
@@ -112,7 +113,8 @@ package {{.Package}}
 {{- $lastIndex := sub (len .Fields) 1 -}}
 {{- $uniquebool := false -}}
 {{- range $i, $field := .Fields -}}
-    {{- $uniquebool = (and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0)) -}}
+    {{- $bool := or (eq .FieldType "bool") (eq .FieldType "[]bool") -}}
+    {{- $uniquebool = (and $bool (eq $lastIndex $i) ( eq $i 0)) -}}
     {{- break -}}
 {{- end -}}
 {{ if and (not $uniquebool) (or (gt $imports 0) (eq $method "bytesBuffer")) }}
@@ -130,7 +132,9 @@ import (
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error) { 
     {{$previousType := ""}}
     {{range $i, $field := .Fields}}
-        {{- if and ( eq $i 0) (not $uniquebool) (or (eq $method "bytesBuffer") (eq .FieldType "bool")) }}
+        {{- $bool := or (eq .FieldType "bool") (eq .FieldType "[]bool") -}}
+        {{- $string := or (eq .FieldType "string") (eq .FieldType "[]string") -}}
+        {{- if and ( eq $i 0) (not $uniquebool) (or (eq $method "bytesBuffer") $bool) }}
             {{- printf $methodVar }}
         {{- end -}}
        
@@ -139,9 +143,9 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- $header := $methodHeader -}}
         {{- if eq $i 0 -}}
             {{- $header = $methodHeaderFirst -}}
-            {{- if and (eq .FieldType "bool") (eq $i $lastIndex) -}}
+            {{- if and $bool (eq $i $lastIndex) -}}
                 {{- $header = $methodHeaderUniqueBool -}}
-            {{- else if and (eq .FieldType "bool") -}}
+            {{- else if and $bool -}}
                 {{- $header = $methodHeaderFirstBool -}}
             {{- end -}}
         {{- end -}}
@@ -150,16 +154,16 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- /* prepare mid line */ -}}
         {{- $start := $methodStart -}}
         {{- if eq $i 0 -}}
-            {{- if eq .FieldType "string" -}}
+            {{- if $string -}}
                 {{- $start = $methodStartFirstString -}}
             {{- else -}}
                 {{- $start = $methodStartFirst -}}
             {{- end -}}
-        {{- else if eq .FieldType "string" -}}
+        {{- else if $string -}}
             {{- $start = $methodStartString -}}
         {{- end -}}
         {{- $stop := $methodStop -}}
-        {{- if eq .FieldType "string" -}}
+        {{- if $string -}}
             {{- if eq $i $lastIndex -}}
                 {{- $stop = $methodStopLastString -}}
             {{- else -}}
@@ -171,12 +175,12 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
 
         {{- /* prepare end of line */ -}}
         {{- $footer := $methodFooter -}}
-        {{- if eq .FieldType "bool" -}}
-            {{- if and (eq $i $lastIndex) (eq $i 0) -}}
+        {{- if $bool -}}
+            {{- if $uniquebool -}}
                 {{- $footer = $methodFooterUniqueBool -}}
-            {{- else if and (eq $i $lastIndex) -}}
+            {{- else if eq $i $lastIndex -}}
                 {{- $footer = $methodFooterLast -}}
-            {{- else if and (eq $i 0) -}}
+            {{- else if eq $i 0 -}}
                 {{- $footer = $methodFooterFirstBool -}}
             {{- else -}}
                 {{- $footer = $methodFooterBool -}}
@@ -188,12 +192,12 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- /* package the line with value */ -}}
         {{- template "fieldValue" dict "FieldType" $field.FieldType "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Header" (print $header) "Footer" (printf $footer) "Start" (print $start) "Stop" (printf $stop) -}}
 
-        {{- if not (eq $previousType "bool") }}
+        {{- if not (or (eq $previousType "bool") (eq $previousType "[]bool"))}}
         {{- printf $methodNextLine -}}
         {{- end -}}
 
     {{end}}
-    {{- if or (gt $lastIndex 0) (not (eq $previousType "bool")) -}}
+    {{- if or (gt $lastIndex 0) (not (or (eq $previousType "bool") (eq $previousType "[]bool"))) -}}
     {{ printf $methodFinalReturn }}
     {{ end }} 
 }

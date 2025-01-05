@@ -1,8 +1,31 @@
 // {{- /* Go Template */ -}}.
 {{define "bool"}}
     if {{.Value}} {
-        {{.Header}}{{.JSONName}}true{{.Footer}}
+        {{.Header}}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{.Footer}}
     } else {
-        {{.Header}}{{.JSONName}}false{{.Footer}}
+        {{.Header}}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{.Footer}}
     }
+{{end}}
+
+{{define "boolarray"}}
+    jsonbool := "["
+    for i, v := range  {{.Value}} {
+        if i>0 {
+            jsonbool += ","
+        }
+        if v {
+            jsonbool += "{{template "boolvalue" dict "Value" true}}"
+        } else {
+            jsonbool += "{{template "boolvalue" dict "Value" false}}"
+        }
+    }
+    {{.Header}}{{.JSONName}}"+jsonbool+"]{{.Footer}}
+{{end}}
+
+{{define "boolvalue"}}
+    {{- if .Value -}}
+        true
+    {{- else -}}
+        false
+    {{- end -}}
 {{end}}

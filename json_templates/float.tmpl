@@ -1,4 +1,20 @@
 // {{- /* Go Template */ -}}.
 {{- define "float" -}}
-    {{.Header}}{{.JSONName}}{{.Start}}strconv.FormatFloat(float64({{.Value}}), 'f', -1, 64){{.Stop}}{{.Footer}}
+    {{- if eq .FieldType "float32" -}}
+        {{.Header}}{{.JSONName}}{{.Start}}{{template "float32" .}}{{.Stop}}{{.Footer}}
+    {{- else if eq .FieldType "float64" -}}
+        {{.Header}}{{.JSONName}}{{.Start}}{{template "float64" .}}{{.Stop}}{{.Footer}}
+    {{- end -}}
+{{- end -}}
+
+{{- define "parsefloat" -}}
+    {{.Header}}{{.Start}}strconv.ParseFloat(float64({{.Value}}), 64){{.Stop}}{{.Footer}}
+{{- end -}}
+
+{{- define "float32" -}}
+    strconv.FormatFloat(float64({{.Value}}), 'f', -1, 32)
+{{- end -}}
+
+{{- define "float64" -}}
+    strconv.FormatFloat({{.Value}}, 'f', -1, 64)
 {{- end -}}

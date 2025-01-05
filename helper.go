@@ -31,6 +31,11 @@ func Sub(a, b int) int {
 	return a - b
 }
 
+// Get Array type
+func GetArrayType(a string) string {
+	return strings.Trim(a, "[]")
+}
+
 // Return.
 func Return() error {
 	os.Exit(0)
@@ -40,33 +45,31 @@ func Return() error {
 // templateFuncs returns a FuncMap with the custom functions.
 func templateFuncs() template.FuncMap {
 	return template.FuncMap{
-		"dict":   dict,
-		"sub":    Sub,
-		"return": Return,
+		"dict":         dict,
+		"sub":          Sub,
+		"getArrayType": GetArrayType,
+		"return":       Return,
 	}
 }
 
 func processFieldType(fieldType, fieldName string, includes *[]string) {
 	// Handle slice types
-	fieldType = strings.TrimPrefix(fieldType, "[]")
+	//fieldType = strings.TrimPrefix(fieldType, "[]")
 
 	switch fieldType {
 	case "string":
 		// do nothing in this case
 		log.Printf("Field %s is of type string", fieldName)
-	case "bool":
+	case "bool", "[]bool":
 		// do nothing in this case
 		log.Printf("Field %s is of type bool", fieldName)
 	case "int", "int8", "int16", "int32", "int64",
 		"uint", "uint8", "uint16", "uint32", "uint64",
 		"float32", "float64":
-		log.Printf("Field %s is of type int", fieldName)
+		log.Printf("Field %s is of type number", fieldName)
 		if !containsItem(*includes, "strconv") {
 			*includes = append(*includes, "strconv")
 		}
-	case "byte":
-		// do nothing in this case
-		log.Printf("Field %s is of type byte", fieldName)
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)

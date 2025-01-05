@@ -1,4 +1,15 @@
 // {{- /* Go Template */ -}}.
 {{- define "array" -}}
-
+{{- $arraytype := (getArrayType .FieldType) -}}
+    {{- if eq $arraytype "string" -}}
+        {{template "stringarray" .}}
+    {{- else if eq $arraytype "bool" -}}
+        {{template "boolarray" .}}
+    {{- else if eq $arraytype "int" -}}
+        {{template "intarray" .}}
+    {{- else if eq $arraytype "float" -}}
+        {{template "floatarray" .}}
+    {{- else -}}
+        {{template "otherarray" .}}
+    {{- end -}}
 {{- end -}}
