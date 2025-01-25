@@ -42,3 +42,46 @@ var FloatType3_examples = []struct {
 			FloatField3: 1.0,
 		}, nil},
 }
+
+//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=plus
+type Float32ArrayType struct {
+	Float32ArrayField []float32 `json:"float32arrayfield"`
+}
+
+// representative example of data stored in target application
+var Float32ArrayType_examples = []struct {
+	Float32ArrayType Float32ArrayType
+	want             []byte
+}{
+	{
+		Float32ArrayType{
+			Float32ArrayField: []float32{1, 2, 3},
+		}, nil},
+}
+
+type Float32ArrayType3 struct {
+	Float32ArrayField1 []float32 `json:"float32array1field"`
+	Float32ArrayField2 []float32 `json:"float32array2field"`
+	Float32ArrayField3 []float32 `json:"float32array3field"`
+}
+
+//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=plus
+
+// representative example(s) of data stored in target application
+var Float32ArrayType3_examples = []struct {
+	Float32ArrayType3
+	want []byte
+}{
+	{
+		Float32ArrayType3{
+			Float32ArrayField1: []float32{1, 2, 3},
+			Float32ArrayField2: []float32{4, 5, 6},
+			Float32ArrayField3: []float32{7, 8, 9},
+		}, nil},
+}

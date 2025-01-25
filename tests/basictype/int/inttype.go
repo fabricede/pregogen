@@ -42,3 +42,46 @@ var IntType3_examples = []struct {
 			IntField3: 10,
 		}, nil},
 }
+
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=plus
+type IntArrayType struct {
+	IntArrayField []int `json:"intarrayfield"`
+}
+
+// representative example of data stored in target application
+var IntArrayType_examples = []struct {
+	IntArrayType IntArrayType
+	want         []byte
+}{
+	{
+		IntArrayType{
+			IntArrayField: []int{1, 2, 3},
+		}, nil},
+}
+
+type IntArrayType3 struct {
+	IntArrayField1 []int `json:"intarray1field"`
+	IntArrayField2 []int `json:"intarray2field"`
+	IntArrayField3 []int `json:"intarray3field"`
+}
+
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=plus
+
+// representative example(s) of data stored in target application
+var IntArrayType3_examples = []struct {
+	IntArrayType3
+	want []byte
+}{
+	{
+		IntArrayType3{
+			IntArrayField1: []int{1, 2, 3},
+			IntArrayField2: []int{4, 5, 6},
+			IntArrayField3: []int{7, 8, 9},
+		}, nil},
+}

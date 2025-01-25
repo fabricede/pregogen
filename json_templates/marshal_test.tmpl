@@ -146,7 +146,7 @@ func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
 		})
 		b.Run(tt.name+"_MarshalJSON_append", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				a_append, _ = y.MarshalJSON_bytesBuffer()
+				a_append, _ = y.MarshalJSON_append()
 			}
 		})
 		b.Run(tt.name+"_json.Marshal_bytesBuffer", func(b *testing.B) {

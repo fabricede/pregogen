@@ -36,6 +36,11 @@ func GetArrayType(a string) string {
 	return strings.Trim(a, "[]")
 }
 
+// IsArray checks if a field is an array.
+func IsArray(fieldType string) bool {
+	return strings.HasPrefix(fieldType, "[]")
+}
+
 // Method gives action method specific translation in method (plus, append, or bytesBuffer)
 // to avoid passing variables in subtemplate
 func Method(method, action, addition string) (string, error) {
@@ -132,6 +137,7 @@ func templateFuncs() template.FuncMap {
 		"dict":         dict,
 		"sub":          Sub,
 		"getArrayType": GetArrayType,
+		"isArray":      IsArray,
 		"method":       Method,
 		"return":       Return,
 	}
@@ -139,7 +145,7 @@ func templateFuncs() template.FuncMap {
 
 func processFieldType(fieldType, fieldName string, includes *[]string) {
 	// Handle slice types
-	//fieldType = strings.TrimPrefix(fieldType, "[]")
+	fieldType = strings.TrimPrefix(fieldType, "[]")
 
 	switch fieldType {
 	case "string":

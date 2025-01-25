@@ -8,6 +8,10 @@
         {{- $header = "\"{" -}}
     {{- else if eq .PreviousType "string" -}}
         {{- $header = "\"\\\"," -}}
+    {{- else if eq .PreviousType "[]string" -}}
+        {{- $header = "\"\\\"]," -}}
+    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
+        {{- $header = "\"]," -}}
     {{- end -}}
     {{- if eq .End "lastend" -}}
         {{- $final = "}\"" -}}
@@ -43,6 +47,10 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
         {{- $header = "\"{" -}}
     {{- else if eq .PreviousType "string" -}}
         {{- $header = "\"\\\"," -}}
+    {{- else if eq .PreviousType "[]string" -}}
+        {{- $header = "\"\\\"]," -}}
+    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
+        {{- $header = "\"]," -}}
     {{- end -}}
     {{- if eq .End "lastend" -}}
         {{- $final = "}\"" -}}
