@@ -77,6 +77,11 @@ type BoolArrayType3 struct {
 	BoolArrayField3 []bool `json:"boolarray3field"`
 }
 
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=plus
+
 // representative example(s) of data stored in target application
 var BoolArrayType3_examples = []struct {
 	BoolArrayType3
@@ -90,8 +95,8 @@ var BoolArrayType3_examples = []struct {
 		}, nil},
 	{
 		BoolArrayType3{
-			BoolArrayField1: []bool{true, true, false},
-			BoolArrayField2: []bool{true, true, true},
-			BoolArrayField3: []bool{false, false, false},
+			BoolArrayField1: []bool{false, false, true},
+			BoolArrayField2: []bool{true, false, false},
+			BoolArrayField3: []bool{false, true, true},
 		}, nil},
 }

@@ -1,25 +1,80 @@
 // {{- /* Go Template */ -}}.
 {{define "bool"}}
+    {{- $header := "\"," -}}
+    {{- $end := "end" -}}
+    {{- $final := "\"" -}}
+    {{- if eq .Start "firststart" -}}
+        {{- $end = "firstend" -}}
+        {{- $header = "\"{" -}}
+    {{- else if eq .PreviousType "string" -}}
+        {{- $header = "\"\\\"," -}}
+    {{- end -}}
+    {{- if eq .End "lastend" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
     if {{.Value}} {
-        {{.Header}}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{.Footer}}
+        {{ method .Method .Start $header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method $end $final }}
     } else {
-        {{.Header}}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{.Footer}}
+        {{ method .Method .Start $header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method $end $final }}
     }
 {{end}}
 
+{{define "uniqueBool"}}
+    {{- range $i, $field := .Fields -}}
+var TRUE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":true}")
+var FALSE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":false}")
+
+func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, error) {
+    if b.BoolField {
+        return TRUE{{.JSONName}}_{{$.Gentype}}, nil
+    } else {
+        return FALSE{{.JSONName}}_{{$.Gentype}}, nil
+    }
+}
+    {{- end -}}
+{{end}}
+
 {{define "boolarray"}}
-    jsonbool := "["
-    for i, v := range  {{.Value}} {
-        if i>0 {
-            jsonbool += ","
-        }
-        if v {
-            jsonbool += "{{template "boolvalue" dict "Value" true}}"
-        } else {
-            jsonbool += "{{template "boolvalue" dict "Value" false}}"
+    {{- $header := "\"," -}}
+    {{- $end := "end" -}}
+    {{- $final := "\"" -}}
+    {{- if eq .Start "firststart" -}}
+        {{- $end = "firstend" -}}
+        {{- $header = "\"{" -}}
+    {{- else if eq .PreviousType "string" -}}
+        {{- $header = "\"\\\"," -}}
+    {{- end -}}
+    {{- if eq .End "lastend" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    size{{.Name}} := len({{.Value}})-1
+    for i, v := range {{.Value}} {
+         if v {
+            if i > 0 {
+                if i == size{{.Name}} {
+                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" true}}]{{ method .Method "end" $final }}
+                } else {
+                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" true}}{{ method .Method "end" "\"" }}
+                }
+            } else if i == size{{.Name}} {
+                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}]{{ method .Method $end $final }}
+            } else {
+                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}{{ method .Method $end "\"" }}
+            }
+        } else {        
+            if i > 0 {
+                if i == size{{.Name}} {
+                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" false}}]{{ method .Method "end" $final }}
+                } else {
+                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" false}}{{ method .Method "end" "\"" }}
+                }
+            } else if i == size{{.Name}} {
+                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}]{{ method .Method $end $final }}
+            } else {
+                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}{{ method .Method $end "\"" }}
+            }
         }
     }
-    {{.Header}}{{.JSONName}}"+jsonbool+"]{{.Footer}}
 {{end}}
 
 {{define "boolvalue"}}

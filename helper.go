@@ -36,6 +36,90 @@ func GetArrayType(a string) string {
 	return strings.Trim(a, "[]")
 }
 
+// Method gives action method specific translation in method (plus, append, or bytesBuffer)
+// to avoid passing variables in subtemplate
+func Method(method, action, addition string) (string, error) {
+	switch method {
+	case "bytesBuffer":
+		return MethodBytesBuffer(action, addition)
+	case "append":
+		return MethodAppend(action, addition)
+	case "plus":
+		return MethodPlus(action, addition)
+	case "unique":
+		return MethodUnique(action, addition)
+	}
+	return "", fmt.Errorf("Unknown method: %v", method)
+}
+
+func MethodAppend(action, addition string) (string, error) {
+	switch action {
+	case "declareVar":
+		return "\n\tvar result []byte\n\t", nil
+	case "start":
+		return "result = append(result, " + addition, nil
+	case "end":
+		return addition + "...)\n\t", nil
+	case "firststart":
+		return "result = []byte(" + addition, nil
+	case "firstend":
+		return addition + ")\n\t", nil
+	case "finalReturn":
+		return "\n\treturn result, nil", nil
+	}
+	return "", fmt.Errorf("Unknown action: %v", action)
+}
+
+func MethodBytesBuffer(action, addition string) (string, error) {
+	switch action {
+	case "declareVar":
+		return "\n\tvar result bytes.Buffer\n\t", nil
+	case "start":
+		return "result.WriteString(" + addition, nil
+	case "end":
+		return addition + ")\n\t", nil
+	case "firststart":
+		return "result.WriteString(" + addition, nil
+	case "firstend":
+		return addition + ")\n\t", nil
+	case "finalReturn":
+		return "\n\treturn result.Bytes(), nil", nil
+	}
+	return "", fmt.Errorf("Unknown action: %v", action)
+}
+
+func MethodPlus(action, addition string) (string, error) {
+	switch action {
+	case "declareVar":
+		return "\n\tvar result string\n\t", nil
+	case "start":
+		return "result += " + addition, nil // result += \","
+	case "end":
+		return addition + "\n\t", nil
+	case "firststart":
+		return "result = " + addition, nil
+	case "firstend":
+		return addition + "\n\t", nil
+	case "finalReturn":
+		return "\n\treturn []byte(result), nil", nil
+	}
+	return "", fmt.Errorf("Unknown action: %v", action)
+}
+
+func MethodUnique(action, addition string) (string, error) {
+	switch action {
+	case "declareVar":
+		return "", nil
+	case "start":
+		return "return ([]byte(", nil
+	case "end":
+		return ")), nil", nil
+	case "finalReturn":
+		return "", nil
+	}
+	return "", fmt.Errorf("Unknown action: %v", action)
+}
+
 // Return.
 func Return() error {
 	os.Exit(0)
@@ -48,6 +132,7 @@ func templateFuncs() template.FuncMap {
 		"dict":         dict,
 		"sub":          Sub,
 		"getArrayType": GetArrayType,
+		"method":       Method,
 		"return":       Return,
 	}
 }

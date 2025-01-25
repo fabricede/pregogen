@@ -1,4 +1,16 @@
 // {{- /* Go Template */ -}}.
 {{- define "other" -}}
-    {{.Header}}{{.JSONName}}{{.Start}}fmt.Sprint({{.Value}}){{.Stop}}{{.Footer}}
+    {{- $header := "\"," -}}
+    {{- $end := "end" -}}
+    {{- if eq .Start "firststart" -}}
+        {{- $end = "firstend" -}}
+        {{- $header = "\"{" -}}
+    {{- else if eq .PreviousType "string" -}}
+        {{- $header = "\"\\\"," -}}
+    {{- end -}}
+    {{- method .Method .Start $header }}{{.JSONName}}{{ method .Method $end "\"" -}}
+    {{ method .Method "start" "" }}fmt.Sprint({{.Value}}){{ method .Method "end" "" -}}
+    {{- if eq .End "lastend" -}}
+        {{ method .Method "start" "\"}" }}{{ method .Method "end" "\"" -}}
+    {{- end -}}
 {{- end -}}

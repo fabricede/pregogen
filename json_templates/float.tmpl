@@ -1,9 +1,21 @@
 // {{- /* Go Template */ -}}.
 {{- define "float" -}}
+    {{- $header := "\"," -}}
+    {{- $end := "end" -}}
+    {{- if eq .Start "firststart" -}}
+        {{- $end = "firstend" -}}
+        {{- $header = "\"{" -}}
+    {{- else if eq .PreviousType "string" -}}
+        {{- $header = "\"\\\"," -}}
+    {{- end -}}
+    {{- method .Method .Start $header }}{{.JSONName}}{{ method .Method $end "\"" -}}
     {{- if eq .FieldType "float32" -}}
-        {{.Header}}{{.JSONName}}{{.Start}}{{template "float32" .}}{{.Stop}}{{.Footer}}
+        {{ method .Method "start" "" }}{{template "float32" .}}{{ method .Method "end" "" -}}
     {{- else if eq .FieldType "float64" -}}
-        {{.Header}}{{.JSONName}}{{.Start}}{{template "float64" .}}{{.Stop}}{{.Footer}}
+        {{ method .Method "start" "" }}{{template "float64" .}}{{ method .Method "end" "" -}}
+    {{- end -}}
+    {{- if eq .End "lastend" -}}
+        {{ method .Method "start" "\"}" }}{{ method .Method "end" "\"" -}}
     {{- end -}}
 {{- end -}}
 
