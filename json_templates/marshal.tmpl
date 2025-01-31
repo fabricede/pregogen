@@ -9,6 +9,7 @@
     {{- else if or (eq .FieldType "int") (eq .FieldType "int8") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "int" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint8") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "int" .}}
     {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "float" .}}
+    {{- else if eq .FieldType "time.Time" -}}{{template "date" .}}
     {{- else -}}{{template "other" .}}
     {{- end -}}
 {{end -}}
@@ -52,7 +53,7 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
     {{$previousType := ""}}
     {{$previousArray := false}}
     {{$start := "firststart"}}
-    {{$end := "end"}}
+    {{$last := false}}
     {{range $i, $field := .Fields}}
         {{- if eq $i 0 }}
             {{- method $method "declareVar" "" }}
@@ -61,11 +62,24 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- end -}}
 
         {{- if eq $i $lastIndex }}
-            {{$end = "lastend"}}
+            {{$last = true}}
+        {{- end -}}
+
+        {{- $header := "\"," -}}
+        {{- $end := "end" -}}
+        {{- if eq $start "firststart" -}}
+            {{- $header = "\"{" -}}
+            {{- $end = "firstend" -}}
+        {{- else if or (eq $previousType "string") (eq $previousType "time.Time") -}}
+            {{- $header = "\"\\\"," -}}
+        {{- else if or (eq $previousType "[]string") (eq $previousType "[]time.Time") -}}
+            {{- $header = "\"\\\"]," -}}
+        {{- else if (and $previousArray (not (eq $previousType "[]bool"))) -}}
+            {{- $header = "\"]," -}}
         {{- end -}}
 
         {{- /* package the line with value */ -}}
-        {{- template "fieldValue" dict "FieldType" $field.FieldType "Method" $method "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Name" $field.JSONName "Start" (print $start) "End" (printf $end) "PreviousType" (print $previousType) "PreviousArray" (print $previousArray) -}}
+        {{- template "fieldValue" dict "FieldName" $field.Name "FieldType" $field.FieldType "Method" $method "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Name" $field.JSONName "Start" (print $start) "End" (printf $end) "PreviousType" (print $previousType) "PreviousArray" (print $previousArray) "Header" $header "Last" (print $last) -}}
 
         {{- $previousType = (print $field.FieldType) -}}
         {{- if isArray .FieldType -}}
@@ -73,7 +87,6 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- else -}}
             {{- $previousArray = false -}}
         {{- end -}}
-
     {{end}}
     {{ method $method "finalReturn" "" }}
 }

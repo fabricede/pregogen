@@ -1,25 +1,13 @@
 // {{- /* Go Template */ -}}.
 {{define "bool"}}
-    {{- $header := "\"," -}}
-    {{- $end := "end" -}}
     {{- $final := "\"" -}}
-    {{- if eq .Start "firststart" -}}
-        {{- $end = "firstend" -}}
-        {{- $header = "\"{" -}}
-    {{- else if eq .PreviousType "string" -}}
-        {{- $header = "\"\\\"," -}}
-    {{- else if eq .PreviousType "[]string" -}}
-        {{- $header = "\"\\\"]," -}}
-    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
-        {{- $header = "\"]," -}}
-    {{- end -}}
-    {{- if eq .End "lastend" -}}
+    {{ if eq .Last "true" -}}
         {{- $final = "}\"" -}}
     {{- end -}}
     if {{.Value}} {
-        {{ method .Method .Start $header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method $end $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method .End $final }}
     } else {
-        {{ method .Method .Start $header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method $end $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method .End $final }}
     }
 {{end}}
 
@@ -39,20 +27,8 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
 {{end}}
 
 {{define "boolarray"}}
-    {{- $header := "\"," -}}
-    {{- $end := "end" -}}
     {{- $final := "\"" -}}
-    {{- if eq .Start "firststart" -}}
-        {{- $end = "firstend" -}}
-        {{- $header = "\"{" -}}
-    {{- else if eq .PreviousType "string" -}}
-        {{- $header = "\"\\\"," -}}
-    {{- else if eq .PreviousType "[]string" -}}
-        {{- $header = "\"\\\"]," -}}
-    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
-        {{- $header = "\"]," -}}
-    {{- end -}}
-    {{- if eq .End "lastend" -}}
+    {{ if eq .Last "true" -}}
         {{- $final = "}\"" -}}
     {{- end -}}
     size{{.Name}} := len({{.Value}})-1
@@ -65,9 +41,9 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
                     {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" true}}{{ method .Method "end" "\"" }}
                 }
             } else if i == size{{.Name}} {
-                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}]{{ method .Method $end $final }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}]{{ method .Method .End $final }}
             } else {
-                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}{{ method .Method $end "\"" }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}{{ method .Method .End "\"" }}
             }
         } else {        
             if i > 0 {
@@ -77,9 +53,9 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
                     {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" false}}{{ method .Method "end" "\"" }}
                 }
             } else if i == size{{.Name}} {
-                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}]{{ method .Method $end $final }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}]{{ method .Method .End $final }}
             } else {
-                {{ method .Method .Start $header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}{{ method .Method $end "\"" }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}{{ method .Method .End "\"" }}
             }
         }
     }

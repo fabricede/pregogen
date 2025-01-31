@@ -1,0 +1,45 @@
+// {{- /* Go Template */ -}}.
+{{- define "datedef" -}}
+type {{.FieldName}}CustomTime struct {
+	time.Time
+}
+
+func (t {{.FieldName}}CustomTime) MarshalJSON() ([]byte, error) {
+	return []byte(t.Format({{.FieldName}}Format)), nil
+}
+
+func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
+	date, err := time.Parse({{.FieldName}}Format, string(b))
+	if err != nil {
+		return err
+	}
+	t.Time = date
+	return
+}
+
+{{- end -}}
+
+{{- define "datevalue" -}}
+    {{.Value}}.Format({{.FieldName}}Format)
+{{- end -}}
+
+{{- define "date" -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
+    {{ method .Method "start" "" }}{{template "datevalue" .}}{{ method .Method "end" "" -}}
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"\"}"{{ method .Method "end" "" }}
+    {{- end -}}
+{{- end -}}
+
+{{define "datearray"}}
+    {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
+    for i, v := range {{.Value}} {
+        if i > 0 {
+            {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+        }
+        {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}{{ method .Method "end" "" -}}
+    }
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"\"]}"{{ method .Method "end" "" -}}
+    {{- end -}}
+{{end}}

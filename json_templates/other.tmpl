@@ -1,46 +1,21 @@
 // {{- /* Go Template */ -}}.
 {{- define "other" -}}
-    {{- $header := "\"," -}}
-    {{- $end := "end" -}}
-    {{- if eq .Start "firststart" -}}
-        {{- $end = "firstend" -}}
-        {{- $header = "\"{" -}}
-    {{- else if eq .PreviousType "string" -}}
-        {{- $header = "\"\\\"," -}}
-    {{- else if eq .PreviousType "[]string" -}}
-        {{- $header = "\"\\\"]," -}}
-    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
-        {{- $header = "\"]," -}}
-    {{- end -}}
-    {{- method .Method .Start $header }}{{.JSONName}}{{ method .Method $end "\"" -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
     {{ method .Method "start" "" }}fmt.Sprint({{.Value}}){{ method .Method "end" "" -}}
-    {{ if eq .End "lastend" -}}
+    {{ if eq .Last "true" -}}
         {{ method .Method "start" "\"}" }}{{ method .Method "end" "\"" -}}
     {{- end -}}
 {{- end -}}
 
 {{define "otherarray"}}
-    {{- $header := "\"," -}}
-    {{- $end := "end" -}}
-    {{- $final := "\"" -}}
-    {{- if eq .Start "firststart" -}}
-        {{- $end = "firstend" -}}
-        {{- $header = "\"{" -}}
-    {{- else if eq .PreviousType "string" -}}
-        {{- $header = "\"\\\"," -}}
-    {{- else if eq .PreviousType "[]string" -}}
-        {{- $header = "\"\\\"]," -}}
-    {{- else if (and (eq .PreviousArray "true") (not (eq .PreviousType "[]bool"))) -}}
-        {{- $header = "\"]," -}}
-    {{- end -}}
-    {{- method .Method .Start $header }}{{.JSONName}}[{{ method .Method $end "\"" }}
+    {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
     for i, v := range {{.Value}} {
         if i > 0 {
             {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
         }
         {{ method .Method "start" "" }}fmt.Sprint(v){{ method .Method "end" "" }}
     }
-    {{ if eq .End "lastend" -}}
+    {{ if eq .Last "true" -}}
         {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
     {{- end -}}
 {{end}}

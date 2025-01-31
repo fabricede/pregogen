@@ -151,7 +151,7 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	case "string":
 		// do nothing in this case
 		log.Printf("Field %s is of type string", fieldName)
-	case "bool", "[]bool":
+	case "bool":
 		// do nothing in this case
 		log.Printf("Field %s is of type bool", fieldName)
 	case "int", "int8", "int16", "int32", "int64",
@@ -161,6 +161,9 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 		if !containsItem(*includes, "strconv") {
 			*includes = append(*includes, "strconv")
 		}
+	case "time.Time":
+		// no need to do anything in this case
+		log.Printf("Field %s is of type time.Time", fieldName)
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)

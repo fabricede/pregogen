@@ -2,12 +2,22 @@
 {{define "test"}}
 package {{.Package}}
 
+{{ $containsdate := false -}}
+{{- range $i, $field := .Fields -}}
+   	{{- if or (eq .FieldType "time.Time") (eq .FieldType "[]time.Time") -}}
+        {{- $containsdate = true -}}
+		{{- break -}}
+    {{- end -}}
+{{- end -}}
 import (
     "encoding/json"
 	"reflect"
 	"testing"
 	"log"
 	"strconv"
+	{{ if $containsdate -}}
+	"time"
+	{{- end }}
 )
 
 type {{.TypeName}}Ref struct {

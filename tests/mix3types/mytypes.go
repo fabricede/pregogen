@@ -4,10 +4,16 @@
 //go:generate pregogen -type=YourType2 -file=$GOFILE -gen=plus
 package mix3types
 
+import "time"
+
+var testTime = time.Now()
+
+// var convertTime, err = time.Parse(time.RFC3339, DateFieldFormat)
+
 type YourType2 struct {
-	RuneField    rune    `json:"runefield"`
-	RunesField   []rune  `json:"runesfield"`
-	Float32Field float32 `json:"float32field"`
+	RuneField  rune      `json:"runefield"`
+	RunesField []rune    `json:"runesfield"`
+	DateField  time.Time `json:"datefield"`
 }
 
 // representative example of data stored in target application (size used for capacity)
@@ -17,8 +23,10 @@ var YourType2_examples = []struct {
 }{
 	{
 		YourType2{
-			RuneField:    'b',
-			RunesField:   []rune("123"),
-			Float32Field: 12.34,
+			RuneField:  'b',
+			RunesField: []rune("123"),
+			DateField:  testTime,
 		}, nil},
 }
+
+var DateFieldFormat string = time.RFC3339Nano
