@@ -85,3 +85,67 @@ var IntArrayType3_examples = []struct {
 			IntArrayField3: []int{7, 8, 9},
 		}, nil},
 }
+
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=plus
+
+type PointerIntType struct {
+	PointerIntField *int `json:"pointerintfield"`
+}
+
+var int1 = 12345
+
+// representative example of data stored in target application
+var PointerIntType_examples = []struct {
+	PointerIntType
+	want []byte
+}{
+	{
+		PointerIntType{
+			PointerIntField: &int1,
+		}, nil},
+	{
+		PointerIntType{
+			PointerIntField: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=plus
+type PointerIntType3 struct {
+	PointerIntField1 *int `json:"pointerintfield1"`
+	PointerIntField2 *int `json:"pointerintfield2"`
+	PointerIntField3 *int `json:"pointerintfield3"`
+}
+
+var int2 = 12345
+var int3 = 67890
+
+// representative example(s) of data stored in target application
+var PointerIntType3_examples = []struct {
+	PointerIntType3
+	want []byte
+}{
+	{
+		PointerIntType3{
+			PointerIntField1: &int1,
+			PointerIntField2: &int2,
+			PointerIntField3: &int3,
+		}, nil},
+	{
+		PointerIntType3{
+			PointerIntField1: nil,
+			PointerIntField2: nil,
+			PointerIntField3: nil,
+		}, nil},
+	{
+		PointerIntType3{
+			PointerIntField1: nil,
+			PointerIntField2: &int2,
+			PointerIntField3: nil,
+		}, nil},
+}

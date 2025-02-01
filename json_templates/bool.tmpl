@@ -1,4 +1,13 @@
 // {{- /* Go Template */ -}}.
+
+{{define "boolvalue"}}
+    {{- if .Value -}}
+        true
+    {{- else -}}
+        false
+    {{- end -}}
+{{end}}
+
 {{define "bool"}}
     {{- $final := "\"" -}}
     {{ if eq .Last "true" -}}
@@ -61,10 +70,18 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
     }
 {{end}}
 
-{{define "boolvalue"}}
-    {{- if .Value -}}
-        true
-    {{- else -}}
-        false
+{{define "pointerbool"}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
     {{- end -}}
+    if {{.Value}} != nil {
+        if *{{.Value}} {
+            {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method .End $final }}
+        } else {
+            {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method .End $final }}
+        }
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method "End" $final -}}
+    }
 {{end}}

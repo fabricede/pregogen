@@ -43,3 +43,17 @@ func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
         {{ method .Method "start" "" }}"\"]}"{{ method .Method "end" "" -}}
     {{- end -}}
 {{end}}
+
+{{define "pointerdate"}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    if {{.Value}} != nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
+        {{ method .Method "start" "" }}{{template "datevalue" dict "Value" (printf "*%s" .Value) "FieldName" .FieldName}}{{ method .Method "end" "" -}}
+        {{ method .Method "start" "" }}"\"{{ method .Method "end" $final }}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null}"{{ method .Method .End $final -}}
+    }
+{{end}}

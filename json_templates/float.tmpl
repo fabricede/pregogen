@@ -39,3 +39,23 @@
         {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
     {{- end -}}
 {{end}}
+
+{{define "pointerfloat"}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    if {{.Value}} != nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
+        {{ if eq .FieldType "*float32" -}}
+        {{ method .Method "start" "" }}{{template "float32" dict "Value" (printf "*%s" .Value)}}{{ method .Method "end" "" -}}
+        {{ else if eq .FieldType "*float64" -}}
+        {{ method .Method "start" "" }}{{template "float64" dict "Value" (printf "*%s" .Value)}}{{ method .Method "end" "" -}}
+        {{ end }}
+        {{ if eq .Last "true" -}}
+        {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
+        {{- end }}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null}"{{ method .Method .End $final -}}
+    }
+{{end}}

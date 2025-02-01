@@ -146,6 +146,8 @@ func templateFuncs() template.FuncMap {
 func processFieldType(fieldType, fieldName string, includes *[]string) {
 	// Handle slice types
 	fieldType = strings.TrimPrefix(fieldType, "[]")
+	// Handle pointer types
+	fieldType = strings.TrimPrefix(fieldType, "*")
 
 	switch fieldType {
 	case "string":
