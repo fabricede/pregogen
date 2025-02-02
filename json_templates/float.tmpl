@@ -56,6 +56,6 @@
         {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
         {{- end }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null}"{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
     }
 {{end}}

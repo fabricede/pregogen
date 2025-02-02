@@ -1,22 +1,13 @@
 // {{- /* Go Template */ -}}.
-
-{{define "boolvalue"}}
-    {{- if .Value -}}
-        true
-    {{- else -}}
-        false
-    {{- end -}}
-{{end}}
-
 {{define "bool"}}
     {{- $final := "\"" -}}
     {{ if eq .Last "true" -}}
         {{- $final = "}\"" -}}
     {{- end -}}
     if {{.Value}} {
-        {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method .End $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End $final }}
     } else {
-        {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method .End $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End $final }}
     }
 {{end}}
 
@@ -45,26 +36,26 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
          if v {
             if i > 0 {
                 if i == size{{.Name}} {
-                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" true}}]{{ method .Method "end" $final }}
+                    {{ method .Method "start" "\"," }}true]{{ method .Method "end" $final }}
                 } else {
-                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" true}}{{ method .Method "end" "\"" }}
+                    {{ method .Method "start" "\"," }}true{{ method .Method "end" "\"" }}
                 }
             } else if i == size{{.Name}} {
-                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}]{{ method .Method .End $final }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[true]{{ method .Method .End $final }}
             } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" true}}{{ method .Method .End "\"" }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[true{{ method .Method .End "\"" }}
             }
         } else {        
             if i > 0 {
                 if i == size{{.Name}} {
-                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" false}}]{{ method .Method "end" $final }}
+                    {{ method .Method "start" "\"," }}false]{{ method .Method "end" $final }}
                 } else {
-                    {{ method .Method "start" "\"," }}{{template "boolvalue" dict "Value" false}}{{ method .Method "end" "\"" }}
+                    {{ method .Method "start" "\"," }}false{{ method .Method "end" "\"" }}
                 }
             } else if i == size{{.Name}} {
-                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}]{{ method .Method .End $final }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[false]{{ method .Method .End $final }}
             } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[{{template "boolvalue" dict "Value" false}}{{ method .Method .End "\"" }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[false{{ method .Method .End "\"" }}
             }
         }
     }
@@ -77,9 +68,9 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
     {{- end -}}
     if {{.Value}} != nil {
         if *{{.Value}} {
-            {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" true}}{{ method .Method .End $final }}
+            {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End $final }}
         } else {
-            {{ method .Method .Start .Header }}{{.JSONName}}{{template "boolvalue" dict "Value" false}}{{ method .Method .End $final }}
+            {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End $final }}
         }
     } else {
         {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method "End" $final -}}

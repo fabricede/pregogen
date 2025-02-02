@@ -54,6 +54,6 @@ func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
         {{ method .Method "start" "" }}{{template "datevalue" dict "Value" (printf "*%s" .Value) "FieldName" .FieldName}}{{ method .Method "end" "" -}}
         {{ method .Method "start" "" }}"\"{{ method .Method "end" $final }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null}"{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
     }
 {{end}}

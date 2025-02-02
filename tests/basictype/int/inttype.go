@@ -133,7 +133,7 @@ var PointerIntType3_examples = []struct {
 	{
 		PointerIntType3{
 			PointerIntField1: &int1,
-			PointerIntField2: &int2,
+			PointerIntField2: nil,
 			PointerIntField3: &int3,
 		}, nil},
 	{

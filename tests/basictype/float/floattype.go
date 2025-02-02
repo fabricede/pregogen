@@ -85,3 +85,67 @@ var Float32ArrayType3_examples = []struct {
 			Float32ArrayField3: []float32{7, 8, 9},
 		}, nil},
 }
+
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=plus
+
+type PointerFloat32Type struct {
+	PointerFloat32Field *float32 `json:"pointerfloat32field"`
+}
+
+var int1 float32 = 12345.12
+
+// representative example of data stored in target application
+var PointerFloat32Type_examples = []struct {
+	PointerFloat32Type
+	want []byte
+}{
+	{
+		PointerFloat32Type{
+			PointerFloat32Field: &int1,
+		}, nil},
+	{
+		PointerFloat32Type{
+			PointerFloat32Field: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=plus
+type PointerFloat32Type3 struct {
+	PointerFloat32Field1 *float32 `json:"pointerfloat32field1"`
+	PointerFloat32Field2 *float32 `json:"pointerfloat32field2"`
+	PointerFloat32Field3 *float32 `json:"pointerfloat32field3"`
+}
+
+var int2 float32 = 12345.14
+var int3 float32 = 67890.23
+
+// representative example(s) of data stored in target application
+var PointerFloat32Type3_examples = []struct {
+	PointerFloat32Type3
+	want []byte
+}{
+	{
+		PointerFloat32Type3{
+			PointerFloat32Field1: &int1,
+			PointerFloat32Field2: nil,
+			PointerFloat32Field3: &int3,
+		}, nil},
+	{
+		PointerFloat32Type3{
+			PointerFloat32Field1: nil,
+			PointerFloat32Field2: nil,
+			PointerFloat32Field3: nil,
+		}, nil},
+	{
+		PointerFloat32Type3{
+			PointerFloat32Field1: nil,
+			PointerFloat32Field2: &int2,
+			PointerFloat32Field3: nil,
+		}, nil},
+}
