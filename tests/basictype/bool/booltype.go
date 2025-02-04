@@ -69,6 +69,14 @@ var BoolArrayType_examples = []struct {
 		BoolArrayType{
 			BoolArrayField: []bool{false, false, true},
 		}, nil},
+	{
+		BoolArrayType{
+			BoolArrayField: []bool{true},
+		}, nil},
+	{
+		BoolArrayType{
+			BoolArrayField: []bool{false},
+		}, nil},
 }
 
 type BoolArrayType3 struct {
@@ -98,5 +106,85 @@ var BoolArrayType3_examples = []struct {
 			BoolArrayField1: []bool{false, false, true},
 			BoolArrayField2: []bool{true, false, false},
 			BoolArrayField3: []bool{false, true, true},
+		}, nil},
+	{
+		BoolArrayType3{
+			BoolArrayField1: []bool{true},
+			BoolArrayField2: []bool{false},
+			BoolArrayField3: []bool{true},
+		}, nil},
+	{
+		BoolArrayType3{
+			BoolArrayField1: []bool{false},
+			BoolArrayField2: []bool{true},
+			BoolArrayField3: []bool{false},
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=plus
+
+type PointerBoolType struct {
+	PointerBoolField *bool `json:"pointerboolfield"`
+}
+
+var int1 = true
+var int2 = false
+
+// representative example of data stored in target application
+var PointerBoolType_examples = []struct {
+	PointerBoolType
+	want []byte
+}{
+	{
+		PointerBoolType{
+			PointerBoolField: &int1,
+		}, nil},
+	{
+		PointerBoolType{
+			PointerBoolField: &int2,
+		}, nil},
+	{
+		PointerBoolType{
+			PointerBoolField: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=plus
+type PointerBoolType3 struct {
+	PointerBoolField1 *bool `json:"pointerboolfield1"`
+	PointerBoolField2 *bool `json:"pointerboolfield2"`
+	PointerBoolField3 *bool `json:"pointerboolfield3"`
+}
+
+var int3 = true
+
+// representative example(s) of data stored in target application
+var PointerBoolType3_examples = []struct {
+	PointerBoolType3
+	want []byte
+}{
+	{
+		PointerBoolType3{
+			PointerBoolField1: &int1,
+			PointerBoolField2: nil,
+			PointerBoolField3: &int3,
+		}, nil},
+	{
+		PointerBoolType3{
+			PointerBoolField1: nil,
+			PointerBoolField2: nil,
+			PointerBoolField3: nil,
+		}, nil},
+	{
+		PointerBoolType3{
+			PointerBoolField1: nil,
+			PointerBoolField2: &int2,
+			PointerBoolField3: nil,
 		}, nil},
 }

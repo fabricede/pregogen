@@ -101,3 +101,72 @@ var DateArrayType3_examples = []struct {
 			DateArrayField3: []time.Time{testTime, testTime, testTime},
 		}, nil},
 }
+
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=plus
+
+type PointerDateType struct {
+	PointerDateField *time.Time `json:"pointerdatefield"`
+}
+
+var PointerDateFieldFormat string = time.RFC3339Nano
+var int1 = testTime
+
+// representative example of data stored in target application
+var PointerDateType_examples = []struct {
+	PointerDateType
+	want []byte
+}{
+	{
+		PointerDateType{
+			PointerDateField: &int1,
+		}, nil},
+	{
+		PointerDateType{
+			PointerDateField: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerDateType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerDateType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerDateType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerDateType3 -file=$GOFILE -gen=plus
+type PointerDateType3 struct {
+	PointerDateField1 *time.Time `json:"pointerdatefield1"`
+	PointerDateField2 *time.Time `json:"pointerdatefield2"`
+	PointerDateField3 *time.Time `json:"pointerdatefield3"`
+}
+
+var PointerDateField1Format string = time.RFC3339Nano
+var PointerDateField2Format string = time.RFC3339Nano
+var PointerDateField3Format string = time.RFC3339Nano
+
+var int2 = testTime
+var int3 = testTime
+
+// representative example(s) of data stored in target application
+var PointerDateType3_examples = []struct {
+	PointerDateType3
+	want []byte
+}{
+	{
+		PointerDateType3{
+			PointerDateField1: &int1,
+			PointerDateField2: nil,
+			PointerDateField3: &int3,
+		}, nil},
+	{
+		PointerDateType3{
+			PointerDateField1: nil,
+			PointerDateField2: nil,
+			PointerDateField3: nil,
+		}, nil},
+	{
+		PointerDateType3{
+			PointerDateField1: nil,
+			PointerDateField2: &int2,
+			PointerDateField3: nil,
+		}, nil},
+}

@@ -73,6 +73,6 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
             {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End $final }}
         }
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method "End" $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
     }
 {{end}}
