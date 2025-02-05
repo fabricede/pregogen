@@ -41,6 +41,15 @@ func IsArray(fieldType string) bool {
 	return strings.HasPrefix(fieldType, "[]")
 }
 
+// Seq creates a sequence of integers.
+func Seq(size int) []int {
+	res := make([]int, size)
+	for i := range res {
+		res[i] = i
+	}
+	return res
+}
+
 // Method gives action method specific translation in method (plus, append, or bytesBuffer)
 // to avoid passing variables in subtemplate
 func Method(method, action, addition string) (string, error) {
@@ -136,6 +145,7 @@ func templateFuncs() template.FuncMap {
 	return template.FuncMap{
 		"dict":         dict,
 		"sub":          Sub,
+		"seq":          Seq,
 		"getArrayType": GetArrayType,
 		"isArray":      IsArray,
 		"method":       Method,
@@ -156,8 +166,8 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	case "bool":
 		// do nothing in this case
 		log.Printf("Field %s is of type bool", fieldName)
-	case "int", "int8", "int16", "int32", "int64",
-		"uint", "uint8", "uint16", "uint32", "uint64",
+	case "int", "int16", "int32", "int64",
+		"uint", "uint16", "uint32", "uint64",
 		"float32", "float64":
 		log.Printf("Field %s is of type number", fieldName)
 		if !containsItem(*includes, "strconv") {
@@ -166,6 +176,12 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	case "time.Time":
 		// no need to do anything in this case
 		log.Printf("Field %s is of type time.Time", fieldName)
+	case "byte", "int8", "uint8":
+		// do nothing in this case
+		log.Printf("Field %s is of type byte", fieldName)
+		if !containsItem(*includes, "strconv") {
+			*includes = append(*includes, "strconv")
+		}
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)

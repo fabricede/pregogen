@@ -1,4 +1,61 @@
 // {{- /* Go Template */ -}}.
-{{- define "bytes" -}}
-    string({{ . }})
+{{- define "bytebis" -}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    switch {{.Value}} {
+    {{ range seq 256 -}}
+    case {{.}}:
+        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $final }}
+    {{- end -}}
+    }
+{{ end -}}
+
+{{- define "bytevalue" -}}
+var byteValue_{{.Method}} map[byte]string
+
+func init() {
+	byteValue_{{.Method}} = make(map[byte]string)
+	for i := 0; i < 256; i++ {
+		byteValue_{{.Method}}[byte(i)] = strconv.Itoa(int(i))
+	}
+}
 {{- end -}}
+
+{{- define "byte" -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
+    {{ method .Method "start" "" }}byteValue_{{.Method}}[{{.Value}}]{{ method .Method "end" "" -}}
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"}"{{ method .Method "end" "" }}
+    {{- end -}}
+{{ end -}}
+
+{{define "bytearray"}}
+    {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+    for i, v := range {{.Value}} {
+        if i > 0 {
+            {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
+        }
+        {{ method .Method "start" "" }}byteValue_{{.Method}}[v]{{ method .Method "end" "" }}
+    }
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
+    {{- end -}}
+{{end}}
+
+{{define "pointerbyte"}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    if {{.Value}} != nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
+        {{ method .Method "start" "" }}byteValue_{{.Method}}[*{{.Value}}]{{ method .Method "end" "" -}}
+        {{ if eq .Last "true" -}}
+        {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
+        {{- end }}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+    }
+{{end}}

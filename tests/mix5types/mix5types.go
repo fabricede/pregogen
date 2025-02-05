@@ -7,7 +7,7 @@ package mypac
 type YourType1 struct {
 	BoolField    bool    `json:"boolfield"`
 	Float64Field float64 `json:"float64field"`
-	Int8Field    int8    `json:"int8field"`
+	Int8Field    uint8   `json:"int8field"`
 	IntField     int     `json:"intfield"`
 	StringField  string  `json:"stringfield"`
 }

@@ -6,8 +6,9 @@
     {{- else if eq .FieldType "string" -}}{{template "string" .}}
     {{- else if eq .FieldType "bool" -}}{{template "bool" .}}
     {{- else if or (eq .FieldType "int") (eq .FieldType "int8") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "int" .}}
-    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint8") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "int" .}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "int" .}}
     {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "float" .}}
+    {{- else if or (eq .FieldType "uint8") (eq .FieldType "byte") -}}{{template "byte" .}}
     {{- else if eq .FieldType "time.Time" -}}{{template "date" .}}
     {{- else if eq .FieldType "*string" -}}{{template "pointerstring" .}}
     {{- else if eq .FieldType "*bool" -}}{{template "pointerbool" .}}
@@ -34,25 +35,35 @@ package {{.Package}}
 {{- $lastIndex := sub (len .Fields) 1 -}}
 {{- $uniquebool := false -}}
 {{- $uniquearraybool := false -}}
+{{- $containsbytes := false -}}
 {{- range $i, $field := .Fields -}}
-    {{- $uniquebool = (and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0)) -}}
-    {{- $uniquearraybool = (and (eq .FieldType "[]bool") (eq $lastIndex $i) ( eq $i 0)) -}}
-    {{- break -}}
+    {{- if (and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0)) }}
+        {{- $uniquebool = true -}}
+    {{- else if (and (eq .FieldType "[]bool") (eq $lastIndex $i) ( eq $i 0)) }}
+        {{- $uniquearraybool = true -}}
+    {{- end -}}
+    {{- if (or (eq .FieldType "byte") (eq .FieldType "unit8")) }}
+        {{- $containsbytes = true -}}
+    {{- end -}}
 {{- end -}}
-{{ if and $uniquebool }}
+{{- if $uniquebool -}}
     {{ template "uniqueBool" . }}
     {{ return }}
-{{ end }}
+{{- end -}}
 {{ if or (gt $imports 0) (eq $method "bytesBuffer") }}
 import (
-    {{ if eq $method "bytesBuffer" }}
+    {{ if eq $method "bytesBuffer" -}}
     "bytes"
-    {{ end }}
+    {{- end }}
     {{ range $include := .Includes }}
     "{{$include}}"
     {{ end }}
 )
-{{ end }}
+{{ end -}}
+
+{{- /* if $containsbytes */ -}}
+    {{ template "bytevalue" dict "Method" $method }}
+{{/* end */}}
 
 func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error) { 
     {{$previousType := ""}}
