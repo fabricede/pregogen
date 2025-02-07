@@ -9,14 +9,16 @@
         {{template "intarray" .}}
     {{- else if eq $arraytype "float" -}}
         {{template "floatarray" .}}
-    {{- else if or (eq $arraytype "int") (eq $arraytype "int8") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
+    {{- else if or (eq $arraytype "int") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
         {{template "intarray" .}}
-    {{- else if or (eq $arraytype "uint") (eq $arraytype "uint8") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
+    {{- else if or (eq $arraytype "uint") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
         {{template "intarray" .}}
     {{- else if or (eq $arraytype "float32") (eq $arraytype "float64") -}}
         {{template "floatarray" .}}
     {{- else if eq $arraytype "time.Time" -}}
         {{template "datearray" .}}
+    {{- else if or (eq $arraytype "byte") (eq $arraytype "uint8") (eq $arraytype "int8") -}}
+        {{template "bytearray" .}}
     {{- else -}}
         {{template "otherarray" .}}
     {{- end -}}

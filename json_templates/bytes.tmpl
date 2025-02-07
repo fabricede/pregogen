@@ -1,14 +1,74 @@
 // {{- /* Go Template */ -}}.
-{{- define "bytebis" -}}
+{{- define "byte" -}}
     {{- $final := "\"" -}}
     {{ if eq .Last "true" -}}
         {{- $final = "}\"" -}}
     {{- end -}}
     switch {{.Value}} {
-    {{ range seq 256 -}}
+    {{if eq .FieldType "int8"}}
+        {{ range seq -128 256 -}}
     case {{.}}:
         {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $final }}
+        {{- end -}}
+    {{ else -}}
+        {{ range seq 0 256 -}}
+    case {{.}}:
+        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $final }}
+        {{- end -}}
     {{- end -}}
+    }
+{{ end -}}
+
+{{- define "bytearray" -}}
+    for i, v := range {{.Value}} {
+        switch v {
+    {{if eq .FieldType "int8"}}
+        {{ range seq -128 256 }}
+    case {{.}}:
+        if i > 0 {
+            {{ method $.Method "start" "\"" }},{{.}}{{ method $.Method "end" "\"" }}
+        } else {
+            {{- method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.End "\"" }}
+        }
+        {{- end -}}
+    {{ else -}}
+        {{ range seq 0 256 }}
+    case {{.}}:
+        if i > 0 {
+            {{ method $.Method "start" "\"" }},{{.}}{{ method $.Method "end" "\"" }}
+        } else {
+            {{- method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.End "\"" }}
+        }
+        {{- end -}}
+    }
+    {{ end }}
+    }
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
+    {{- end -}}
+{{- end -}}
+
+{{- define "pointerbyte" -}}
+    {{- $final := "\"" -}}
+    {{ if eq .Last "true" -}}
+        {{- $final = "}\"" -}}
+    {{- end -}}
+    if {{.Value}} != nil {
+        switch *{{.Value}} {
+        {{if eq .FieldType "int8"}}
+            {{ range seq -128 256 -}}
+        case {{.}}:
+            {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $final }}
+            {{- end -}}
+        {{ else -}}
+            {{ range seq 0 256 -}}
+        case {{.}}:
+            {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $final }}
+            {{- end -}}
+        {{- end -}}
+        }
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
     }
 {{ end -}}
 
@@ -23,39 +83,10 @@ func init() {
 }
 {{- end -}}
 
-{{- define "byte" -}}
+{{- define "bytebis" -}}
     {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
     {{ method .Method "start" "" }}byteValue_{{.Method}}[{{.Value}}]{{ method .Method "end" "" -}}
     {{ if eq .Last "true" -}}
         {{ method .Method "start" "" }}"}"{{ method .Method "end" "" }}
     {{- end -}}
 {{ end -}}
-
-{{define "bytearray"}}
-    {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
-        }
-        {{ method .Method "start" "" }}byteValue_{{.Method}}[v]{{ method .Method "end" "" }}
-    }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
-    {{- end -}}
-{{end}}
-
-{{define "pointerbyte"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
-    if {{.Value}} != nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
-        {{ method .Method "start" "" }}byteValue_{{.Method}}[*{{.Value}}]{{ method .Method "end" "" -}}
-        {{ if eq .Last "true" -}}
-        {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
-        {{- end }}
-    } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
-    }
-{{end}}

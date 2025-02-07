@@ -334,17 +334,20 @@ var ByteType_examples = []struct {
 		ByteType{
 			ByteField: 79,
 		}, nil},
+	{
+		ByteType{
+			ByteField: 255,
+		}, nil},
 }
 
-/*
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=test
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=plus
 type ByteType3 struct {
-	ByteField1 int `json:"intfield1"`
-	ByteField2 int `json:"intfield2"`
-	ByteField3 int `json:"intfield3"`
+	ByteField1 byte `json:"bytefield1"`
+	ByteField2 byte `json:"bytefield2"`
+	ByteField3 byte `json:"bytefield3"`
 }
 
 // representative example(s) of data stored in target application
@@ -354,8 +357,8 @@ var ByteType3_examples = []struct {
 }{
 	{
 		ByteType3{
-			ByteField1: 12345,
-			ByteField2: 67890,
+			ByteField1: 123,
+			ByteField2: 67,
 			ByteField3: 10,
 		}, nil},
 }
@@ -365,24 +368,24 @@ var ByteType3_examples = []struct {
 //go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=plus
 type ByteArrayType struct {
-	ByteArrayField []int `json:"intarrayfield"`
+	ByteArrayField []byte `json:"bytearrayfield"`
 }
 
 // representative example of data stored in target application
 var ByteArrayType_examples = []struct {
 	ByteArrayType ByteArrayType
-	want         []byte
+	want          []byte
 }{
 	{
 		ByteArrayType{
-			ByteArrayField: []int{1, 2, 3},
+			ByteArrayField: []byte{1, 2, 3},
 		}, nil},
 }
 
 type ByteArrayType3 struct {
-	ByteArrayField1 []int `json:"intarray1field"`
-	ByteArrayField2 []int `json:"intarray2field"`
-	ByteArrayField3 []int `json:"intarray3field"`
+	ByteArrayField1 []byte `json:"bytearray1field"`
+	ByteArrayField2 []byte `json:"bytearray2field"`
+	ByteArrayField3 []byte `json:"bytearray3field"`
 }
 
 //go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=test
@@ -397,9 +400,9 @@ var ByteArrayType3_examples = []struct {
 }{
 	{
 		ByteArrayType3{
-			ByteArrayField1: []int{1, 2, 3},
-			ByteArrayField2: []int{4, 5, 6},
-			ByteArrayField3: []int{7, 8, 9},
+			ByteArrayField1: []byte{1, 2, 3},
+			ByteArrayField2: []byte{4, 5, 6},
+			ByteArrayField3: []byte{7, 8, 9},
 		}, nil},
 }
 
@@ -409,10 +412,10 @@ var ByteArrayType3_examples = []struct {
 //go:generate pregogen -type=PointerByteType -file=$GOFILE -gen=plus
 
 type PointerByteType struct {
-	PointerByteField *int `json:"pointerintfield"`
+	PointerByteField *byte `json:"pointerbytefield"`
 }
 
-var int1 = 12345
+var byte1 byte = 64
 
 // representative example of data stored in target application
 var PointerByteType_examples = []struct {
@@ -421,7 +424,7 @@ var PointerByteType_examples = []struct {
 }{
 	{
 		PointerByteType{
-			PointerByteField: &int1,
+			PointerByteField: &byte1,
 		}, nil},
 	{
 		PointerByteType{
@@ -434,13 +437,13 @@ var PointerByteType_examples = []struct {
 //go:generate pregogen -type=PointerByteType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerByteType3 -file=$GOFILE -gen=plus
 type PointerByteType3 struct {
-	PointerByteField1 *int `json:"pointerintfield1"`
-	PointerByteField2 *int `json:"pointerintfield2"`
-	PointerByteField3 *int `json:"pointerintfield3"`
+	PointerByteField1 *byte `json:"pointerbytefield1"`
+	PointerByteField2 *byte `json:"pointerbytefield2"`
+	PointerByteField3 *byte `json:"pointerbytefield3"`
 }
 
-var int2 = 12345
-var int3 = 67890
+var byte2 byte = 125
+var byte3 byte = 90
 
 // representative example(s) of data stored in target application
 var PointerByteType3_examples = []struct {
@@ -449,9 +452,9 @@ var PointerByteType3_examples = []struct {
 }{
 	{
 		PointerByteType3{
-			PointerByteField1: &int1,
+			PointerByteField1: &byte1,
 			PointerByteField2: nil,
-			PointerByteField3: &int3,
+			PointerByteField3: &byte3,
 		}, nil},
 	{
 		PointerByteType3{
@@ -462,8 +465,7 @@ var PointerByteType3_examples = []struct {
 	{
 		PointerByteType3{
 			PointerByteField1: nil,
-			PointerByteField2: &int2,
+			PointerByteField2: &byte2,
 			PointerByteField3: nil,
 		}, nil},
 }
-*/

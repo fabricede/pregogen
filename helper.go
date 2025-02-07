@@ -42,10 +42,10 @@ func IsArray(fieldType string) bool {
 }
 
 // Seq creates a sequence of integers.
-func Seq(size int) []int {
+func Seq(start, size int) []int {
 	res := make([]int, size)
 	for i := range res {
-		res[i] = i
+		res[i] = i + start
 	}
 	return res
 }
@@ -179,9 +179,9 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	case "byte", "int8", "uint8":
 		// do nothing in this case
 		log.Printf("Field %s is of type byte", fieldName)
-		if !containsItem(*includes, "strconv") {
+		/*if !containsItem(*includes, "strconv") {
 			*includes = append(*includes, "strconv")
-		}
+		}*/
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)
