@@ -11,25 +11,6 @@
     strconv.FormatFloat({{.Value}}, 'f', -1, 64)
 {{- end -}}
 
-{{define "floatarray"}}
-    if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
-    } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
-        for i, v := range {{.Value}} {
-            if i > 0 {
-                {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
-            }
-            {{ if eq .FieldType "[]float32" -}}
-            {{ method .Method "start" "" }}{{template "float32" dict "Value" "v"}}{{ method .Method "end" "" -}}
-            {{ else if eq .FieldType "[]float64" -}}
-            {{ method .Method "start" "" }}{{template "float64" dict "Value" "v"}}{{ method .Method "end" "" -}}
-            {{ end }}
-        }
-        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
-    }
-{{end}}
-
 {{define "pointerfloat"}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}

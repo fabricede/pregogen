@@ -4,10 +4,9 @@ A code generator for custom JSON methods in Go.
 
 ## Current State
 demonstrates feasibility and increase in json Marshal performance over the standard library.
-Handles structure with basic types (bool, int, float, string) date, pointer and array
+Handles structure with basic types (bool, int, float, string) date, pointer, array and array of pointer
 
 ## TODO 
-	- pointer array
 	- Enum capabilities inspired from bool
 	- Unmarshal
 	- improve 'plus' marshal method to avoid multiple allocation

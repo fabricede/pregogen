@@ -7,25 +7,6 @@
     {{- end -}}
 {{- end -}}
 
-{{define "stringarray"}}
-    if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
-    } else {
-        size{{.Name}} := len({{.Value}})-1
-        for i, v := range {{.Value}} {
-             if i != 0 {
-                {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
-            } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
-            }
-            {{ method .Method "start" "" }}v{{ method .Method "end" "" }}
-            if i == size{{.Name}} {
-                {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
-            }
-        }
-    }
-{{end}}
-
 {{define "pointerstring"}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}

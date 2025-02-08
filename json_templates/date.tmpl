@@ -31,25 +31,6 @@ func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
     {{- end -}}
 {{- end -}}
 
-{{define "datearray"}}
-    if {{.Value}} == nil {
-        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
-    } else {
-        size{{.Name}} := len({{.Value}})-1
-        for i, v := range {{.Value}} {
-            if i != 0 {
-                {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
-            } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
-            }
-            {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}{{ method .Method "end" "" }}
-            if i == size{{.Name}} {
-                {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
-            }
-        }
-    }
-{{end}}
-
 {{define "pointerdate"}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
