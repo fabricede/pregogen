@@ -378,7 +378,7 @@ var ByteArrayType_examples = []struct {
 }{
 	{
 		ByteArrayType{
-			ByteArrayField: []byte{1, 2, 3},
+			ByteArrayField: []byte{91, 92, 93},
 		}, nil},
 }
 
@@ -400,9 +400,9 @@ var ByteArrayType3_examples = []struct {
 }{
 	{
 		ByteArrayType3{
-			ByteArrayField1: []byte{1, 2, 3},
-			ByteArrayField2: []byte{4, 5, 6},
-			ByteArrayField3: []byte{7, 8, 9},
+			ByteArrayField1: []byte{97, 92, 93},
+			ByteArrayField2: []byte{94, 95, 96},
+			ByteArrayField3: []byte{97, 98, 99},
 		}, nil},
 }
 
@@ -467,5 +467,69 @@ var PointerByteType3_examples = []struct {
 			PointerByteField1: nil,
 			PointerByteField2: &byte2,
 			PointerByteField3: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerByteArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerByteArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerByteArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerByteArrayType -file=$GOFILE -gen=plus
+
+type PointerByteArrayType struct {
+	PointerByteField []*byte `json:"pointerbytefield"`
+}
+
+var bytearray1 []*byte = []*byte{&byte1, nil, &byte3}
+var bytearray2 []*byte = []*byte{nil, nil, nil}
+
+// representative example of data stored in target application
+var PointerByteArrayType_examples = []struct {
+	PointerByteArrayType
+	want []byte
+}{
+	{
+		PointerByteArrayType{
+			PointerByteField: bytearray1,
+		}, nil},
+	{
+		PointerByteArrayType{
+			PointerByteField: bytearray2,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerByteArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerByteArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerByteArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerByteArrayType3 -file=$GOFILE -gen=plus
+type PointerByteArrayType3 struct {
+	PointerByteArrayField1 []*byte `json:"pointerbytefield1"`
+	PointerByteArrayField2 []*byte `json:"pointerbytefield2"`
+	PointerByteArrayField3 []*byte `json:"pointerbytefield3"`
+}
+
+var bytearray3 []*byte = []*byte{nil, &byte3, nil}
+
+// representative example(s) of data stored in target application
+var PointerByteArrayType3_examples = []struct {
+	PointerByteArrayType3
+	want []byte
+}{
+	{
+		PointerByteArrayType3{
+			PointerByteArrayField1: bytearray1,
+			PointerByteArrayField2: nil,
+			PointerByteArrayField3: bytearray3,
+		}, nil},
+	{
+		PointerByteArrayType3{
+			PointerByteArrayField1: nil,
+			PointerByteArrayField2: nil,
+			PointerByteArrayField3: nil,
+		}, nil},
+	{
+		PointerByteArrayType3{
+			PointerByteArrayField1: nil,
+			PointerByteArrayField2: bytearray2,
+			PointerByteArrayField3: nil,
 		}, nil},
 }

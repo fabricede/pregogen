@@ -3,33 +3,60 @@
     {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
     {{ method .Method "start" "" }}{{.Value}}{{ method .Method "end" "" -}}
     {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"\"}"{{ method .Method "end" "" }}
+        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
     {{- end -}}
 {{- end -}}
 
 {{define "stringarray"}}
-    {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+             if i != 0 {
+                {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+            } else {
+                {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
+            }
+            {{ method .Method "start" "" }}v{{ method .Method "end" "" }}
+            if i == size{{.Name}} {
+                {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
+            }
         }
-        {{ method .Method "start" "" }}v{{ method .Method "end" "" -}}
     }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"\"]}"{{ method .Method "end" "" -}}
-    {{- end -}}
 {{end}}
 
 {{define "pointerstring"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
         {{ method .Method "start" "" }}*{{.Value}}{{ method .Method "end" "" -}}
-        {{ method .Method "start" "" }}"\"{{ method .Method "end" $final }}
+        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    }
+{{end}}
+
+{{define "pointerstringarray"}}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                if v != nil {
+                    {{ method .Method "start" "\"" }},\"{{ method .Method "end" "\"" }}
+                    {{ method .Method "start" "" }}*v{{ method .Method "end" "" }}
+                    {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
+                } else {
+                    {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                }
+            } else if v != nil {
+                {{- method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
+                {{ method .Method "start" "" }}*v{{ method .Method "end" "" }}
+                {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
+            } else {
+                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+            }
+        }
+        {{ method .Method "start" "\"" }}]{{ method .Method "end" .Final }}
     }
 {{end}}

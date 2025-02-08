@@ -130,8 +130,8 @@ type PointerBoolType struct {
 	PointerBoolField *bool `json:"pointerboolfield"`
 }
 
-var int1 = true
-var int2 = false
+var bool1 = true
+var bool2 = false
 
 // representative example of data stored in target application
 var PointerBoolType_examples = []struct {
@@ -140,11 +140,11 @@ var PointerBoolType_examples = []struct {
 }{
 	{
 		PointerBoolType{
-			PointerBoolField: &int1,
+			PointerBoolField: &bool1,
 		}, nil},
 	{
 		PointerBoolType{
-			PointerBoolField: &int2,
+			PointerBoolField: &bool2,
 		}, nil},
 	{
 		PointerBoolType{
@@ -162,7 +162,7 @@ type PointerBoolType3 struct {
 	PointerBoolField3 *bool `json:"pointerboolfield3"`
 }
 
-var int3 = true
+var bool3 = true
 
 // representative example(s) of data stored in target application
 var PointerBoolType3_examples = []struct {
@@ -171,9 +171,9 @@ var PointerBoolType3_examples = []struct {
 }{
 	{
 		PointerBoolType3{
-			PointerBoolField1: &int1,
+			PointerBoolField1: &bool1,
 			PointerBoolField2: nil,
-			PointerBoolField3: &int3,
+			PointerBoolField3: &bool3,
 		}, nil},
 	{
 		PointerBoolType3{
@@ -184,7 +184,71 @@ var PointerBoolType3_examples = []struct {
 	{
 		PointerBoolType3{
 			PointerBoolField1: nil,
-			PointerBoolField2: &int2,
+			PointerBoolField2: &bool2,
 			PointerBoolField3: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=plus
+
+type PointerBoolArrayType struct {
+	PointerBoolField []*bool `json:"pointerboolfield"`
+}
+
+var bytearray1 []*bool = []*bool{&bool1, nil, &bool3}
+var bytearray2 []*bool = []*bool{nil, nil, nil}
+
+// representative example of data stored in target application
+var PointerBoolArrayType_examples = []struct {
+	PointerBoolArrayType
+	want []byte
+}{
+	{
+		PointerBoolArrayType{
+			PointerBoolField: bytearray1,
+		}, nil},
+	{
+		PointerBoolArrayType{
+			PointerBoolField: bytearray2,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=plus
+type PointerBoolArrayType3 struct {
+	PointerBoolArrayField1 []*bool `json:"pointerboolfield1"`
+	PointerBoolArrayField2 []*bool `json:"pointerboolfield2"`
+	PointerBoolArrayField3 []*bool `json:"pointerboolfield3"`
+}
+
+var bytearray3 []*bool = []*bool{nil, &bool3, nil}
+
+// representative example(s) of data stored in target application
+var PointerBoolArrayType3_examples = []struct {
+	PointerBoolArrayType3
+	want []byte
+}{
+	{
+		PointerBoolArrayType3{
+			PointerBoolArrayField1: bytearray1,
+			PointerBoolArrayField2: nil,
+			PointerBoolArrayField3: bytearray3,
+		}, nil},
+	{
+		PointerBoolArrayType3{
+			PointerBoolArrayField1: nil,
+			PointerBoolArrayField2: nil,
+			PointerBoolArrayField3: nil,
+		}, nil},
+	{
+		PointerBoolArrayType3{
+			PointerBoolArrayField1: nil,
+			PointerBoolArrayField2: bytearray2,
+			PointerBoolArrayField3: nil,
 		}, nil},
 }

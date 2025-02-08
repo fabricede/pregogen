@@ -149,3 +149,67 @@ var PointerIntType3_examples = []struct {
 			PointerIntField3: nil,
 		}, nil},
 }
+
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=plus
+
+type PointerIntArrayType struct {
+	PointerIntField []*int `json:"pointerintfield"`
+}
+
+var intarray1 []*int = []*int{&int1, nil, &int3}
+var intarray2 []*int = []*int{nil, nil, nil}
+
+// representative example of data stored in target application
+var PointerIntArrayType_examples = []struct {
+	PointerIntArrayType
+	want []byte
+}{
+	{
+		PointerIntArrayType{
+			PointerIntField: intarray1,
+		}, nil},
+	{
+		PointerIntArrayType{
+			PointerIntField: intarray2,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=plus
+type PointerIntArrayType3 struct {
+	PointerIntArrayField1 []*int `json:"pointerintfield1"`
+	PointerIntArrayField2 []*int `json:"pointerintfield2"`
+	PointerIntArrayField3 []*int `json:"pointerintfield3"`
+}
+
+var intarray3 []*int = []*int{nil, &int3, nil}
+
+// representative example(s) of data stored in target application
+var PointerIntArrayType3_examples = []struct {
+	PointerIntArrayType3
+	want []byte
+}{
+	{
+		PointerIntArrayType3{
+			PointerIntArrayField1: intarray1,
+			PointerIntArrayField2: nil,
+			PointerIntArrayField3: intarray3,
+		}, nil},
+	{
+		PointerIntArrayType3{
+			PointerIntArrayField1: nil,
+			PointerIntArrayField2: nil,
+			PointerIntArrayField3: nil,
+		}, nil},
+	{
+		PointerIntArrayType3{
+			PointerIntArrayField1: nil,
+			PointerIntArrayField2: intarray2,
+			PointerIntArrayField3: nil,
+		}, nil},
+}

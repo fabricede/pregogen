@@ -1,13 +1,9 @@
 // {{- /* Go Template */ -}}.
 {{define "bool"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} {
-        {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End .Final }}
     } else {
-        {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End $final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End .Final }}
     }
 {{end}}
 
@@ -27,52 +23,95 @@ func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, err
 {{end}}
 
 {{define "boolarray"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
-    size{{.Name}} := len({{.Value}})-1
-    for i, v := range {{.Value}} {
-         if v {
-            if i > 0 {
-                if i == size{{.Name}} {
-                    {{ method .Method "start" "\"," }}true]{{ method .Method "end" $final }}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if v {
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}true]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}true{{ method .Method "end" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[true]{{ method .Method .End .Final }}
                 } else {
-                    {{ method .Method "start" "\"," }}true{{ method .Method "end" "\"" }}
+                    {{ method .Method .Start .Header }}{{.JSONName}}[true{{ method .Method .End "\"" }}
                 }
-            } else if i == size{{.Name}} {
-                {{ method .Method .Start .Header }}{{.JSONName}}[true]{{ method .Method .End $final }}
-            } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[true{{ method .Method .End "\"" }}
-            }
-        } else {        
-            if i > 0 {
-                if i == size{{.Name}} {
-                    {{ method .Method "start" "\"," }}false]{{ method .Method "end" $final }}
+            } else {        
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}false]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}false{{ method .Method "end" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[false]{{ method .Method .End .Final }}
                 } else {
-                    {{ method .Method "start" "\"," }}false{{ method .Method "end" "\"" }}
+                    {{ method .Method .Start .Header }}{{.JSONName}}[false{{ method .Method .End "\"" }}
                 }
-            } else if i == size{{.Name}} {
-                {{ method .Method .Start .Header }}{{.JSONName}}[false]{{ method .Method .End $final }}
-            } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[false{{ method .Method .End "\"" }}
             }
         }
     }
 {{end}}
 
 {{define "pointerbool"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} != nil {
         if *{{.Value}} {
-            {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End $final }}
+            {{ method .Method .Start .Header }}{{.JSONName}}true{{ method .Method .End .Final }}
         } else {
-            {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End $final }}
+            {{ method .Method .Start .Header }}{{.JSONName}}false{{ method .Method .End .Final }}
         }
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    }
+{{end}}
+
+{{define "pointerboolarray"}}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if v != nil && *v {
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}true]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}true{{ method .Method "end" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[true]{{ method .Method .End .Final }}
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[true{{ method .Method .End "\"" }}
+                }
+            } else if v != nil {        
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}false]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}false{{ method .Method "end" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[false]{{ method .Method .End .Final }}
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[false{{ method .Method .End "\"" }}
+                }
+            } else {
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}null]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}null{{ method .Method "end" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null]{{ method .Method .End .Final }}
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+                }
+            }
+        }
     }
 {{end}}

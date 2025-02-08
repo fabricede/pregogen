@@ -1,41 +1,37 @@
 // {{- /* Go Template */ -}}.
-{{- define "int" -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
-    {{ method .Method "start" "" }}{{template "intvalue" dict "Value" .Value}}{{ method .Method "end" "" -}}
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"}"{{ method .Method "end" "" }}
-    {{- end -}}
-{{- end -}}
-
 {{- define "intvalue" -}}
     strconv.Itoa(int({{.Value}}))
 {{- end -}}
 
-{{define "intarray"}}
-    {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
-        }
-        {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "v"}}{{ method .Method "end" "" }}
-    }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
-    {{- end -}}
-{{end}}
-
 {{define "pointerint"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
         {{ method .Method "start" "" }}{{template "intvalue" dict "Value" (printf "*%s" .Value) }}{{ method .Method "end" "" -}}
-        {{ if eq .Last "true" -}}
-        {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
-        {{- end }}
+        {{ method .Method "start" "\"" }}{{ method .Method "end" .Final }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    }
+{{end}}
+
+{{define "pointerintarray"}}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                if v != nil {
+                    {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
+                    {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "end" "" }}
+                } else {
+                    {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                }
+            } else if v != nil {
+                {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+                {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "end" "" }}
+            } else {
+                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+            }
+        }
+        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
     }
 {{end}}

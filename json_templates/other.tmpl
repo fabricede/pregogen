@@ -1,21 +1,4 @@
 // {{- /* Go Template */ -}}.
-{{- define "other" -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
-    {{ method .Method "start" "" }}fmt.Sprint({{.Value}}){{ method .Method "end" "" -}}
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "\"}" }}{{ method .Method "end" "\"" -}}
-    {{- end -}}
+{{- define "othervalue" -}}
+    fmt.Sprint({{.Value}})
 {{- end -}}
-
-{{define "otherarray"}}
-    {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
-        }
-        {{ method .Method "start" "" }}fmt.Sprint(v){{ method .Method "end" "" }}
-    }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
-    {{- end -}}
-{{end}}

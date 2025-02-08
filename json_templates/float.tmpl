@@ -1,16 +1,4 @@
 // {{- /* Go Template */ -}}.
-{{- define "float" -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
-    {{- if eq .FieldType "float32" -}}
-        {{ method .Method "start" "" }}{{template "float32" .}}{{ method .Method "end" "" -}}
-    {{- else if eq .FieldType "float64" -}}
-        {{ method .Method "start" "" }}{{template "float64" .}}{{ method .Method "end" "" -}}
-    {{- end -}}
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"}"{{ method .Method "end" "" -}}
-    {{- end -}}
-{{- end -}}
-
 {{- define "parsefloat" -}}
     {{.Header}}{{.Start}}strconv.ParseFloat(float64({{.Value}}), 64){{.Stop}}{{.Footer}}
 {{- end -}}
@@ -24,27 +12,25 @@
 {{- end -}}
 
 {{define "floatarray"}}
-    {{ method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "" }}","{{ method .Method "end" "" }}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
+            }
+            {{ if eq .FieldType "[]float32" -}}
+            {{ method .Method "start" "" }}{{template "float32" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ else if eq .FieldType "[]float64" -}}
+            {{ method .Method "start" "" }}{{template "float64" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ end }}
         }
-        {{ if eq .FieldType "[]float32" -}}
-        {{ method .Method "start" "" }}{{template "float32" dict "Value" "v"}}{{ method .Method "end" "" -}}
-        {{ else if eq .FieldType "[]float64" -}}
-        {{ method .Method "start" "" }}{{template "float64" dict "Value" "v"}}{{ method .Method "end" "" -}}
-        {{ end }}
+        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
     }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"]}"{{ method .Method "end" "" }}
-    {{- end -}}
 {{end}}
 
 {{define "pointerfloat"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
         {{ if eq .FieldType "*float32" -}}
@@ -53,9 +39,40 @@
         {{ method .Method "start" "" }}{{template "float64" dict "Value" (printf "*%s" .Value)}}{{ method .Method "end" "" -}}
         {{ end }}
         {{ if eq .Last "true" -}}
-        {{ method .Method "start" "\"" }}{{ method .Method "end" $final }}
+        {{ method .Method "start" "\"" }}{{ method .Method "end" .Final }}
         {{- end }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    }
+{{end}}
+
+{{define "pointerfloatarray"}}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                if v != nil {
+                    {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
+                    {{ if eq .FieldType "[]*float32" -}}
+                    {{ method .Method "start" "" }}{{template "float32" dict "Value" "*v" }}{{ method .Method "end" "" -}}
+                    {{ else if eq .FieldType "[]*float64" -}}
+                    {{ method .Method "start" "" }}{{template "float64" dict "Value" "*v" }}{{ method .Method "end" "" -}}
+                    {{ end }}
+                } else {
+                    {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                }
+            } else if v != nil {
+                {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+                {{ if eq .FieldType "[]*float32" -}}
+                {{ method .Method "start" "" }}{{template "float32" dict "Value" "*v" }}{{ method .Method "end" "" -}}
+                {{ else if eq .FieldType "[]*float64" -}}
+                {{ method .Method "start" "" }}{{template "float64" dict "Value" "*v" }}{{ method .Method "end" "" -}}
+                {{ end }}
+            } else {
+                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+            }
+        }
+        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
     }
 {{end}}

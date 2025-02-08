@@ -5,9 +5,9 @@
         {{- template "array" . -}}
     {{- else if eq .FieldType "string" -}}{{template "string" .}}
     {{- else if eq .FieldType "bool" -}}{{template "bool" .}}
-    {{- else if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "int" .}}
-    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "int" .}}
-    {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "float" .}}
+    {{- else if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "number" .}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "number" .}}
+    {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "number" .}}
     {{- else if or (eq .FieldType "int8") (eq .FieldType "uint8") (eq .FieldType "byte") -}}{{template "byte" .}}
     {{- else if eq .FieldType "time.Time" -}}{{template "date" .}}
     {{- else if eq .FieldType "*string" -}}{{template "pointerstring" .}}
@@ -17,9 +17,24 @@
     {{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") -}}{{template "pointerfloat" .}}
     {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "pointerbyte" .}}
     {{- else if eq .FieldType "*time.Time" -}}{{template "pointerdate" .}}
-    {{- else -}}{{template "other" .}}
+    {{- else -}}{{template "number" .}}
     {{- end -}}
 {{end -}}
+
+{{- define "number" -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
+    {{ method .Method "start" "" }}
+    {{- if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "intvalue" .}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "intvalue" .}}
+    {{- else if eq .FieldType "float64" -}}{{template "float64" .}}
+    {{- else if eq .FieldType "float32" -}}{{template "float32" .}}
+    {{- else -}}{{template "othervalue" .}}
+    {{- end -}}
+    {{ method .Method "end" "" }}
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "" }}"{{ method .Method "end" .Final }}
+    {{- end -}}
+{{- end -}}
 
 {{- /* set construction variables */ -}}
 {{- $method := .Gentype -}}
@@ -43,7 +58,7 @@ package {{.Package}}
     {{- else if and (eq .FieldType "[]bool") (eq $lastIndex $i) ( eq $i 0) }}
         {{- $uniquearraybool = true -}}
     {{- end -}}
-    {{- if or (eq .FieldType "byte") (eq .FieldType "uint8") }}
+    {{- if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") }}
         {{- $containsbytes = true -}}
     {{- end -}}
 {{- end -}}
@@ -75,11 +90,7 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- if eq $i 0 }}
             {{- method $method "declareVar" "" }}
         {{- else -}}
-            {{$start = "start"}}
-        {{- end -}}
-
-        {{- if eq $i $lastIndex }}
-            {{$last = true}}
+            {{- $start = "start" -}}
         {{- end -}}
 
         {{- $header := "\"," -}}
@@ -89,14 +100,16 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
             {{- $end = "firstend" -}}
         {{- else if or (eq $previousType "string") (eq $previousType "time.Time") -}}
             {{- $header = "\"\\\"," -}}
-        {{- else if or (eq $previousType "[]string") (eq $previousType "[]time.Time") -}}
-            {{- $header = "\"\\\"]," -}}
-        {{- else if (and $previousArray (not (eq $previousType "[]bool"))) -}}
-            {{- $header = "\"]," -}}
+        {{- end -}}
+
+        {{- $final := "\"" -}}
+        {{- if eq $i $lastIndex }}
+            {{- $last = true -}}
+            {{- $final = "}\"" -}}
         {{- end -}}
 
         {{- /* package the line with value */ -}}
-        {{- template "fieldValue" dict "FieldName" $field.Name "FieldType" $field.FieldType "Method" $method "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Name" $field.JSONName "Start" (print $start) "End" (printf $end) "PreviousType" (print $previousType) "PreviousArray" (print $previousArray) "Header" $header "Last" (print $last) -}}
+        {{- template "fieldValue" dict "FieldName" $field.Name "FieldType" $field.FieldType "Method" $method "Value" (printf "%s.%s" $.ReceiverName $field.Name ) "JSONName" (printf "\\\"%s\\\":" $field.JSONName) "Name" $field.JSONName "Start" (print $start) "End" (printf $end) "PreviousType" (print $previousType) "PreviousArray" (print $previousArray) "Header" $header "Last" (print $last) "Final" $final -}}
 
         {{- $previousType = (print $field.FieldType) -}}
         {{- if isArray .FieldType -}}

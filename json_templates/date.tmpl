@@ -25,35 +25,84 @@ func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
 
 {{- define "date" -}}
     {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
-    {{ method .Method "start" "" }}{{template "datevalue" .}}{{ method .Method "end" "" -}}
+    {{ method .Method "start" "" }}{{template "datevalue" .}}{{ method .Method "end" "" }}
     {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"\"}"{{ method .Method "end" "" }}
+        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
     {{- end -}}
 {{- end -}}
 
 {{define "datearray"}}
-    {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
-    for i, v := range {{.Value}} {
-        if i > 0 {
-            {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+    if {{.Value}} == nil {
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if i != 0 {
+                {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+            } else {
+                {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
+            }
+            {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}{{ method .Method "end" "" }}
+            if i == size{{.Name}} {
+                {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
+            }
         }
-        {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}{{ method .Method "end" "" -}}
     }
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"\"]}"{{ method .Method "end" "" -}}
-    {{- end -}}
 {{end}}
 
 {{define "pointerdate"}}
-    {{- $final := "\"" -}}
-    {{ if eq .Last "true" -}}
-        {{- $final = "}\"" -}}
-    {{- end -}}
     if {{.Value}} != nil {
         {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
         {{ method .Method "start" "" }}{{template "datevalue" dict "Value" (printf "(*%s)" .Value) "FieldName" .FieldName}}{{ method .Method "end" "" -}}
-        {{ method .Method "start" "" }}"\"{{ method .Method "end" $final }}
+        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End $final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
     }
 {{end}}
+
+{{- define "pointerdatearray" }}
+    if {{.Value}} == nil {
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        reminder{{.Name}} := false
+        for i, v := range {{.Value}} {
+            if v == nil {
+                if i != 0 && i != size{{.Name}} {
+                    if reminder{{.Name}} {
+                        {{ method .Method "start" "\"" }}\",null{{ method .Method "end" "\"" }}
+                    } else {
+                        {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                    }
+                } else if i != 0 {
+                    if reminder{{.Name}} {
+                        {{ method .Method "start" "\"" }}\",null]{{ method .Method "end" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"" }},null]{{ method .Method "end" .Final }}
+                    }
+                } else if i != size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null]{{ method .Method .End .Final }}
+                }
+                reminder{{.Name}} = false
+            } else {
+                if i != 0 {
+                    if reminder{{.Name}} {
+                        {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+                    } else {
+                        {{ method .Method "start" "\"" }},\"{{ method .Method "end" "\"" }}
+                    }
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}                  
+                }
+                {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "(*v)" "FieldName" .FieldName}}{{ method .Method "end" "" }}
+                if i != size{{.Name}} {
+                    reminder{{.Name}} = true
+                } else {
+                    {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
+                }
+            }
+        }
+    }
+{{- end -}}

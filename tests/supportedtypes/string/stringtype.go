@@ -149,3 +149,67 @@ var PointerStringType3_examples = []struct {
 			PointerStringField3: nil,
 		}, nil},
 }
+
+//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=plus
+
+type PointerStringArrayType struct {
+	PointerStringField []*string `json:"pointerstringfield"`
+}
+
+var intarray1 []*string = []*string{&int1, nil, &int2}
+var intarray2 []*string = []*string{nil, nil, nil}
+
+// representative example of data stored in target application
+var PointerStringArrayType_examples = []struct {
+	PointerStringArrayType
+	want []byte
+}{
+	{
+		PointerStringArrayType{
+			PointerStringField: intarray1,
+		}, nil},
+	{
+		PointerStringArrayType{
+			PointerStringField: intarray2,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=plus
+type PointerStringArrayType3 struct {
+	PointerStringArrayField1 []*string `json:"pointerstringfield1"`
+	PointerStringArrayField2 []*string `json:"pointerstringfield2"`
+	PointerStringArrayField3 []*string `json:"pointerstringfield3"`
+}
+
+var intarray3 []*string = []*string{nil, &int3, nil}
+
+// representative example(s) of data stored in target application
+var PointerStringArrayType3_examples = []struct {
+	PointerStringArrayType3
+	want []byte
+}{
+	{
+		PointerStringArrayType3{
+			PointerStringArrayField1: intarray1,
+			PointerStringArrayField2: nil,
+			PointerStringArrayField3: intarray3,
+		}, nil},
+	{
+		PointerStringArrayType3{
+			PointerStringArrayField1: nil,
+			PointerStringArrayField2: nil,
+			PointerStringArrayField3: nil,
+		}, nil},
+	{
+		PointerStringArrayType3{
+			PointerStringArrayField1: nil,
+			PointerStringArrayField2: intarray2,
+			PointerStringArrayField3: nil,
+		}, nil},
+}

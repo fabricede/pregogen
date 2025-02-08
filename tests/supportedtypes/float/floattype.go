@@ -119,11 +119,11 @@ var PointerFloat32Type_examples = []struct {
 type PointerFloat32Type3 struct {
 	PointerFloat32Field1 *float32 `json:"pointerfloat32field1"`
 	PointerFloat32Field2 *float32 `json:"pointerfloat32field2"`
-	PointerFloat32Field3 *float32 `json:"pointerfloat32field3"`
+	PointerFloat32Field3 *float64 `json:"pointerfloat32field3"`
 }
 
 var int2 float32 = 12345.14
-var int3 float32 = 67890.23
+var int3 float64 = 67890.23
 
 // representative example(s) of data stored in target application
 var PointerFloat32Type3_examples = []struct {
@@ -147,5 +147,69 @@ var PointerFloat32Type3_examples = []struct {
 			PointerFloat32Field1: nil,
 			PointerFloat32Field2: &int2,
 			PointerFloat32Field3: nil,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=plus
+
+type PointerFloatArrayType struct {
+	PointerFloatField []*float32 `json:"pointerfloatfield"`
+}
+
+var intarray1 []*float32 = []*float32{&int1, nil, &int2}
+var intarray2 []*float32 = []*float32{nil, nil, nil}
+
+// representative example of data stored in target application
+var PointerFloatArrayType_examples = []struct {
+	PointerFloatArrayType
+	want []byte
+}{
+	{
+		PointerFloatArrayType{
+			PointerFloatField: intarray1,
+		}, nil},
+	{
+		PointerFloatArrayType{
+			PointerFloatField: intarray2,
+		}, nil},
+}
+
+//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=append
+//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=bytesBuffer
+//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=plus
+type PointerFloatArrayType3 struct {
+	PointerFloatArrayField1 []*float32 `json:"pointerfloatfield1"`
+	PointerFloatArrayField2 []*float32 `json:"pointerfloatfield2"`
+	PointerFloatArrayField3 []*float64 `json:"pointerfloatfield3"`
+}
+
+var intarray3 []*float64 = []*float64{nil, &int3, nil}
+
+// representative example(s) of data stored in target application
+var PointerFloatArrayType3_examples = []struct {
+	PointerFloatArrayType3
+	want []byte
+}{
+	{
+		PointerFloatArrayType3{
+			PointerFloatArrayField1: intarray1,
+			PointerFloatArrayField2: nil,
+			PointerFloatArrayField3: intarray3,
+		}, nil},
+	{
+		PointerFloatArrayType3{
+			PointerFloatArrayField1: nil,
+			PointerFloatArrayField2: nil,
+			PointerFloatArrayField3: nil,
+		}, nil},
+	{
+		PointerFloatArrayType3{
+			PointerFloatArrayField1: nil,
+			PointerFloatArrayField2: intarray2,
+			PointerFloatArrayField3: nil,
 		}, nil},
 }

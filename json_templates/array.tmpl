@@ -2,24 +2,82 @@
 {{- define "array" -}}
 {{- $arraytype := (getArrayType .FieldType) -}}
     {{- if eq $arraytype "string" -}}
-        {{template "stringarray" .}}
+        {{template "txtarray" .}}
     {{- else if eq $arraytype "bool" -}}
         {{template "boolarray" .}}
-    {{- else if eq $arraytype "int" -}}
-        {{template "intarray" .}}
-    {{- else if eq $arraytype "float" -}}
-        {{template "floatarray" .}}
     {{- else if or (eq $arraytype "int") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
-        {{template "intarray" .}}
+        {{template "numberarray" .}}
     {{- else if or (eq $arraytype "uint") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
-        {{template "intarray" .}}
+        {{template "numberarray" .}}
     {{- else if or (eq $arraytype "float32") (eq $arraytype "float64") -}}
-        {{template "floatarray" .}}
+        {{template "numberarray" .}}
     {{- else if eq $arraytype "time.Time" -}}
-        {{template "datearray" .}}
+        {{template "txtarray" .}}
     {{- else if or (eq $arraytype "byte") (eq $arraytype "uint8") (eq $arraytype "int8") -}}
         {{template "bytearray" .}}
+    {{- else if or (eq $arraytype "*int") (eq $arraytype "*int16") (eq $arraytype "*int32") (eq $arraytype "*int64") -}}
+        {{template "pointerintarray" .}}
+    {{- else if or (eq $arraytype "*uint") (eq $arraytype "*uint16") (eq $arraytype "*uint32") (eq $arraytype "*uint64") -}}
+        {{template "pointerintarray" .}}
+    {{- else if or (eq $arraytype "*float32") (eq $arraytype "*float64") -}}
+        {{template "pointerfloatarray" .}}
+    {{- else if eq $arraytype "*string" -}}
+        {{template "pointerstringarray" .}}
+    {{- else if eq $arraytype "*bool" -}}
+        {{template "pointerboolarray" .}}
+    {{- else if eq $arraytype "*time.Time" -}}
+        {{template "pointerdatearray" .}}
+    {{- else if or (eq $arraytype "*byte") (eq $arraytype "*uint8") (eq $arraytype "*int8") -}}
+        {{template "pointerbytearray" .}}
     {{- else -}}
-        {{template "otherarray" .}}
+        {{template "numberarray" .}}
     {{- end -}}
 {{- end -}}
+
+{{define "txtarray"}}
+    if {{.Value}} == nil {
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if i != 0 {
+                {{ method .Method "start" "\"" }}\",\"{{ method .Method "end" "\"" }}
+            } else {
+                {{ method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
+            }
+            {{ if eq .FieldType "[]time.Time" -}}
+            {{ method .Method "start" "" }}{{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}{{ method .Method "end" "" }}
+            {{ else }}
+            {{ method .Method "start" "" }}v{{ method .Method "end" "" }}
+            {{ end }}
+            if i == size{{.Name}} {
+                {{ method .Method "start" "\"" }}\"]{{ method .Method "end" .Final }}
+            }
+        }
+    }
+{{end}}
+
+{{define "numberarray"}}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
+            }
+            {{ if eq .FieldType "[]float32" -}}
+            {{ method .Method "start" "" }}{{template "float32" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ else if eq .FieldType "[]float64" -}}
+            {{ method .Method "start" "" }}{{template "float64" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ else if or (eq .FieldType "[]int") (eq .FieldType "[]int16") (eq .FieldType "[]int32") (eq .FieldType "[]int64") }}
+            {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ else if or (eq .FieldType "[]uint") (eq .FieldType "[]uint16") (eq .FieldType "[]uint32") (eq .FieldType "[]uint64") }}
+            {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "v"}}{{ method .Method "end" "" -}}
+            {{ else }}
+            {{ method .Method "start" "" }}fmt.Sprint(v){{ method .Method "end" "" }}
+            {{ end }}
+        }
+        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
+    }
+{{end}}
