@@ -3,16 +3,6 @@
     strconv.Itoa(int({{.Value}}))
 {{- end -}}
 
-{{define "pointerint"}}
-    if {{.Value}} != nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}"{{ method .Method .End "" -}}
-        {{ method .Method "start" "" }}{{template "intvalue" dict "Value" (printf "*%s" .Value) }}{{ method .Method "end" "" -}}
-        {{ method .Method "start" "\"" }}{{ method .Method "end" .Final }}
-    } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
-    }
-{{end}}
-
 {{define "pointerintarray"}}
     if {{.Value}} == nil {
         {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}

@@ -1,43 +1,4 @@
 // {{- /* Go Template */ -}}.
-{{- define "string" -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
-    {{ method .Method "start" "" }}{{.Value}}{{ method .Method "end" "" -}}
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
-    {{- end -}}
+{{- define "stringvalue" -}}
+    {{.Value}}
 {{- end -}}
-
-{{define "pointerstring"}}
-    if {{.Value}} != nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\\\"\"" -}}
-        {{ method .Method "start" "" }}*{{.Value}}{{ method .Method "end" "" -}}
-        {{ method .Method "start" "" }}"\"{{ method .Method "end" .Final }}
-    } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
-    }
-{{end}}
-
-{{define "pointerstringarray"}}
-    if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
-    } else {
-        for i, v := range {{.Value}} {
-            if i > 0 {
-                if v != nil {
-                    {{ method .Method "start" "\"" }},\"{{ method .Method "end" "\"" }}
-                    {{ method .Method "start" "" }}*v{{ method .Method "end" "" }}
-                    {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
-                } else {
-                    {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
-                }
-            } else if v != nil {
-                {{- method .Method .Start .Header }}{{.JSONName}}[\"{{ method .Method .End "\"" }}
-                {{ method .Method "start" "" }}*v{{ method .Method "end" "" }}
-                {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
-            } else {
-                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
-            }
-        }
-        {{ method .Method "start" "\"" }}]{{ method .Method "end" .Final }}
-    }
-{{end}}

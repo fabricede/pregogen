@@ -11,6 +11,8 @@ Handles structure with basic types (bool, int, float, string) date, pointer, arr
 	- Unmarshal
 	- improve 'plus' marshal method to avoid multiple allocation
 	- take into account json flag
+	- map types
+	- composed types
 
 ## Overview
 - Parses Go source files and generates JSON methods using templates.
@@ -78,7 +80,7 @@ Performance for a struct with multiple types (bool, float64, int8, int, string):
 Output: `{"boolfield":true,"float64field":12.34,"int8field":12,"intfield":123,"stringfield":"hello"}`
 
 ### Summary
-- bytesBuffer consistently performs best across all types
+- bytesBuffer consistently performs best across almost all types
 - append method shows good balance of performance and memory usage
 - plus method generally uses more memory and allocations
 - at least one custom method outperform standard json.Marshal

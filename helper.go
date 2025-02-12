@@ -36,6 +36,11 @@ func GetArrayType(a string) string {
 	return strings.Trim(a, "[]")
 }
 
+// Get Pointer type
+func GetPointerType(a string) string {
+	return strings.Trim(a, "*")
+}
+
 // IsArray checks if a field is an array.
 func IsArray(fieldType string) bool {
 	return strings.HasPrefix(fieldType, "[]")
@@ -143,13 +148,14 @@ func Return() error {
 // templateFuncs returns a FuncMap with the custom functions.
 func templateFuncs() template.FuncMap {
 	return template.FuncMap{
-		"dict":         dict,
-		"sub":          Sub,
-		"seq":          Seq,
-		"getArrayType": GetArrayType,
-		"isArray":      IsArray,
-		"method":       Method,
-		"return":       Return,
+		"dict":           dict,
+		"sub":            Sub,
+		"seq":            Seq,
+		"getArrayType":   GetArrayType,
+		"getPointerType": GetPointerType,
+		"isArray":        IsArray,
+		"method":         Method,
+		"return":         Return,
 	}
 }
 

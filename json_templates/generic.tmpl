@@ -1,0 +1,61 @@
+// {{- /* Go Template */ -}}.
+
+{{- define "fieldValue"}}
+    {{- if isArray .FieldType -}}
+        {{- template "array" . -}}
+    {{- else if eq .FieldType "string" -}}{{template "basic" .}}
+    {{- else if eq .FieldType "bool" -}}{{template "bool" .}}
+    {{- else if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "basic" .}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "basic" .}}
+    {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "basic" .}}
+    {{- else if or (eq .FieldType "int8") (eq .FieldType "uint8") (eq .FieldType "byte") -}}{{template "byte" .}}
+    {{- else if eq .FieldType "time.Time" -}}{{template "basic" .}}
+    {{- else if eq .FieldType "*string" -}}{{template "pointer" .}}
+    {{- else if eq .FieldType "*bool" -}}{{template "pointerbool" .}}
+    {{- else if or (eq .FieldType "*int") (eq .FieldType "*int8") (eq .FieldType "*int16") (eq .FieldType "*int32") (eq .FieldType "*int64") -}}{{template "pointer" .}}
+    {{- else if or (eq .FieldType "*uint") (eq .FieldType "*uint8") (eq .FieldType "*uint16") (eq .FieldType "*uint32") (eq .FieldType "*uint64") -}}{{template "pointer" .}}
+    {{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") -}}{{template "pointer" .}}
+    {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "pointerbyte" .}}
+    {{- else if eq .FieldType "*time.Time" -}}{{template "pointer" .}}
+    {{- else -}}{{template "basic" .}}
+    {{- end -}}
+{{end -}}
+
+{{- define "basic" -}}
+    {{- $cote := "" -}}
+    {{- if or (eq .FieldType "time.Time") (eq .FieldType "string") -}}
+        {{- $cote = "\\\"" -}}
+    {{- end -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{$cote}}{{ method .Method .End "\"" -}}
+    {{ method .Method "start" "" }}
+    {{- if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}
+        {{template "intvalue" .}}
+    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
+        {{template "intvalue" .}}
+    {{- else if eq .FieldType "float64" -}}
+        {{template "float64" .}}
+    {{- else if eq .FieldType "float32" -}}
+        {{template "float32" .}}
+    {{- else if eq .FieldType "time.Time" -}}
+        {{template "datevalue" .}}
+    {{- else if eq .FieldType "string" -}}
+        {{.Value}}
+    {{- else -}}
+        {{template "othervalue" .}}
+    {{- end -}}
+    {{- method .Method "end" "" }}
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "\"" }}{{$cote}}{{ method .Method "end" .Final }}
+    {{- end -}}
+{{- end -}}
+
+{{define "pointer"}}
+    if {{.Value}} != nil {
+        {{- template "basic" dict "FieldName" .FieldName "FieldType" (getPointerType .FieldType) "Method" .Method "Value" (printf "*%s" .Value) "JSONName" .JSONName "Name" .Name "Start" .Start "End" .End "PreviousType" .PreviousType "PreviousArray" .PreviousArray "Header" .Header "Last" .Last "Final" .Final -}}
+        {{ if and (eq .Last "false") (or (eq .FieldType "*string") (eq .FieldType "*time.Time")) -}}
+            {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
+        {{- end -}}
+    } else {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+    }
+{{end}}
