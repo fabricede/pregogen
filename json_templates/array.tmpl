@@ -44,7 +44,7 @@
     } else {
         for i, v := range {{.Value}} {
             if i != 0 {
-                {{ method .Method "start" "\"" }}{{$cote}},{{$cote}}{{ method .Method "end" "\"" }}
+                {{ method .Method "start" "\"" }}{{$cote}},{{$cote}}{{ method .Method "stop" "\"" }}
             } else {
                 {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .Stop "\"" }}
             }
@@ -64,9 +64,9 @@
             {{- else -}}
                 {{template "othervalue" dict "Value" "v"}}
             {{- end -}}
-            {{- method .Method "end" "" }}
+            {{- method .Method "stop" "" }}
         }
-        {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "end" .Final }}
+        {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "stop" .Final }}
     }
 {{end}}
 
@@ -84,15 +84,15 @@
             if v == nil {
                 if i != 0 && i != size{{.Name}} {
                     if reminder{{.Name}} {
-                        {{ method .Method "start" "\"" }}{{$cote}},null{{ method .Method "end" "\"" }}
+                        {{ method .Method "start" "\"" }}{{$cote}},null{{ method .Method "stop" "\"" }}
                     } else {
-                        {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                        {{ method .Method "start" "\"" }},null{{ method .Method "stop" "\"" }}
                     }
                 } else if i != 0 {
                     if reminder{{.Name}} {
-                        {{ method .Method "start" "\"" }}{{$cote}},null]{{ method .Method "end" .Final }}
+                        {{ method .Method "start" "\"" }}{{$cote}},null]{{ method .Method "stop" .Final }}
                     } else {
-                        {{ method .Method "start" "\"" }},null]{{ method .Method "end" .Final }}
+                        {{ method .Method "start" "\"" }},null]{{ method .Method "stop" .Final }}
                     }
                 } else if i != size{{.Name}} {
                     {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .Stop "\"" }}
@@ -103,9 +103,9 @@
             } else {
                 if i != 0 {
                     if reminder{{.Name}} {
-                        {{ method .Method "start" "\"" }}{{$cote}},{{$cote}}{{ method .Method "end" "\"" }}
+                        {{ method .Method "start" "\"" }}{{$cote}},{{$cote}}{{ method .Method "stop" "\"" }}
                     } else {
-                        {{ method .Method "start" "\"" }},{{$cote}}{{ method .Method "end" "\"" }}
+                        {{ method .Method "start" "\"" }},{{$cote}}{{ method .Method "stop" "\"" }}
                     }
                 } else {
                     {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .Stop "\"" }}                  
@@ -126,11 +126,11 @@
                 {{- else -}}
                     {{template "othervalue" dict "Value" "*v"}}
                 {{- end -}}
-                {{ method .Method "end" "" }}
+                {{ method .Method "stop" "" }}
                 if i != size{{.Name}} {
                     reminder{{.Name}} = true
                 } else {
-                    {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "end" .Final }}
+                    {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "stop" .Final }}
                 }
             }
         }

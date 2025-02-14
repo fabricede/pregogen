@@ -57,7 +57,7 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- end -}}
 
         {{- $header := "\"," -}}
-        {{- $stop := "end" -}}
+        {{- $stop := "stop" -}}
         {{- if eq $start "firststart" -}}
             {{- $header = "\"{" -}}
             {{- $stop = "firstend" -}}

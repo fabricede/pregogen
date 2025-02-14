@@ -77,7 +77,7 @@ func MethodAppend(action, addition string) (string, error) {
 		return "\n\tvar result []byte\n\t", nil
 	case "start":
 		return "result = append(result, " + addition, nil
-	case "end":
+	case "stop":
 		return addition + "...)\n\t", nil
 	case "firststart":
 		return "result = []byte(" + addition, nil
@@ -95,7 +95,7 @@ func MethodBytesBuffer(action, addition string) (string, error) {
 		return "\n\tvar result bytes.Buffer\n\t", nil
 	case "start":
 		return "result.WriteString(" + addition, nil
-	case "end":
+	case "stop":
 		return addition + ")\n\t", nil
 	case "firststart":
 		return "result.WriteString(" + addition, nil
@@ -113,7 +113,7 @@ func MethodPlus(action, addition string) (string, error) {
 		return "\n\tvar result string\n\t", nil
 	case "start":
 		return "result += " + addition, nil // result += \","
-	case "end":
+	case "stop":
 		return addition + "\n\t", nil
 	case "firststart":
 		return "result = " + addition, nil
@@ -131,7 +131,7 @@ func MethodUnique(action, addition string) (string, error) {
 		return "", nil
 	case "start":
 		return "return ([]byte(", nil
-	case "end":
+	case "stop":
 		return ")), nil", nil
 	case "finalReturn":
 		return "", nil

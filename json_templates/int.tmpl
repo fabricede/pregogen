@@ -10,18 +10,18 @@
         for i, v := range {{.Value}} {
             if i > 0 {
                 if v != nil {
-                    {{ method .Method "start" "\"" }},{{ method .Method "end" "\"" }}
-                    {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "end" "" }}
+                    {{ method .Method "start" "\"" }},{{ method .Method "stop" "\"" }}
+                    {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "stop" "" }}
                 } else {
-                    {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
+                    {{ method .Method "start" "\"" }},null{{ method .Method "stop" "\"" }}
                 }
             } else if v != nil {
                 {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .Stop "\"" }}
-                {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "end" "" }}
+                {{ method .Method "start" "" }}{{template "intvalue" dict "Value" "*v"}}{{ method .Method "stop" "" }}
             } else {
                 {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .Stop "\"" }}
             }
         }
-        {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
+        {{ method .Method "start" "" }}"]{{ method .Method "stop" .Final }}
     }
 {{end}}

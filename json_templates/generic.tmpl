@@ -4,7 +4,7 @@
     {{- if isArray .FieldType -}}
         {{- template "array" . -}}
     {{- else if eq .FieldType "string" -}}{{template "basic" .}}
-    {{- else if eq .FieldType "bool" -}}{{template "boolvalue" .}}
+    {{- else if eq .FieldType "bool" -}}{{template "basic" .}}
     {{- else if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "basic" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "basic" .}}
     {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "basic" .}}
@@ -22,42 +22,42 @@
 {{end -}}
 
 {{- define "basic" -}}
-    {{- $cote := "" -}}
-    {{- if or (eq .FieldType "time.Time") (eq .FieldType "string") -}}
-        {{- $cote = "\\\"" -}}
-    {{- end -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{$cote}}{{ method .Method .Stop "\"" -}}
-    {{ method .Method "start" "" }}
-    {{- if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}
-        {{template "intvalue" .}}
-    {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
-        {{template "intvalue" .}}
-    {{- else if eq .FieldType "float64" -}}
-        {{template "float64" .}}
-    {{- else if eq .FieldType "float32" -}}
-        {{template "float32" .}}
-    {{- else if eq .FieldType "time.Time" -}}
-        {{template "datevalue" .}}
-    {{- else if eq .FieldType "string" -}}
-        {{.Value}}
+    {{ if eq .FieldType "bool" -}}
+        {{ template "boolvalue" dict "Value" .Value "JSONName" .JSONName "Begin" "" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final  }}
     {{- else -}}
-        {{template "othervalue" .}}
-    {{- end -}}
-    {{- method .Method "end" "" }}
-    {{ if eq .Last "true" -}}
-        {{ method .Method "start" "\"" }}{{$cote}}{{ method .Method "end" .Final }}
+        {{- $cote := "" -}}
+        {{- if or (eq .FieldType "time.Time") (eq .FieldType "string") -}}
+            {{- $cote = "\\\"" -}}
+        {{- end -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}{{$cote}}{{ method .Method .Stop "\"" -}}
+        {{ method .Method "start" "" }}
+        {{- if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}
+            {{template "intvalue" .}}
+        {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
+            {{template "intvalue" .}}
+        {{- else if eq .FieldType "float64" -}}
+            {{template "float64" .}}
+        {{- else if eq .FieldType "float32" -}}
+            {{template "float32" .}}
+        {{- else if eq .FieldType "time.Time" -}}
+            {{template "datevalue" .}}
+        {{- else if eq .FieldType "string" -}}
+            {{.Value}}
+        {{- else -}}
+            {{template "othervalue" .}}
+        {{- end -}}
+        {{- method .Method "stop" "" }}
+        {{ if eq .Last "true" -}}
+            {{ method .Method "start" "\"" }}{{$cote}}{{ method .Method "stop" .Final }}
+        {{- end -}}
     {{- end -}}
 {{- end -}}
 
 {{define "pointer"}}
     if {{.Value}} != nil {
-        {{ if eq .FieldType "*bool" -}}
-            {{ template "boolvalue" dict "Value" (printf "*%s" .Value) "JSONName" .JSONName "Begin" "" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final  }}
-        {{- else -}}
-            {{- template "basic" dict "FieldName" .FieldName "FieldType" (getPointerType .FieldType) "Method" .Method "Value" (printf "*%s" .Value) "JSONName" .JSONName "Name" .Name "Start" .Start "Stop" .Stop "PreviousType" .PreviousType "PreviousArray" .PreviousArray "Header" .Header "Last" .Last "Final" .Final -}}
-            {{ if and (eq .Last "false") (or (eq .FieldType "*string") (eq .FieldType "*time.Time")) -}}
-                {{ method .Method "start" "\"" }}\"{{ method .Method "end" "\"" }}
-            {{- end -}}
+        {{- template "basic" dict "FieldName" .FieldName "FieldType" (getPointerType .FieldType) "Method" .Method "Value" (printf "*%s" .Value) "JSONName" .JSONName "Name" .Name "Start" .Start "Stop" .Stop "PreviousType" .PreviousType "PreviousArray" .PreviousArray "Header" .Header "Last" .Last "Final" .Final -}}
+        {{ if and (eq .Last "false") (or (eq .FieldType "*string") (eq .FieldType "*time.Time")) -}}
+            {{ method .Method "start" "\"" }}\"{{ method .Method "stop" "\"" }}
         {{- end -}}
     } else {
         {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
