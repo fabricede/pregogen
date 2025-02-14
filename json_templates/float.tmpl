@@ -13,7 +13,7 @@
 
 {{define "pointerfloatarray"}}
     if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
     } else {
         for i, v := range {{.Value}} {
             if i > 0 {
@@ -28,14 +28,14 @@
                     {{ method .Method "start" "\"" }},null{{ method .Method "end" "\"" }}
                 }
             } else if v != nil {
-                {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .End "\"" }}
+                {{- method .Method .Start .Header }}{{.JSONName}}[{{ method .Method .Stop "\"" }}
                 {{ if eq .FieldType "[]*float32" -}}
                 {{ method .Method "start" "" }}{{template "float32" dict "Value" "*v" }}{{ method .Method "end" "" -}}
                 {{ else if eq .FieldType "[]*float64" -}}
                 {{ method .Method "start" "" }}{{template "float64" dict "Value" "*v" }}{{ method .Method "end" "" -}}
                 {{ end }}
             } else {
-                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+                {{- method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .Stop "\"" }}
             }
         }
         {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}

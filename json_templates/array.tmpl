@@ -40,13 +40,13 @@
         {{- $cote = "\\\"" -}}
     {{- end -}}
     if {{.Value}} == nil {
-        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final }}
     } else {
         for i, v := range {{.Value}} {
             if i != 0 {
                 {{ method .Method "start" "\"" }}{{$cote}},{{$cote}}{{ method .Method "end" "\"" }}
             } else {
-                {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .End "\"" }}
+                {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .Stop "\"" }}
             }
             {{ method .Method "start" "" -}}
             {{- if eq .FieldType "[]time.Time" -}}
@@ -76,7 +76,7 @@
         {{- $cote = "\\\"" -}}
     {{- end }}
     if {{.Value}} == nil {
-        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final }}
     } else {
         size{{.Name}} := len({{.Value}})-1
         reminder{{.Name}} := false
@@ -95,9 +95,9 @@
                         {{ method .Method "start" "\"" }},null]{{ method .Method "end" .Final }}
                     }
                 } else if i != size{{.Name}} {
-                    {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .End "\"" }}
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .Stop "\"" }}
                 } else {
-                    {{ method .Method .Start .Header }}{{.JSONName}}[null]{{ method .Method .End .Final }}
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null]{{ method .Method .Stop .Final }}
                 }
                 reminder{{.Name}} = false
             } else {
@@ -108,7 +108,7 @@
                         {{ method .Method "start" "\"" }},{{$cote}}{{ method .Method "end" "\"" }}
                     }
                 } else {
-                    {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .End "\"" }}                  
+                    {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .Stop "\"" }}                  
                 }
                 {{ method .Method "start" "" }}
                 {{- if eq .FieldType "[]*string" -}}

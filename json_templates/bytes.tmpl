@@ -7,7 +7,7 @@
     switch {{.Value}} {
         {{ range seq $seqstart 256 -}}
     case {{.}}:
-        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $.Final }}
+        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.Stop $.Final }}
         {{- end -}}
     }
 {{ end -}}
@@ -18,7 +18,7 @@
         {{- $seqstart = -128 -}}
     {{- end }}
     if {{.Value}} == nil {
-        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final }}
+        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final }}
     } else {
         size{{.Name}} := len({{.Value}})-1
         for i, v := range {{.Value}} {
@@ -32,9 +32,9 @@
                         {{ method $.Method "start" "\"," }}{{.}}{{ method $.Method "end" "\"" }}
                     }
                 } else if i == size{{$.Name}} {
-                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}]{{ method $.Method $.End $.Final }}
+                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}]{{ method $.Method $.Stop $.Final }}
                 } else {
-                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.End "\"" }}
+                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.Stop "\"" }}
                 }
             {{- end -}}
             }
@@ -51,11 +51,11 @@
         switch *{{.Value}} {
             {{ range seq $seqstart 256 -}}
         case {{.}}:
-            {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.End $.Final }}
+            {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.Stop $.Final }}
             {{- end -}}
         }
     } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
     }
 {{ end -}}
 
@@ -65,7 +65,7 @@
         {{- $seqstart = -128 -}}
     {{- end }}
     if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .End .Final -}}
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
     } else {
         for i, v := range {{.Value}} {
             if v != nil {
@@ -75,14 +75,14 @@
                     if i > 0 {
                         {{ method $.Method "start" "\"" }},{{.}}{{ method $.Method "end" "\"" }}
                     } else {
-                        {{- method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.End "\"" }}
+                        {{- method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.Stop "\"" }}
                     }
                 {{- end -}}
                 }
             } else if i > 0 {
                 {{ method $.Method "start" "\"" }},null{{ method $.Method "end" "\"" }}
             } else {
-                {{- method $.Method $.Start $.Header }}{{$.JSONName}}[null{{ method $.Method $.End "\"" }}
+                {{- method $.Method $.Start $.Header }}{{$.JSONName}}[null{{ method $.Method $.Stop "\"" }}
             }
         }
         {{ method .Method "start" "" }}"]{{ method .Method "end" .Final }}
@@ -101,7 +101,7 @@ func init() {
 {{- end -}}
 
 {{- define "bytebis" -}}
-    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .End "\"" -}}
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .Stop "\"" -}}
     {{ method .Method "start" "" }}byteValue_{{.Method}}[{{.Value}}]{{ method .Method "end" "" -}}
     {{ if eq .Last "true" -}}
         {{ method .Method "start" "" }}"}"{{ method .Method "end" "" }}
