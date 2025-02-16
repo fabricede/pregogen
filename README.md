@@ -6,8 +6,10 @@ A code generator for custom JSON methods in Go.
 demonstrates feasibility and increase in json Marshal performance over the standard library.
 Handles structure with basic types (bool, int, float, string) date, pointer, array and array of pointer
 
+For []byte use a byte by byte aproach {"bytearrayfield":[91,92,93]}  <-- want --> {"bytearrayfield":"W1xd"}
+
 ## TODO 
-	- Enum capabilities inspired from bool
+	- Extend Enum capabilities
 	- Unmarshal
 	- improve 'plus' marshal method to avoid multiple allocation
 	- take into account json flag
@@ -23,6 +25,7 @@ Handles structure with basic types (bool, int, float, string) date, pointer, arr
 2. Run `go build main/pregogen.go`.
 3. Add executable to the path : `export PATH="$PATH:$(pwd)"`.
 4. To generate tests : `go generate ./...`
+5. To execute tests : `go test ./...`
 
 ## Usage
 - Use the `-type` flag to specify the struct type.

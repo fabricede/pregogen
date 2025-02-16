@@ -1,95 +1,18 @@
 // {{- /* Go Template */ -}}.
-{{- define "byte" -}}
-    {{- $seqstart := 0 -}}
-    {{if eq .FieldType "int8"}}
+{{define "bytevalue"}}
+    {{$seqstart := 0 -}}
+    {{- if eq .FieldType "int8" -}}
         {{- $seqstart = -128 -}}
-    {{- end }}
+    {{- end -}}
     switch {{.Value}} {
         {{ range seq $seqstart 256 -}}
     case {{.}}:
-        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.Stop $.Final }}
+        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{$.Begin}}{{.}}{{$.End}}{{ method $.Method $.Stop $.Final }}
         {{- end -}}
     }
-{{ end -}}
+{{end}}
 
-{{- define "bytearray" -}}
-    {{- $seqstart := 0 -}}
-    {{if eq .FieldType "int8"}}
-        {{- $seqstart = -128 -}}
-    {{- end }}
-    if {{.Value}} == nil {
-        {{ method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final }}
-    } else {
-        size{{.Name}} := len({{.Value}})-1
-        for i, v := range {{.Value}} {
-            switch v {
-            {{ range seq $seqstart 256 }}
-            case {{.}}:
-                if i > 0 {
-                    if i == size{{$.Name}} {
-                        {{ method $.Method "start" "\"," }}{{.}}]{{ method $.Method "stop" $.Final }}
-                    } else {
-                        {{ method $.Method "start" "\"," }}{{.}}{{ method $.Method "stop" "\"" }}
-                    }
-                } else if i == size{{$.Name}} {
-                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}]{{ method $.Method $.Stop $.Final }}
-                } else {
-                    {{ method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.Stop "\"" }}
-                }
-            {{- end -}}
-            }
-        }
-    }
-{{- end -}}
-
-{{- define "pointerbyte" -}}
-    {{- $seqstart := 0 -}}
-    {{if eq .FieldType "int8"}}
-        {{- $seqstart = -128 -}}
-    {{- end }}
-    if {{.Value}} != nil {
-        switch *{{.Value}} {
-            {{ range seq $seqstart 256 -}}
-        case {{.}}:
-            {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{.}}{{ method $.Method $.Stop $.Final }}
-            {{- end -}}
-        }
-    } else {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
-    }
-{{ end -}}
-
-{{- define "pointerbytearray" -}}
-    {{- $seqstart := 0 -}}
-    {{if eq .FieldType "int8"}}
-        {{- $seqstart = -128 -}}
-    {{- end }}
-    if {{.Value}} == nil {
-        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
-    } else {
-        for i, v := range {{.Value}} {
-            if v != nil {
-                switch *v {
-                {{ range seq $seqstart 256 }}
-                case {{.}}:
-                    if i > 0 {
-                        {{ method $.Method "start" "\"" }},{{.}}{{ method $.Method "stop" "\"" }}
-                    } else {
-                        {{- method $.Method $.Start $.Header }}{{$.JSONName}}[{{.}}{{ method $.Method $.Stop "\"" }}
-                    }
-                {{- end -}}
-                }
-            } else if i > 0 {
-                {{ method $.Method "start" "\"" }},null{{ method $.Method "stop" "\"" }}
-            } else {
-                {{- method $.Method $.Start $.Header }}{{$.JSONName}}[null{{ method $.Method $.Stop "\"" }}
-            }
-        }
-        {{ method .Method "start" "" }}"]{{ method .Method "stop" .Final }}
-    }
-{{- end -}}
-
-{{- define "bytevalue" -}}
+{{- define "bytevalues" -}}
 var byteValue_{{.Method}} map[byte]string
 
 func init() {

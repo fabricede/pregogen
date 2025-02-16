@@ -72,7 +72,7 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
 		t.Run(tt.name+"_MarshalJSON_append", func(t *testing.T) {
@@ -82,7 +82,7 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
 		t.Run(tt.name+"_MarshalJSON_plus", func(t *testing.T) {
@@ -92,7 +92,7 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
 		t.Run(tt.name+"_json.Marshal", func(t *testing.T) {
@@ -102,7 +102,7 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("json.Marshal({{.TypeName}}) = %v, want %v", string(got), string(tt.want))
+				t.Errorf("json.Marshal({{.TypeName}}) = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
 		t.Run(tt.name+"_ref", func(t *testing.T) {
@@ -112,7 +112,7 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}Ref.MarshalJSON() = %v, want %v", string(got), string(tt.want))
+				t.Errorf("{{.TypeName}}Ref.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
 	}

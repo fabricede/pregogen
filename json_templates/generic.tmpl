@@ -8,14 +8,14 @@
     {{- else if or (eq .FieldType "int")  (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}{{template "basic" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}{{template "basic" .}}
     {{- else if or (eq .FieldType "float32") (eq .FieldType "float64") -}}{{template "basic" .}}
-    {{- else if or (eq .FieldType "int8") (eq .FieldType "uint8") (eq .FieldType "byte") -}}{{template "byte" .}}
+    {{- else if or (eq .FieldType "int8") (eq .FieldType "uint8") (eq .FieldType "byte") -}}{{template "basic" .}}
     {{- else if eq .FieldType "time.Time" -}}{{template "basic" .}}
     {{- else if eq .FieldType "*string" -}}{{template "pointer" .}}
     {{- else if eq .FieldType "*bool" -}}{{template "pointer" .}}
     {{- else if or (eq .FieldType "*int") (eq .FieldType "*int8") (eq .FieldType "*int16") (eq .FieldType "*int32") (eq .FieldType "*int64") -}}{{template "pointer" .}}
     {{- else if or (eq .FieldType "*uint") (eq .FieldType "*uint8") (eq .FieldType "*uint16") (eq .FieldType "*uint32") (eq .FieldType "*uint64") -}}{{template "pointer" .}}
     {{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") -}}{{template "pointer" .}}
-    {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "pointerbyte" .}}
+    {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "pointer" .}}
     {{- else if eq .FieldType "*time.Time" -}}{{template "pointer" .}}
     {{- else -}}{{template "basic" .}}
     {{- end -}}
@@ -24,6 +24,8 @@
 {{- define "basic" -}}
     {{ if eq .FieldType "bool" -}}
         {{ template "boolvalue" dict "Value" .Value "JSONName" .JSONName "Begin" "" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final  }}
+    {{- else if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") -}}
+        {{ template "bytevalue" dict "Value" .Value "JSONName" .JSONName "Begin" "" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final "FieldType" .FieldType }}
     {{- else -}}
         {{- $cote := "" -}}
         {{- if or (eq .FieldType "time.Time") (eq .FieldType "string") -}}

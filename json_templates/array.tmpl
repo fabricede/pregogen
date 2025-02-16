@@ -4,7 +4,7 @@
     {{- if eq $arraytype "string" -}}
         {{template "basicarray" .}}
     {{- else if eq $arraytype "bool" -}}
-        {{template "boolarray" .}}
+        {{template "enumarray" .}}
     {{- else if or (eq $arraytype "int") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
         {{template "basicarray" .}}
     {{- else if or (eq $arraytype "uint") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
@@ -14,7 +14,7 @@
     {{- else if eq $arraytype "time.Time" -}}
         {{template "basicarray" .}}
     {{- else if or (eq $arraytype "byte") (eq $arraytype "uint8") (eq $arraytype "int8") -}}
-        {{template "bytearray" .}}
+        {{template "enumarray" .}}
     {{- else if or (eq $arraytype "*int") (eq $arraytype "*int16") (eq $arraytype "*int32") (eq $arraytype "*int64") -}}
         {{template "pointerarray" .}}
     {{- else if or (eq $arraytype "*uint") (eq $arraytype "*uint16") (eq $arraytype "*uint32") (eq $arraytype "*uint64") -}}
@@ -24,19 +24,20 @@
     {{- else if eq $arraytype "*string" -}}
         {{template "pointerarray" .}}
     {{- else if eq $arraytype "*bool" -}}
-        {{template "pointerboolarray" .}}
+        {{template "pointerenumarray" .}}
     {{- else if eq $arraytype "*time.Time" -}}
         {{template "pointerarray" .}}
     {{- else if or (eq $arraytype "*byte") (eq $arraytype "*uint8") (eq $arraytype "*int8") -}}
-        {{template "pointerbytearray" .}}
+        {{template "pointerenumarray" .}}
     {{- else -}}
         {{template "basicarray" .}}
     {{- end -}}
 {{- end -}}
 
 {{define "basicarray"}}
+    {{ $fieldType := (getArrayType .FieldType) }}
     {{- $cote := "" -}}
-    {{- if or (eq .FieldType "[]time.Time") (eq .FieldType "[]string") -}}
+    {{- if or (eq $fieldType "time.Time") (eq $fieldType "string") -}}
         {{- $cote = "\\\"" -}}
     {{- end -}}
     if {{.Value}} == nil {
@@ -49,17 +50,17 @@
                 {{ method .Method .Start .Header }}{{.JSONName}}[{{$cote}}{{ method .Method .Stop "\"" }}
             }
             {{ method .Method "start" "" -}}
-            {{- if eq .FieldType "[]time.Time" -}}
+            {{- if eq $fieldType "time.Time" -}}
                 {{template "datevalue" dict "Value" "v" "FieldName" .FieldName}}
-            {{- else if eq .FieldType "[]string" -}}
+            {{- else if eq $fieldType "string" -}}
                 v
-            {{- else if eq .FieldType "[]float32" -}}
+            {{- else if eq $fieldType "float32" -}}
                 {{template "float32" dict "Value" "v"}}
-            {{- else if eq .FieldType "[]float64" -}}
+            {{- else if eq $fieldType "float64" -}}
                 {{template "float64" dict "Value" "v"}}
-            {{- else if or (eq .FieldType "[]int") (eq .FieldType "[]int16") (eq .FieldType "[]int32") (eq .FieldType "[]int64") -}}
+            {{- else if or (eq $fieldType "int") (eq $fieldType "int16") (eq $fieldType "int32") (eq $fieldType "int64") -}}
                 {{template "intvalue" dict "Value" "v"}}
-            {{- else if or (eq .FieldType "[]uint") (eq .FieldType "[]uint16") (eq .FieldType "[]uint32") (eq .FieldType "[]uint64") -}}
+            {{- else if or (eq $fieldType "uint") (eq $fieldType "uint16") (eq $fieldType "uint32") (eq $fieldType "uint64") -}}
                 {{template "intvalue" dict "Value" "v"}}
             {{- else -}}
                 {{template "othervalue" dict "Value" "v"}}
@@ -67,6 +68,44 @@
             {{- method .Method "stop" "" }}
         }
         {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "stop" .Final }}
+    }
+{{end}}
+
+{{define "enumarray"}}
+    {{ $fieldType := (getArrayType .FieldType) }}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if i > 0 {
+                if i == size{{.Name}} {
+                    {{ if eq $fieldType "bool" -}}
+                        {{ template "boolvalue" dict "Value" "v" "JSONName" "" "Begin" "" "End" "]" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" .Final }}
+                    {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                        {{ template "bytevalue" dict "Value" "v" "JSONName" "" "Begin" "" "End" "]" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" .Final "FieldType" $fieldType }}
+                    {{- end -}}
+                } else {
+                    {{ if eq $fieldType "bool" -}}
+                        {{ template "boolvalue" dict "Value" "v" "JSONName" "" "Begin" "" "End" "" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" "\"" }}
+                    {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                        {{ template "bytevalue" dict "Value" "v" "JSONName" "" "Begin" "" "End" "" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" "\"" "FieldType" $fieldType }}
+                    {{- end -}}
+                }
+            } else if i == size{{.Name}} {
+                {{ if eq $fieldType "bool" -}}
+                    {{ template "boolvalue" dict "Value" "v" "JSONName" .JSONName "Begin" "[" "End" "]" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final }}
+                {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                    {{ template "bytevalue" dict "Value" "v" "JSONName" .JSONName "Begin" "[" "End" "]" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final "FieldType" $fieldType }}
+                {{- end -}}
+            } else {
+                {{ if eq $fieldType "bool" -}}
+                    {{ template "boolvalue" dict "Value" "v" "JSONName" .JSONName "Begin" "[" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" "\"" }}
+                {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                    {{ template "bytevalue" dict "Value" "v" "JSONName" .JSONName "Begin" "[" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" "\"" "FieldType" $fieldType }}
+                {{- end -}}   
+            }
+        }
     }
 {{end}}
 
@@ -131,6 +170,58 @@
                     reminder{{.Name}} = true
                 } else {
                     {{ method .Method "start" "\"" }}{{$cote}}]{{ method .Method "stop" .Final }}
+                }
+            }
+        }
+    }
+{{- end -}}
+
+{{- define "pointerenumarray" }}
+    {{ $fieldType := (getPointerType (getArrayType .FieldType)) }}
+    if {{.Value}} == nil {
+        {{- method .Method .Start .Header }}{{.JSONName}}null{{ method .Method .Stop .Final -}}
+    } else {
+        size{{.Name}} := len({{.Value}})-1
+        for i, v := range {{.Value}} {
+            if v == nil {
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ method .Method "start" "\"," }}null]{{ method .Method "stop" .Final }}
+                    } else {
+                        {{ method .Method "start" "\"," }}null{{ method .Method "stop" "\"" }}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null]{{ method .Method .Stop .Final }}
+                } else {
+                    {{ method .Method .Start .Header }}{{.JSONName}}[null{{ method .Method .Stop "\"" }}
+                }
+            } else {        
+                if i > 0 {
+                    if i == size{{.Name}} {
+                        {{ if eq $fieldType "bool" -}}
+                            {{ template "boolvalue" dict "Value" "*v" "JSONName" "" "Begin" "" "End" "]" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" .Final }}
+                        {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                            {{ template "bytevalue" dict "Value" "*v" "JSONName" "" "Begin" "" "End" "]" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" .Final "FieldType" $fieldType }}
+                        {{- end -}}
+                    } else {
+                        {{ if eq $fieldType "bool" -}}
+                            {{ template "boolvalue" dict "Value" "*v" "JSONName" "" "Begin" "" "End" "" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" "\"" }}
+                        {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                            {{ template "bytevalue" dict "Value" "*v" "JSONName" "" "Begin" "" "End" "" "Start" "start" "Stop" "stop" "Method" .Method "Header" "\"," "Final" "\"" "FieldType" $fieldType }}
+                        {{- end -}}
+                    }
+                } else if i == size{{.Name}} {
+                    {{ if eq $fieldType "bool" -}}
+                        {{ template "boolvalue" dict "Value" "*v" "JSONName" .JSONName "Begin" "[" "End" "]" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final }}
+                    {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                        {{ template "bytevalue" dict "Value" "*v" "JSONName" .JSONName "Begin" "[" "End" "]" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final "FieldType" $fieldType }}
+                    {{- end -}}
+                } else {
+                    {{ if eq $fieldType "bool" -}}
+                        {{ template "boolvalue" dict "Value" "*v" "JSONName" .JSONName "Begin" "[" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" "\"" }}
+                    {{ else if or (eq $fieldType "byte") (eq $fieldType "int8") (eq $fieldType "uint8") -}}
+                        {{ template "bytevalue" dict "Value" "*v" "JSONName" .JSONName "Begin" "[" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" "\"" "FieldType" $fieldType }}
+                    {{- end -}}
                 }
             }
         }
