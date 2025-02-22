@@ -1,0 +1,49 @@
+// {{- /* Go Template */ -}}.
+{{- define "float32" -}}
+    strconv.FormatFloat(float64({{.Value}}), 'f', -1, 32)
+{{- end -}}
+
+{{- define "float64" -}}
+    strconv.FormatFloat({{.Value}}, 'f', -1, 64)
+{{- end -}}
+
+{{- define "intvalue" -}}
+    strconv.Itoa(int({{.Value}}))
+{{- end -}}
+
+{{- define "stringvalue" -}}
+    {{.Value}}
+{{- end -}}
+
+{{- define "datevalue" -}}
+    ({{.Value}}).Format({{.FieldName}}Format)
+{{- end -}}
+
+{{define "boolvalue"}}
+    if {{.Value}} {
+        {{ method .Method .Start .Header }}{{.JSONName}}{{.Begin}}true{{.End}}{{ method .Method .Stop .Final }}
+    } else {
+        {{ method .Method .Start .Header }}{{.JSONName}}{{.Begin}}false{{.End}}{{ method .Method .Stop .Final }}
+    }
+{{end}}
+
+{{define "bytevalue"}}
+    {{$seqstart := 0 -}}
+    {{- if eq .FieldType "int8" -}}
+        {{- $seqstart = -128 -}}
+    {{- end -}}
+    switch {{.Value}} {
+        {{ range seq $seqstart 256 -}}
+    case {{.}}:
+        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{$.Begin}}{{.}}{{$.End}}{{ method $.Method $.Stop $.Final }}
+        {{- end -}}
+    }
+{{end}}
+
+{{- define "base64" -}}
+    base64.StdEncoding.EncodeToString([]byte({{.Value}}))
+{{- end -}}
+
+{{- define "othervalue" -}}
+    fmt.Sprint({{.Value}})
+{{- end -}}

@@ -61,7 +61,7 @@ func ({{.ReceiverName}} {{.TypeName}}) MarshalJSON_{{$method}}() ([]byte, error)
         {{- if eq $start "firststart" -}}
             {{- $header = "\"{" -}}
             {{- $stop = "firstend" -}}
-        {{- else if or (eq $previousType "string") (eq $previousType "time.Time") -}}
+        {{- else if or (eq $previousType "[]byte") (eq $previousType "string") (eq $previousType "time.Time") -}}
             {{- $header = "\"\\\"," -}}
         {{- end -}}
 

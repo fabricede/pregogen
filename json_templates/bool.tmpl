@@ -1,12 +1,4 @@
 // {{- /* Go Template */ -}}.
-{{define "boolvalue"}}
-    if {{.Value}} {
-        {{ method .Method .Start .Header }}{{.JSONName}}{{.Begin}}true{{.End}}{{ method .Method .Stop .Final }}
-    } else {
-        {{ method .Method .Start .Header }}{{.JSONName}}{{.Begin}}false{{.End}}{{ method .Method .Stop .Final }}
-    }
-{{end}}
-
 {{define "uniqueBool"}}
     {{- range $i, $field := .Fields -}}
 var TRUE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":true}")

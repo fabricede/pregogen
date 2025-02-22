@@ -28,7 +28,7 @@
         {{ template "bytevalue" dict "Value" .Value "JSONName" .JSONName "Begin" "" "End" "" "Start" .Start "Stop" .Stop "Method" .Method "Header" .Header "Final" .Final "FieldType" .FieldType }}
     {{- else -}}
         {{- $cote := "" -}}
-        {{- if or (eq .FieldType "time.Time") (eq .FieldType "string") -}}
+        {{- if or (eq .FieldType "[]byte") (eq .FieldType "time.Time") (eq .FieldType "string") -}}
             {{- $cote = "\\\"" -}}
         {{- end -}}
         {{- method .Method .Start .Header }}{{.JSONName}}{{$cote}}{{ method .Method .Stop "\"" -}}
@@ -45,6 +45,8 @@
             {{template "datevalue" .}}
         {{- else if eq .FieldType "string" -}}
             {{.Value}}
+        {{- else if eq .FieldType "[]byte" -}}
+            {{template "base64" .}}
         {{- else -}}
             {{template "othervalue" .}}
         {{- end -}}

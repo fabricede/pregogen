@@ -1,0 +1,4 @@
+// {{- /* Go Template */ -}}.
+{{- define "parsefloat" -}}
+    strconv.ParseFloat(float64({{.Value}}), 64)
+{{- end -}}

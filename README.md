@@ -4,9 +4,7 @@ A code generator for custom JSON methods in Go.
 
 ## Current State
 demonstrates feasibility and increase in json Marshal performance over the standard library.
-Handles structure with basic types (bool, int, float, string) date, pointer, array and array of pointer
-
-For []byte use a byte by byte aproach {"bytearrayfield":[91,92,93]}  <-- want --> {"bytearrayfield":"W1xd"}
+Handles structure with basic types (bool, int, float, string) date, []byte, pointer, array and array of pointer
 
 ## TODO 
 	- Extend Enum capabilities

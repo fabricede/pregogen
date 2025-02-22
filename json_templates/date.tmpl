@@ -18,7 +18,3 @@ func (t *{{.FieldName}}CustomTime) UnmarshalJSON(b []byte) (err error) {
 }
 
 {{- end -}}
-
-{{- define "datevalue" -}}
-    ({{.Value}}).Format({{.FieldName}}Format)
-{{- end -}}

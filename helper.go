@@ -160,6 +160,13 @@ func templateFuncs() template.FuncMap {
 }
 
 func processFieldType(fieldType, fieldName string, includes *[]string) {
+	// Handle []byte type
+	if fieldType == "[]byte" {
+		if !containsItem(*includes, "encoding/base64") {
+			*includes = append(*includes, "encoding/base64")
+		}
+		return
+	}
 	// Handle slice types
 	fieldType = strings.TrimPrefix(fieldType, "[]")
 	// Handle pointer types
@@ -184,7 +191,7 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 		log.Printf("Field %s is of type time.Time", fieldName)
 	case "byte", "int8", "uint8":
 		// do nothing in this case
-		log.Printf("Field %s is of type byte", fieldName)
+		log.Printf("Field %s is of type short", fieldName)
 		/*if !containsItem(*includes, "strconv") {
 			*includes = append(*includes, "strconv")
 		}*/

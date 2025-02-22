@@ -1,17 +1,4 @@
 // {{- /* Go Template */ -}}.
-{{define "bytevalue"}}
-    {{$seqstart := 0 -}}
-    {{- if eq .FieldType "int8" -}}
-        {{- $seqstart = -128 -}}
-    {{- end -}}
-    switch {{.Value}} {
-        {{ range seq $seqstart 256 -}}
-    case {{.}}:
-        {{ method $.Method $.Start $.Header }}{{$.JSONName}}{{$.Begin}}{{.}}{{$.End}}{{ method $.Method $.Stop $.Final }}
-        {{- end -}}
-    }
-{{end}}
-
 {{- define "bytevalues" -}}
 var byteValue_{{.Method}} map[byte]string
 

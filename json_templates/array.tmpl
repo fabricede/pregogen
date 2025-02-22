@@ -13,7 +13,9 @@
         {{template "basicarray" .}}
     {{- else if eq $arraytype "time.Time" -}}
         {{template "basicarray" .}}
-    {{- else if or (eq $arraytype "byte") (eq $arraytype "uint8") (eq $arraytype "int8") -}}
+    {{- else if eq $arraytype "byte" -}}
+        {{template "basic" .}}
+    {{- else if or (eq $arraytype "uint8") (eq $arraytype "int8") -}}
         {{template "enumarray" .}}
     {{- else if or (eq $arraytype "*int") (eq $arraytype "*int16") (eq $arraytype "*int32") (eq $arraytype "*int64") -}}
         {{template "pointerarray" .}}
