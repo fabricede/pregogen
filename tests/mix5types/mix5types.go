@@ -1,4 +1,4 @@
-//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=test
+//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=YourType1 -file=$GOFILE -gen=append
 //go:generate pregogen -type=YourType1 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=YourType1 -file=$GOFILE -gen=plus

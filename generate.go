@@ -50,7 +50,7 @@ func generateForStruct(node *ast.File, typeName, genType string) error {
 		switch x := n.(type) {
 		case *ast.TypeSpec:
 			if x.Name.Name == typeName {
-				generateJSONMarshal(x, node.Name.Name, genType)
+				generateJSON(x, node.Name.Name, genType)
 				return false
 			}
 		}
@@ -59,7 +59,7 @@ func generateForStruct(node *ast.File, typeName, genType string) error {
 	return nil
 }
 
-func generateJSONMarshal(typeSpec *ast.TypeSpec, packageName string, gentype string) {
+func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 	structType, ok := typeSpec.Type.(*ast.StructType)
 	if !ok {
 		log.Fatalf("%s is not a struct", typeSpec.Name.Name)
@@ -100,18 +100,26 @@ func generateJSONMarshal(typeSpec *ast.TypeSpec, packageName string, gentype str
 		Gentype:      gentype,
 	}
 
-	tmpl, err := template.New("marshal.tmpl").Funcs(templateFuncs()).ParseFS(templatesFS, "json_templates/*.tmpl")
+	tmpl, err := template.New("json.tmpl").Funcs(templateFuncs()).ParseFS(templatesFS, "json_templates/*.tmpl")
 	if err != nil {
 		log.Fatalf("Error parsing template: %v", err)
 	}
 
-	file, err := os.Create(fmt.Sprintf("generated_%s_marshal_json_%s.go", typeSpec.Name.Name, gentype))
+	name := fmt.Sprintf("generated_%s_marshal_json_%s.go", typeSpec.Name.Name, gentype)
+	if gentype == "testUnmarshal" {
+		name = fmt.Sprintf("generated_%s_unmarshal_json_test.go", typeSpec.Name.Name)
+	} else if gentype == "unmarshal" {
+		name = fmt.Sprintf("generated_%s_unmarshal_json.go", typeSpec.Name.Name)
+	} else if gentype == "testMarshal" {
+		name = fmt.Sprintf("generated_%s_marshal_json_test.go", typeSpec.Name.Name)
+	}
+	file, err := os.Create(name)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}
 	defer file.Close()
 
-	err = tmpl.ExecuteTemplate(file, "marshal.tmpl", data)
+	err = tmpl.ExecuteTemplate(file, "json.tmpl", data)
 	if err != nil {
 		log.Fatalf("Error executing template: %v", err)
 	}

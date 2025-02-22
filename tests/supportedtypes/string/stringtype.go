@@ -1,8 +1,8 @@
-//go:generate pregogen -type=StringType -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=plus
-
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=unmarshal
 package stringtype
 
 type StringType struct {
@@ -20,10 +20,11 @@ var StringType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=unmarshal
 type StringType3 struct {
 	StringField1 string `json:"stringfield1"`
 	StringField2 string `json:"stringfield2"`
@@ -43,7 +44,7 @@ var StringType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=StringArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=StringArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringArrayType -file=$GOFILE -gen=plus
@@ -68,7 +69,7 @@ type StringArrayType3 struct {
 	StringArrayField3 []string `json:"stringarray3field"`
 }
 
-//go:generate pregogen -type=StringArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=StringArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=StringArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringArrayType3 -file=$GOFILE -gen=plus
@@ -86,7 +87,7 @@ var StringArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=plus
@@ -112,7 +113,7 @@ var PointerStringType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=plus
@@ -150,11 +151,10 @@ var PointerStringType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerStringArrayType -file=$GOFILE -gen=plus
-
 type PointerStringArrayType struct {
 	PointerStringField []*string `json:"pointerstringfield"`
 }
@@ -177,7 +177,7 @@ var PointerStringArrayType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerStringArrayType3 -file=$GOFILE -gen=plus

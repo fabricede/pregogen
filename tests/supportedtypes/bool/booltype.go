@@ -1,4 +1,4 @@
-//go:generate pregogen -type=BoolType -file=$GOFILE -gen=test
+//go:generate pregogen -type=BoolType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=plus
@@ -24,7 +24,7 @@ type BoolType3 struct {
 	BoolField3 bool `json:"boolfield3"`
 }
 
-//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=plus
@@ -48,7 +48,7 @@ var BoolType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=plus
@@ -85,7 +85,7 @@ type BoolArrayType3 struct {
 	BoolArrayField3 []bool `json:"boolarray3field"`
 }
 
-//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=plus
@@ -121,7 +121,7 @@ var BoolArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=plus
@@ -152,7 +152,7 @@ var PointerBoolType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=plus
@@ -189,7 +189,7 @@ var PointerBoolType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=plus
@@ -216,7 +216,7 @@ var PointerBoolArrayType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=plus

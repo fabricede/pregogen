@@ -1,4 +1,4 @@
-//go:generate pregogen -type=IntType -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=append
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=plus
@@ -20,7 +20,7 @@ var IntType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=IntType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=IntType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=IntType3 -file=$GOFILE -gen=plus
@@ -43,7 +43,7 @@ var IntType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=plus
@@ -68,7 +68,7 @@ type IntArrayType3 struct {
 	IntArrayField3 []int `json:"intarray3field"`
 }
 
-//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=plus
@@ -86,7 +86,7 @@ var IntArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=plus
@@ -112,7 +112,7 @@ var PointerIntType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=plus
@@ -150,7 +150,7 @@ var PointerIntType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=plus
@@ -177,7 +177,7 @@ var PointerIntArrayType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=plus

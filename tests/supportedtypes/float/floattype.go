@@ -1,4 +1,4 @@
-//go:generate pregogen -type=FloatType -file=$GOFILE -gen=test
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=append
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=plus
@@ -20,7 +20,7 @@ var FloatType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=plus
@@ -43,7 +43,7 @@ var FloatType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=Float32ArrayType -file=$GOFILE -gen=plus
@@ -68,7 +68,7 @@ type Float32ArrayType3 struct {
 	Float32ArrayField3 []float32 `json:"float32array3field"`
 }
 
-//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=Float32ArrayType3 -file=$GOFILE -gen=plus
@@ -86,7 +86,7 @@ var Float32ArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=plus
@@ -112,7 +112,7 @@ var PointerFloat32Type_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=plus
@@ -150,7 +150,7 @@ var PointerFloat32Type3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerFloatArrayType -file=$GOFILE -gen=plus
@@ -177,7 +177,7 @@ var PointerFloatArrayType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=test
+//go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerFloatArrayType3 -file=$GOFILE -gen=plus

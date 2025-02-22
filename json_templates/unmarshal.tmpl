@@ -1,0 +1,84 @@
+// {{- /* Go Template */ -}}
+{{define "unmarshal"}}
+package {{.Package}}
+
+{{ $imports := (len .Includes) }}
+{{- $lastIndex := sub (len .Fields) 1 -}}
+{{- $uniquebool := false -}}
+{{- $uniquearraybool := false -}}
+{{- $containsbytes := false -}}
+{{- range $i, $field := .Fields -}}
+    {{- if and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0) }}
+        {{- $uniquebool = true -}}
+    {{- else if and (eq .FieldType "[]bool") (eq $lastIndex $i) ( eq $i 0) }}
+        {{- $uniquearraybool = true -}}
+    {{- end -}}
+    {{- if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") }}
+        {{- $containsbytes = true -}}
+    {{- end -}}
+{{- end -}}
+{{- if $uniquebool -}}
+    {{ template "uniqueBool" . }}
+    {{ return }}
+{{- end -}}
+import (
+	"strings"
+    {{ range $include := .Includes }}
+    "{{$include}}"
+    {{ end }}
+)
+
+func ({{.ReceiverName}} *{{.TypeName}}) UnmarshalJSON(data []byte) (err error) {
+    // UnmarshalJSON implements the json.Unmarshaler interface.
+	sdata := string(data)
+	lendata := len(sdata)
+
+	// Define a type that holds both key and Field info.
+	type OrderedField struct {
+		Key   string
+		start int
+		begin int
+	}
+
+	var orderedFields []OrderedField
+
+	// List the keys you expect. You can adjust the order or use any iteration order.
+	for _, key := range []string{ {{range $i, $field := .Fields}}"{{$field.JSONName}}",{{end}} } {
+		posField := strings.Index(sdata, key)
+		if posField != -1 {
+			// Found the field: store its position info.
+			newOf := OrderedField{
+				Key:   key,
+				start: posField - 2,
+				begin: strings.Index(sdata[posField:], ":") + posField + 1,
+			}
+			inserted := false
+			for i, of := range orderedFields {
+				if newOf.start < of.start {
+					orderedFields = append(orderedFields[:i],
+						append([]OrderedField{newOf}, orderedFields[i:]...)...)
+					inserted = true
+					break
+				}
+			}
+			if !inserted {
+				orderedFields = append(orderedFields, newOf)
+			}
+		}
+	}
+
+	for i, field := range orderedFields {
+		dataEnd := lendata - 1
+		if len(orderedFields) > i+1 {
+			dataEnd = orderedFields[i+1].start - 1
+		}
+		switch field.Key {
+        {{range $i, $field := .Fields}}
+        case "{{$field.JSONName}}":
+            {{- template "parsefield" dict "ReceiverName" $.ReceiverName "FieldName" $field.Name "FieldType" $field.FieldType -}}
+        {{end}}
+		}
+	}
+	return err
+}
+{{ end }}
