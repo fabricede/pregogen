@@ -1,4 +1,4 @@
-//go:generate pregogen -type=StringType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=StringType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=plus
@@ -20,7 +20,7 @@ var StringType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=StringType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=plus

@@ -20,28 +20,57 @@
     {{- end -}}
 {{end -}}
 
-{{define "parsefloat"}}
-    strconv.ParseFloat(float64(sdata[field.begin:dataEnd]), 64)
+{{define "parsefloat32"}}
+    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseFloat(sdata[field.begin:dataEnd+1], 32)
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = float32(df{{.FieldName}})
+    }
+{{end}}
+
+{{define "parsefloat64"}}
+    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseFloat(sdata[field.begin:dataEnd+1], 64)
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
+    }
 {{end}}
 
 {{define "parseint"}}
-    {{.ReceiverName}}.{{.FieldName}} = strconv.ParseInt(sdata[field.begin:dataEnd], 10, 64)
+    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = int(df{{.FieldName}})
+    }
 {{end}}
 
 {{define "parseuint"}}
-    {{.ReceiverName}}.{{.FieldName}} = strconv.ParseUint(sdata[field.begin:dataEnd], 10, 64)
+    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = uint(df{{.FieldName}})
+    }
 {{end}}
 
 {{define "parsebool"}}
-    {{.ReceiverName}}.{{.FieldName}} = (sdata[field.begin:dataEnd] == "true")
+    {{.ReceiverName}}.{{.FieldName}} = (sdata[field.begin:dataEnd+1] == "true")
 {{end}}
 
 {{define "parsebyte"}}
-    strconv.ParseInt(sdata[field.begin:dataEnd], 10, 8)
+    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 8)
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = byte(df{{.FieldName}})
+    }
 {{end}}
 
 {{define "parsetime"}}
-    df{{.FieldName}}, e{{.FieldName}} := time.Parse({{.FieldName}}Format, sdata[field.begin+1:dataEnd-1])
+    df{{.FieldName}}, e{{.FieldName}} := time.Parse({{.FieldName}}Format, sdata[field.begin+1:dataEnd])
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
@@ -54,7 +83,12 @@
 {{end}}
 
 {{define "parsebase64"}}
-    {{.ReceiverName}}.{{.FieldName}} = base64.StdEncoding.DecodeString(sdata[field.begin+1 : dataEnd])
+    df{{.FieldName}}, e{{.FieldName}} := base64.StdEncoding.DecodeString(sdata[field.begin+1:dataEnd])
+    if e{{.FieldName}} != nil {
+        err = e{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
+    }
 {{end}}
 
 {{define "parseother"}}
@@ -67,15 +101,19 @@
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
         {{- template "parseuint" .}}
     {{- else if eq .FieldType "float64" -}}
-        {{- template "parsefloat" .}}
+        {{- template "parsefloat64" .}}
     {{- else if eq .FieldType "float32" -}}
-        {{- template "parsefloat" .}}
+        {{- template "parsefloat32" .}}
     {{- else if eq .FieldType "time.Time" -}}
         {{- template "parsetime" .}}
     {{- else if eq .FieldType "string" -}}
         {{- template "parsestring" .}}
+    {{- else if eq .FieldType "byte" -}}
+        {{- template "parsebyte" .}}
     {{- else if eq .FieldType "[]byte" -}}
         {{- template "parsebase64" .}}
+    {{- else if eq .FieldType "bool" -}}
+        {{- template "parsebool" .}}
     {{- else -}}
         {{- template "parseother" .}}
     {{- end -}}

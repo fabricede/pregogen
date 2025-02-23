@@ -65,7 +65,7 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 		log.Fatalf("%s is not a struct", typeSpec.Name.Name)
 	}
 
-	receiverName := strings.ToLower(string(typeSpec.Name.Name[0]))
+	receiverName := strings.ToLower(string(typeSpec.Name.Name[0])) + "_receiver"
 	var includes []string
 	var fields []FieldInfo
 	for _, field := range structType.Fields.List {
@@ -106,12 +106,10 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 	}
 
 	name := fmt.Sprintf("generated_%s_marshal_json_%s.go", typeSpec.Name.Name, gentype)
-	if gentype == "testUnmarshal" {
-		name = fmt.Sprintf("generated_%s_unmarshal_json_test.go", typeSpec.Name.Name)
-	} else if gentype == "unmarshal" {
+	if gentype == "unmarshal" {
 		name = fmt.Sprintf("generated_%s_unmarshal_json.go", typeSpec.Name.Name)
-	} else if gentype == "testMarshal" {
-		name = fmt.Sprintf("generated_%s_marshal_json_test.go", typeSpec.Name.Name)
+	} else if gentype == "testMarshal" || gentype == "testUnmarshal" || gentype == "testAll" {
+		name = fmt.Sprintf("generated_%s_json_test.go", typeSpec.Name.Name)
 	}
 	file, err := os.Create(name)
 	if err != nil {

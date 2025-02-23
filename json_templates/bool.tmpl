@@ -1,15 +1,34 @@
 // {{- /* Go Template */ -}}.
 {{define "uniqueBool"}}
+{{ if eq $.Gentype "unmarshal" -}}
+import (
+    "bytes"
+    "errors"
+)
+{{ end }}
     {{- range $i, $field := .Fields -}}
 var TRUE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":true}")
 var FALSE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":false}")
 
+{{ if eq $.Gentype "unmarshal" -}}
+func ({{.ReceiverName}} *{{$.TypeName}}) UnmarshalJSON(data []byte) error {
+    if bytes.Equal(data, TRUE{{.JSONName}}_{{$.Gentype}}) {
+        {{.ReceiverName}}.{{$field.Name}} = true
+    } else if bytes.Equal(data, FALSE{{.JSONName}}_{{$.Gentype}}) {
+        {{.ReceiverName}}.{{$field.Name}} = false
+    } else {
+        return errors.New("invalid value for {{.JSONName}}")
+    }
+    return nil
+}
+{{- else if or (eq $.Gentype "append") (eq $.Gentype "plus") (eq $.Gentype "bytesBuffer") -}}
 func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, error) {
-    if b.BoolField {
+    if {{.ReceiverName}}.{{$field.Name}} {
         return TRUE{{.JSONName}}_{{$.Gentype}}, nil
     } else {
         return FALSE{{.JSONName}}_{{$.Gentype}}, nil
     }
 }
+{{- end -}}
     {{- end -}}
 {{end}}

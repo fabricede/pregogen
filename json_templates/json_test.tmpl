@@ -1,5 +1,5 @@
 {{- /* Go Template */ -}}
-{{define "testMarshal"}}
+{{define "jsontest"}}
 package {{.Package}}
 
 {{ $containsdate := false -}}
@@ -43,6 +43,10 @@ func init() {
 	}
 }
 
+{{- if or (eq .Gentype "testMarshal") (eq .Gentype "testAll") -}}
+/*
+   Test{{.TypeName}}_MarshalJSON
+*/
 func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 	var tests []{{.TypeName}}Test
 	for i, example := range {{$.TypeName}}_examples {
@@ -172,4 +176,97 @@ func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
 		log.Println("a_bytesBuffer: ", string(a_bytesBuffer), " a_plus: ", string(a_plus), " a_append :", string(a_append))
 	}
 }
+{{end}}
+
+{{- if or (eq .Gentype "testUnmarshal") (eq .Gentype "testAll") -}}
+/*
+   Test{{.TypeName}}_UnmarshalJSON
+*/
+func Test{{.TypeName}}_UnmarshalJSON(t *testing.T) {
+	var tests []{{.TypeName}}Test
+	for i, example := range {{$.TypeName}}_examples {
+		tests = append(tests, {{$.TypeName}}Test{name: "Test" + strconv.Itoa(i),
+			fields: {{.TypeName}}Ref{
+		{{range $i, $field := .Fields }}
+				{{$field.Name}}:  example.{{$.TypeName}}.{{$field.Name}},
+        {{- end }}},
+			want: example.want,
+		})
+	}
+	for _, tt := range tests {
+		want := {{.TypeName}}{
+        {{ range $i, $field := .Fields }}
+			{{$field.Name}}:  tt.fields.{{$field.Name}},
+        {{- end }}
+		}
+		got := {{.TypeName}}{}
+		t.Run(tt.name+"_UnarshalJSON", func(t *testing.T) {
+			if err := got.UnmarshalJSON(tt.want); err != nil {
+				t.Errorf("{{.TypeName}}.UnmarshalJSON() error = %v", err)
+				return
+			}
+			if !reflect.DeepEqual(got, want) {
+				t.Errorf("YourType2.UnmarshalJSON() = %v  <-- want --> %v", got, want)
+			}
+		})
+		got2 := {{.TypeName}}{}
+		t.Run(tt.name+"_json.Unmarshal", func(t *testing.T) {
+			if err := json.Unmarshal(tt.want, &got2); err != nil {
+				t.Errorf("{{.TypeName}}.UnmarshalJSON() error = %v", err)
+				return
+			}
+			if !reflect.DeepEqual(got2, want) {
+				t.Errorf("YourType2.UnmarshalJSON() = %v  <-- want --> %v", got, want)
+			}
+		})
+		yRef := {{.TypeName}}Ref{}
+		t.Run(tt.name+"_json.Unmarshal_ref", func(t *testing.T) {
+			if err := json.Unmarshal(tt.want, &yRef); err != nil {
+				t.Errorf("json.Unmarshal({{.TypeName}}) error = %v", err)
+			}
+			if !reflect.DeepEqual(yRef, tt.fields) {
+				t.Errorf("json.Unmarshal({{.TypeName}} = %v  <-- want --> %v", got, tt.fields)
+			}
+		})
+	}
+}
+
+/*
+   Benchmark{{.TypeName}}_UnmarshalJSON
+*/
+func Benchmark{{.TypeName}}_UnmarshalJSON(b *testing.B) {
+	tests := []struct {
+		name    string
+		fields  {{.TypeName}}Ref
+		want	[]byte
+	}{
+		{name: "Test1", fields: {{.TypeName}}Ref{
+		{{ range $i, $field := .Fields }}
+			{{$field.Name}}:  {{$.TypeName}}_examples[0].{{$.TypeName}}.{{$field.Name}},
+        {{- end }}},
+		want: {{$.TypeName}}_examples[0].want,
+		},
+	}
+	for _, tt := range tests {
+		got := &{{.TypeName}}{}
+		b.Run(tt.name+"_UnmarshalJSON", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				got.UnmarshalJSON(tt.want)
+			}
+		})
+		got2 := &{{.TypeName}}{}
+		b.Run(tt.name+"_json.Unmarshal", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				json.Unmarshal(tt.want, got2)
+			}
+		})
+		yRef := &{{.TypeName}}Ref{}
+		b.Run(tt.name+"_json.Unmarshal_ref", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				json.Unmarshal(tt.want, yRef)
+			}
+		})
+	}
+}
+{{end}}
 {{end}}

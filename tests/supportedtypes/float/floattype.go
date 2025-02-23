@@ -1,8 +1,8 @@
-//go:generate pregogen -type=FloatType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=append
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=FloatType -file=$GOFILE -gen=plus
-
+//go:generate pregogen -type=FloatType -file=$GOFILE -gen=unmarshal
 package floattype
 
 type FloatType struct {
@@ -20,10 +20,11 @@ var FloatType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=FloatType3 -file=$GOFILE -gen=unmarshal
 type FloatType3 struct {
 	FloatField1 float64 `json:"floatfield1"`
 	FloatField2 float64 `json:"floatfield2"`

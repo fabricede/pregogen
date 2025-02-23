@@ -229,3 +229,24 @@
         }
     }
 {{- end -}}
+
+{{define "parsearray"}}
+{{- $arraytype := (getArrayType .FieldType) -}}
+    {{- if eq $arraytype "string" -}}
+        {{template "arraystring" .}}
+    {{- else if eq $arraytype "bool" -}}
+        {{template "arraybool" .}}
+    {{- else if or (eq $arraytype "int") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
+        {{template "arrayint" .}}
+    {{- else if or (eq $arraytype "uint") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
+        {{template "arrayint" .}}
+    {{- else if or (eq $arraytype "float32") (eq $arraytype "float64") -}}
+        {{template "arrayfloat" .}}
+    {{- else if eq $arraytype "time.Time" -}}
+        {{template "arraydate" .}}
+    {{- else if eq $arraytype "byte" -}}
+        {{template "parsebasic" .}}
+    {{- else if or (eq $arraytype "uint8") (eq $arraytype "int8") -}}
+        {{template "arraybyte" .}}
+    {{- end -}}
+{{- end -}}

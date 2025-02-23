@@ -6,6 +6,7 @@ package {{.Package}}
 {{- $lastIndex := sub (len .Fields) 1 -}}
 {{- $uniquebool := false -}}
 {{- $uniquearraybool := false -}}
+{{- $containsbyte := false -}}
 {{- $containsbytes := false -}}
 {{- range $i, $field := .Fields -}}
     {{- if and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0) }}
@@ -14,6 +15,9 @@ package {{.Package}}
         {{- $uniquearraybool = true -}}
     {{- end -}}
     {{- if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") }}
+        {{- $containsbyte = true -}}
+    {{- end -}}
+	{{- if or (eq .FieldType "[]byte") }}
         {{- $containsbytes = true -}}
     {{- end -}}
 {{- end -}}
@@ -23,6 +27,9 @@ package {{.Package}}
 {{- end -}}
 import (
 	"strings"
+	{{ if $containsbyte -}}
+	"strconv"
+	{{- end }}
     {{ range $include := .Includes }}
     "{{$include}}"
     {{ end }}
@@ -30,7 +37,7 @@ import (
 
 func ({{.ReceiverName}} *{{.TypeName}}) UnmarshalJSON(data []byte) (err error) {
     // UnmarshalJSON implements the json.Unmarshaler interface.
-	sdata := string(data)
+	sdata := strings.Trim((string)(data),"}")
 	lendata := len(sdata)
 
 	// Define a type that holds both key and Field info.

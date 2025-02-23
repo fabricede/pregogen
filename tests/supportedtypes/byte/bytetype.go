@@ -1,8 +1,8 @@
-//go:generate pregogen -type=ByteType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=ByteType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=ByteType -file=$GOFILE -gen=append
 //go:generate pregogen -type=ByteType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteType -file=$GOFILE -gen=plus
-
+//go:generate pregogen -type=ByteType -file=$GOFILE -gen=unmarshal
 package bytetype
 
 type ByteType struct {
@@ -336,14 +336,15 @@ var ByteType_examples = []struct {
 		}, nil},
 	{
 		ByteType{
-			ByteField: 255,
+			ByteField: 127,
 		}, nil},
 }
 
-//go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=ByteType3 -file=$GOFILE -gen=unmarshal
 type ByteType3 struct {
 	ByteField1 byte `json:"bytefield1"`
 	ByteField2 byte `json:"bytefield2"`
@@ -363,10 +364,11 @@ var ByteType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=append
 //go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=ByteArrayType -file=$GOFILE -gen=unmarshal
 type ByteArrayType struct {
 	ByteArrayField []byte `json:"bytearrayfield"`
 }
@@ -388,12 +390,13 @@ type ByteArrayType3 struct {
 	ByteArrayField3 []byte `json:"bytearray3field"`
 }
 
-//go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=testMarshal
+// representative example(s) of data stored in target application
+//
+//go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=plus
-
-// representative example(s) of data stored in target application
+//go:generate pregogen -type=ByteArrayType3 -file=$GOFILE -gen=unmarshal
 var ByteArrayType3_examples = []struct {
 	ByteArrayType3
 	want []byte

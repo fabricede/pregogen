@@ -1,8 +1,8 @@
-//go:generate pregogen -type=BoolType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=BoolType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=plus
-
+//go:generate pregogen -type=BoolType -file=$GOFILE -gen=unmarshal
 package booltype
 
 type BoolType struct {
@@ -24,12 +24,13 @@ type BoolType3 struct {
 	BoolField3 bool `json:"boolfield3"`
 }
 
-//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=testMarshal
+// representative example(s) of data stored in target application
+//
+//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=plus
-
-// representative example(s) of data stored in target application
+//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=unmarshal
 var BoolType3_examples = []struct {
 	BoolType3
 	want []byte
