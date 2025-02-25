@@ -5,6 +5,12 @@
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=unmarshal
 package inttype
 
+import (
+	"encoding/json"
+	"strconv"
+	"strings"
+)
+
 type IntType struct {
 	IntField int `json:"intfield"`
 }
@@ -87,11 +93,11 @@ var IntArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=append
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=plus
-
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=unmarshal
 type PointerIntType struct {
 	PointerIntField *int `json:"pointerintfield"`
 }
@@ -213,4 +219,101 @@ var PointerIntArrayType3_examples = []struct {
 			PointerIntArrayField2: intarray2,
 			PointerIntArrayField3: nil,
 		}, nil},
+}
+
+func (p_receiver *PointerIntType3) UnmarshalJSON_v2(data []byte) error {
+	p_receiver.PointerIntField1 = nil
+	p_receiver.PointerIntField2 = nil
+	p_receiver.PointerIntField3 = nil
+
+	var objMap map[string]json.RawMessage
+	err := json.Unmarshal(data, &objMap)
+	if err != nil {
+		return err
+	}
+
+	for key, value := range objMap {
+		if key == "pointerintfield1" {
+			var valueInt int
+			err = json.Unmarshal(value, &valueInt)
+			if err != nil {
+				return err
+			}
+			p_receiver.PointerIntField1 = &valueInt
+		}
+		if key == "pointerintfield2" {
+			var valueInt int
+			err = json.Unmarshal(value, &valueInt)
+			if err != nil {
+				return err
+			}
+			p_receiver.PointerIntField2 = &valueInt
+		}
+		if key == "pointerintfield3" {
+			var valueInt int
+			err = json.Unmarshal(value, &valueInt)
+			if err != nil {
+				return err
+			}
+			p_receiver.PointerIntField3 = &valueInt
+		}
+	}
+
+	return nil
+}
+
+func (i_receiver *IntType) UnmarshalJSON_opt(data []byte) (err error) {
+	// UnmarshalJSON implements the json.Unmarshaler interface.
+	sdata := string(data)
+
+	//var orderedFields *OrderedField
+
+	// List the keys you expect. You can adjust the order or use any iteration order.
+	//for _, key := range []string{ "intfield", } {
+	posField := strings.Index(sdata, "intfield")
+	if posField != -1 {
+		lendata := len(sdata)
+		// Found the field: store its position info.
+		begin := posField + len("intfield") + 2 // skip ':'
+		dataEnd := lendata - 2                  // remove final '}'
+		dfIntField, eIntField := strconv.ParseInt(sdata[begin:dataEnd+1], 10, 64)
+		if eIntField != nil {
+			err = eIntField
+		} else {
+			i_receiver.IntField = int(dfIntField)
+		}
+
+		/*inserted := false
+		for i, of := range orderedFields {
+			if newOf.start < of.start {
+				orderedFields = append(orderedFields[:i],
+					append([]OrderedField{newOf}, orderedFields[i:]...)...)
+				inserted = true
+				break
+			}
+		}
+		if !inserted {
+			orderedFields = append(orderedFields, newOf)
+		}*/
+	}
+	//}
+
+	/*for i, field := range orderedFields {
+			dataEnd := lendata - 1
+			if len(orderedFields) > i+1 {
+				dataEnd = orderedFields[i+1].start - 1
+			}
+			switch field.Key {
+
+	        case "intfield":
+	    dfIntField, eIntField := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
+	    if eIntField != nil {
+	        err = eIntField
+	    } else {
+	        i_receiver.IntField = int(dfIntField)
+	    }
+
+			}
+		}*/
+	return err
 }

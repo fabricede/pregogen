@@ -82,7 +82,7 @@ func ({{.ReceiverName}} *{{.TypeName}}) UnmarshalJSON(data []byte) (err error) {
 		switch field.Key {
         {{range $i, $field := .Fields}}
         case "{{$field.JSONName}}":
-            {{- template "parsefield" dict "ReceiverName" $.ReceiverName "FieldName" $field.Name "FieldType" $field.FieldType -}}
+            {{- template "parsefield" dict "ReceiverName" $.ReceiverName "FieldName" $field.Name "FieldType" $field.FieldType "Pointer" "" -}}
         {{end}}
 		}
 	}

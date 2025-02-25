@@ -11,8 +11,8 @@
     {{- else if eq .FieldType "time.Time" -}}{{template "parsebasic" .}}
     {{- else if eq .FieldType "*string" -}}{{template "parsepointer" .}}
     {{- else if eq .FieldType "*bool" -}}{{template "parsepointer" .}}
-    {{- else if or (eq .FieldType "*int") (eq .FieldType "*int8") (eq .FieldType "*int16") (eq .FieldType "*int32") (eq .FieldType "*int64") -}}{{template "parsepointer" .}}
-    {{- else if or (eq .FieldType "*uint") (eq .FieldType "*uint8") (eq .FieldType "*uint16") (eq .FieldType "*uint32") (eq .FieldType "*uint64") -}}{{template "parsepointer" .}}
+    {{- else if or (eq .FieldType "*int") (eq .FieldType "*int16") (eq .FieldType "*int32") (eq .FieldType "*int64") -}}{{template "parsepointer" .}}
+    {{- else if or (eq .FieldType "*uint") (eq .FieldType "*uint16") (eq .FieldType "*uint32") (eq .FieldType "*uint64") -}}{{template "parsepointer" .}}
     {{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") -}}{{template "parsepointer" .}}
     {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "parsepointer" .}}
     {{- else if eq .FieldType "*time.Time" -}}{{template "parsepointer" .}}
@@ -43,7 +43,16 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{.ReceiverName}}.{{.FieldName}} = int(df{{.FieldName}})
+        {{ if or (eq .FieldType "int")  (eq .FieldType "*int") }}
+        dfint{{.FieldName}} := int(df{{.FieldName}})
+        {{ else if or (eq .FieldType "int16")  (eq .FieldType "*int16") }}
+        dfint{{.FieldName}} = int16(df{{.FieldName}})
+        {{ else if or (eq .FieldType "int32")  (eq .FieldType "*int32") }}
+        dfint{{.FieldName}} = int32(df{{.FieldName}})
+        {{ else if or (eq .FieldType "int64")  (eq .FieldType "*int64") }}
+        dfint{{.FieldName}} = int64(df{{.FieldName}})
+        {{ end }}
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}dfint{{.FieldName}}
     }
 {{end}}
 
@@ -118,3 +127,11 @@
         {{- template "parseother" .}}
     {{- end -}}
 {{- end -}}
+
+{{define "parsepointer"}}
+    if string(sdata[field.begin:field.begin+4]) == "null" {
+        {{.ReceiverName}}.{{.FieldName}} = nil
+    } else {
+        {{- template "parsebasic" dict "FieldName" .FieldName "FieldType" (getPointerType .FieldType) "ReceiverName" .ReceiverName "Pointer" "&" -}}
+    }
+{{end}}
