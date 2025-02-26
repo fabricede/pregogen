@@ -6,29 +6,35 @@ import (
     "errors"
 )
 {{ end }}
-    {{- range $i, $field := .Fields -}}
-var TRUE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":true}")
-var FALSE{{.JSONName}}_{{$.Gentype}} []byte = []byte( "{\"{{.JSONName}}\":false}")
+
+{{- range $i, $field := .Fields -}}
+    {{- $jsname := .JSONName }}
+var TRUE{{$jsname}}_{{$.Gentype}} []byte = []byte( "{\"{{$jsname}}\":true}")
+var FALSE{{$jsname}}_{{$.Gentype}} []byte = []byte( "{\"{{$jsname}}\":false}")
 
 {{ if eq $.Gentype "unmarshal" -}}
 func ({{.ReceiverName}} *{{$.TypeName}}) UnmarshalJSON(data []byte) error {
-    if bytes.Equal(data, TRUE{{.JSONName}}_{{$.Gentype}}) {
+    if bytes.Equal(data, TRUE{{$jsname}}_{{$.Gentype}}) {
         {{.ReceiverName}}.{{$field.Name}} = true
-    } else if bytes.Equal(data, FALSE{{.JSONName}}_{{$.Gentype}}) {
+    } else if bytes.Equal(data, FALSE{{$jsname}}_{{$.Gentype}}) {
         {{.ReceiverName}}.{{$field.Name}} = false
     } else {
-        return errors.New("invalid value for {{.JSONName}}")
+        return errors.New("invalid value for {{$jsname}}")
     }
     return nil
 }
-{{- else if or (eq $.Gentype "append") (eq $.Gentype "plus") (eq $.Gentype "bytesBuffer") -}}
-func ({{.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, error) {
-    if {{.ReceiverName}}.{{$field.Name}} {
-        return TRUE{{.JSONName}}_{{$.Gentype}}, nil
-    } else {
-        return FALSE{{.JSONName}}_{{$.Gentype}}, nil
-    }
-}
+{{ else -}}
+    {{ range $i, $method := getMethods }}
+        {{- if eq $.Gentype $method -}}
+        func ({{$.ReceiverName}} {{$.TypeName}}) MarshalJSON_{{$.Gentype}}() ([]byte, error) {
+            if {{$.ReceiverName}}.{{$field.Name}} {
+                return TRUE{{$jsname}}_{{$.Gentype}}, nil
+            } else {
+                return FALSE{{$jsname}}_{{$.Gentype}}, nil
+            }
+        }
+        {{- end -}}
+    {{- end -}}
 {{- end -}}
     {{- end -}}
 {{end}}

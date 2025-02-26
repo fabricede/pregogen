@@ -87,13 +87,30 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 		}
 	}
 
+	TypeName := typeSpec.Name.Name
+	name := fmt.Sprintf("generated_%s_marshal_json_%s.go", TypeName, gentype)
+	if gentype == "unmarshal" {
+		name = fmt.Sprintf("generated_%s_unmarshal_json.go", typeSpec.Name.Name)
+	} else if gentype == "testMarshal" || gentype == "testUnmarshal" || gentype == "testAll" {
+		name = fmt.Sprintf("generated_%s_json_test.go", typeSpec.Name.Name)
+	} else if gentype == "marshal" {
+		for _, method := range GetMethods() {
+			name = fmt.Sprintf("generated_%s_marshal_json_%s.go", TypeName, method)
+			processGentype(method, packageName, receiverName, TypeName, name, fields, includes)
+		}
+		return
+	}
+	processGentype(gentype, packageName, receiverName, TypeName, name, fields, includes)
+}
+
+func processGentype(gentype, packageName, receiverName, TypeName, filename string, fields []FieldInfo, includes []string) {
 	for i, inc := range includes {
 		log.Printf("Include: %d,%s", i, inc)
 	}
 
 	data := TemplateData{
 		Package:      packageName,
-		TypeName:     typeSpec.Name.Name,
+		TypeName:     TypeName,
 		ReceiverName: receiverName,
 		Fields:       fields,
 		Includes:     includes,
@@ -105,13 +122,7 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 		log.Fatalf("Error parsing template: %v", err)
 	}
 
-	name := fmt.Sprintf("generated_%s_marshal_json_%s.go", typeSpec.Name.Name, gentype)
-	if gentype == "unmarshal" {
-		name = fmt.Sprintf("generated_%s_unmarshal_json.go", typeSpec.Name.Name)
-	} else if gentype == "testMarshal" || gentype == "testUnmarshal" || gentype == "testAll" {
-		name = fmt.Sprintf("generated_%s_json_test.go", typeSpec.Name.Name)
-	}
-	file, err := os.Create(name)
+	file, err := os.Create(filename)
 	if err != nil {
 		log.Fatalf("Error creating file: %v", err)
 	}

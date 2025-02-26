@@ -1,7 +1,5 @@
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=testAll
-//go:generate pregogen -type=IntType -file=$GOFILE -gen=append
-//go:generate pregogen -type=IntType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=IntType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=IntType -file=$GOFILE -gen=marshal
 //go:generate pregogen -type=IntType -file=$GOFILE -gen=unmarshal
 package inttype
 
@@ -27,9 +25,7 @@ var IntType_examples = []struct {
 }
 
 //go:generate pregogen -type=IntType3 -file=$GOFILE -gen=testAll
-//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=IntType3 -file=$GOFILE -gen=marshal
 //go:generate pregogen -type=IntType3 -file=$GOFILE -gen=unmarshal
 type IntType3 struct {
 	IntField1 int `json:"intfield1"`
@@ -51,9 +47,7 @@ var IntType3_examples = []struct {
 }
 
 //go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=append
-//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=IntArrayType -file=$GOFILE -gen=marshal
 type IntArrayType struct {
 	IntArrayField []int `json:"intarrayfield"`
 }
@@ -76,9 +70,7 @@ type IntArrayType3 struct {
 }
 
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=marshal
 
 // representative example(s) of data stored in target application
 var IntArrayType3_examples = []struct {
@@ -94,9 +86,7 @@ var IntArrayType3_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=testAll
-//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=marshal
 //go:generate pregogen -type=PointerIntType -file=$GOFILE -gen=unmarshal
 type PointerIntType struct {
 	PointerIntField *int `json:"pointerintfield"`
@@ -120,9 +110,7 @@ var PointerIntType_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=marshal
 type PointerIntType3 struct {
 	PointerIntField1 *int `json:"pointerintfield1"`
 	PointerIntField2 *int `json:"pointerintfield2"`
@@ -158,9 +146,7 @@ var PointerIntType3_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerIntArrayType -file=$GOFILE -gen=marshal
 
 type PointerIntArrayType struct {
 	PointerIntField []*int `json:"pointerintfield"`
@@ -185,9 +171,7 @@ var PointerIntArrayType_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerIntArrayType3 -file=$GOFILE -gen=marshal
 type PointerIntArrayType3 struct {
 	PointerIntArrayField1 []*int `json:"pointerintfield1"`
 	PointerIntArrayField2 []*int `json:"pointerintfield2"`

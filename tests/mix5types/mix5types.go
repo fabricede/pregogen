@@ -1,7 +1,5 @@
 //go:generate pregogen -type=YourType1 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=append
-//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=YourType1 -file=$GOFILE -gen=marshal
 package mypac
 
 type YourType1 struct {

@@ -25,11 +25,9 @@ package {{.Package}}
     {{ template "uniqueBool" . }}
     {{ return }}
 {{- end -}}
-{{ if or (gt $imports 0) (eq $method "bytesBuffer") }}
+{{ if or (gt $imports 0) (gt (len (method $method "include" "")) 0) }}
 import (
-    {{ if eq $method "bytesBuffer" -}}
-    "bytes"
-    {{- end }}
+    {{ method $method "include" "" }}
     {{ range $include := .Includes }}
     "{{$include}}"
     {{ end }}

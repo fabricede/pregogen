@@ -1,7 +1,5 @@
 //go:generate pregogen -type=YourType2 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=append
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=marshal
 package mix3types
 
 import (
