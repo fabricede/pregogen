@@ -79,9 +79,9 @@ var StringArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=marshal
-
+//go:generate pregogen -type=PointerStringType -file=$GOFILE -gen=unmarshal
 type PointerStringType struct {
 	PointerStringField *string `json:"pointerstringfield"`
 }
@@ -103,8 +103,9 @@ var PointerStringType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=PointerStringType3 -file=$GOFILE -gen=unmarshal
 type PointerStringType3 struct {
 	PointerStringField1 *string `json:"pointerstringfield1"`
 	PointerStringField2 *string `json:"pointerstringfield2"`

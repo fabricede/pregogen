@@ -79,9 +79,9 @@ var Float32ArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=marshal
-
+//go:generate pregogen -type=PointerFloat32Type -file=$GOFILE -gen=unmarshal
 type PointerFloat32Type struct {
 	PointerFloat32Field *float32 `json:"pointerfloat32field"`
 }
@@ -103,8 +103,9 @@ var PointerFloat32Type_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=PointerFloat32Type3 -file=$GOFILE -gen=unmarshal
 type PointerFloat32Type3 struct {
 	PointerFloat32Field1 *float32 `json:"pointerfloat32field1"`
 	PointerFloat32Field2 *float32 `json:"pointerfloat32field2"`

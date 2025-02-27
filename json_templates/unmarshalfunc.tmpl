@@ -25,7 +25,8 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{.ReceiverName}}.{{.FieldName}} = float32(df{{.FieldName}})
+        dffloat{{.FieldName}} := float32(df{{.FieldName}})
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}dffloat{{.FieldName}}
     }
 {{end}}
 
@@ -34,7 +35,7 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
     }
 {{end}}
 
@@ -43,25 +44,24 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{ if or (eq .FieldType "int")  (eq .FieldType "*int") }}
+        {{ if eq .FieldType "int" }}
         dfint{{.FieldName}} := int(df{{.FieldName}})
-        {{ else if or (eq .FieldType "int16")  (eq .FieldType "*int16") }}
-        dfint{{.FieldName}} = int16(df{{.FieldName}})
-        {{ else if or (eq .FieldType "int32")  (eq .FieldType "*int32") }}
-        dfint{{.FieldName}} = int32(df{{.FieldName}})
-        {{ else if or (eq .FieldType "int64")  (eq .FieldType "*int64") }}
-        dfint{{.FieldName}} = int64(df{{.FieldName}})
+        {{ else if eq .FieldType "int16" }}
+        dfint{{.FieldName}} := int16(df{{.FieldName}})
+        {{ else if eq .FieldType "int32" }}
+        dfint{{.FieldName}} := int32(df{{.FieldName}})
+        {{ else if eq .FieldType "int64" }}
+        dfint{{.FieldName}} := int64(df{{.FieldName}})
+        {{ else if eq .FieldType "uint" }}
+        dfint{{.FieldName}} := uint(df{{.FieldName}})
+        {{ else if eq .FieldType "uint16" }}
+        dfint{{.FieldName}} := uint16(df{{.FieldName}})
+        {{ else if eq .FieldType "uint32" }}
+        dfint{{.FieldName}} := uint32(df{{.FieldName}})
+        {{ else if eq .FieldType "uint64" }}
+        dfint{{.FieldName}} := uint64(df{{.FieldName}})
         {{ end }}
         {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}dfint{{.FieldName}}
-    }
-{{end}}
-
-{{define "parseuint"}}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{.ReceiverName}}.{{.FieldName}} = uint(df{{.FieldName}})
     }
 {{end}}
 
@@ -83,12 +83,17 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
     }
 {{end}}
 
 {{define "parsestring"}}
+    {{ if eq .Pointer "&" }}
+    df{{.FieldName}} := sdata[field.begin+1 : dataEnd]
+    {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
+    {{ else }}
     {{.ReceiverName}}.{{.FieldName}} = sdata[field.begin+1 : dataEnd]
+    {{ end }}
 {{end}}
 
 {{define "parsebase64"}}
@@ -108,7 +113,7 @@
     {{- if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}
         {{- template "parseint" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
-        {{- template "parseuint" .}}
+        {{- template "parseint" .}}
     {{- else if eq .FieldType "float64" -}}
         {{- template "parsefloat64" .}}
     {{- else if eq .FieldType "float32" -}}

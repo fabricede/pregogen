@@ -109,8 +109,9 @@ var PointerIntType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=PointerIntType3 -file=$GOFILE -gen=unmarshal
 type PointerIntType3 struct {
 	PointerIntField1 *int `json:"pointerintfield1"`
 	PointerIntField2 *int `json:"pointerintfield2"`
