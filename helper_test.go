@@ -107,7 +107,7 @@ func Test_processFieldType(t *testing.T) {
 		{"Test string", args{"string", "StringField", []string{}, []string{}}},
 		{"Test date", args{"time.Time", "DateField", []string{}, []string{}}},
 		{"Test int", args{"int", "IntField", []string{}, []string{"strconv"}}},
-		{"Test second int", args{"int", "IntField", []string{"strconv", "fmt"}, []string{"strconv", "fmt"}}},
+		{"Test second int", args{"int", "IntField", []string{"strconv", "encoding/json"}, []string{"strconv", "encoding/json"}}},
 		{"Test second int bis", args{"int", "IntField", []string{"strconv"}, []string{"strconv"}}},
 		{"Test int8", args{"int8", "Int8Field", []string{}, []string{}}},
 		{"Test byte", args{"byte", "ByteField", []string{}, []string{}}},
@@ -117,9 +117,9 @@ func Test_processFieldType(t *testing.T) {
 		{"Test *string", args{"*string", "PointerStringField", []string{}, []string{}}},
 		{"Test []string", args{"[]string", "StringArrayField", []string{}, []string{}}},
 		{"Test []*string", args{"[]*string", "PointerStringArrayField", []string{}, []string{}}},
-		{"Test other", args{"rune", "RuneField", []string{}, []string{"fmt"}}},
-		{"Test second other", args{"rune", "RuneField", []string{"fmt"}, []string{"fmt"}}},
-		{"Test second other bis", args{"rune", "RuneField", []string{"strconv", "fmt"}, []string{"strconv", "fmt"}}},
+		{"Test other", args{"rune", "RuneField", []string{}, []string{"encoding/json"}}},
+		{"Test second other", args{"rune", "RuneField", []string{"encoding/json"}, []string{"encoding/json"}}},
+		{"Test second other bis", args{"rune", "RuneField", []string{"strconv", "encoding/json"}, []string{"strconv", "encoding/json"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

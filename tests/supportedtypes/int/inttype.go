@@ -261,7 +261,7 @@ func (i_receiver *IntType) UnmarshalJSON_opt(data []byte) (err error) {
 		// Found the field: store its position info.
 		begin := posField + len("intfield") + 2 // skip ':'
 		dataEnd := lendata - 2                  // remove final '}'
-		dfIntField, eIntField := strconv.ParseInt(sdata[begin:dataEnd+1], 10, 64)
+		dfIntField, eIntField := strconv.ParseInt(sdata[begin:dataEnd+1], 10, 32)
 		if eIntField != nil {
 			err = eIntField
 		} else {
