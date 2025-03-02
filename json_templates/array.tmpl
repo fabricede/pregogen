@@ -32,7 +32,7 @@
     {{- else if or (eq $arraytype "*byte") (eq $arraytype "*uint8") (eq $arraytype "*int8") -}}
         {{template "pointerenumarray" .}}
     {{- else -}}
-        {{template "basicarray" .}}
+        {{template "othervalue" .}}
     {{- end -}}
 {{- end -}}
 
@@ -248,5 +248,7 @@
         {{template "parsebasic" .}}
     {{- else if or (eq $arraytype "uint8") (eq $arraytype "int8") -}}
         {{template "arraybyte" .}}
+    {{- else -}}
+        {{template "parsebasic" .}}
     {{- end -}}
 {{- end -}}

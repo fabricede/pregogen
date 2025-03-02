@@ -69,36 +69,18 @@ func Test{{.TypeName}}_MarshalJSON(t *testing.T) {
 			{{$field.Name}}:  tt.fields.{{$field.Name}},
         {{- end }}
 		}
-		t.Run(tt.name+"_MarshalJSON_bytesBuffer", func(t *testing.T) {
-			got, err := y.MarshalJSON_bytesBuffer()
+		{{ range $i, $method := getMethods }}
+		t.Run(tt.name+"_MarshalJSON_{{$method}}", func(t *testing.T) {
+			got, err := y.MarshalJSON_{{$method}}()
 			if err != nil {
-				t.Errorf("{{.TypeName}}.MarshalJSON() error = %v", err)
+				t.Errorf("{{$.TypeName}}.MarshalJSON_{{$method}}() error = %v", err)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
+				t.Errorf("{{$.TypeName}}.MarshalJSON_{{$method}}() = %v  <-- want --> %v", string(got), string(tt.want))
 			}
 		})
-		t.Run(tt.name+"_MarshalJSON_append", func(t *testing.T) {
-			got, err := y.MarshalJSON_append()
-			if err != nil {
-				t.Errorf("{{.TypeName}}.MarshalJSON() error = %v", err)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
-			}
-		})
-		t.Run(tt.name+"_MarshalJSON_plus", func(t *testing.T) {
-			got, err := y.MarshalJSON_plus()
-			if err != nil {
-				t.Errorf("{{.TypeName}}.MarshalJSON() error = %v", err)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("{{.TypeName}}.MarshalJSON() = %v  <-- want --> %v", string(got), string(tt.want))
-			}
-		})
+		{{ end }}
 		t.Run(tt.name+"_json.Marshal", func(t *testing.T) {
 			got, err := json.Marshal(y)
 			if err != nil {
@@ -136,7 +118,6 @@ func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
         {{- end }}},
 		},
 	}
-	var a_append, a_plus, a_bytesBuffer []byte
 	for _, tt := range tests {
 		y := {{.TypeName}}{
         {{ range $i, $field := .Fields }}
@@ -148,22 +129,16 @@ func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
 			{{$field.Name}}:  tt.fields.{{$field.Name}},
         {{- end }}
 		}
-		b.Run(tt.name+"_MarshalJSON_bytesBuffer", func(b *testing.B) {
+		{{ range $i, $method := getMethods }}
+		var a_{{$method}} []byte
+		b.Run(tt.name+"_MarshalJSON_{{$method}}", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				a_bytesBuffer, _ = y.MarshalJSON_bytesBuffer()
+				a_{{$method}}, _ = y.MarshalJSON_{{$method}}()
 			}
 		})
-		b.Run(tt.name+"_MarshalJSON_plus", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				a_plus, _ = y.MarshalJSON_plus()
-			}
-		})
-		b.Run(tt.name+"_MarshalJSON_append", func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				a_append, _ = y.MarshalJSON_append()
-			}
-		})
-		b.Run(tt.name+"_json.Marshal_bytesBuffer", func(b *testing.B) {
+		log.Println("a_{{$method}}: ", string(a_{{$method}}))
+		{{ end }}
+		b.Run(tt.name+"_json.Marshal", func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				_, _ = json.Marshal(y)
 			}
@@ -173,7 +148,6 @@ func Benchmark{{.TypeName}}_MarshalJSON(b *testing.B) {
 				_, _ = json.Marshal(yRef)
 			}
 		})
-		log.Println("a_bytesBuffer: ", string(a_bytesBuffer), " a_plus: ", string(a_plus), " a_append :", string(a_append))
 	}
 }
 {{end}}

@@ -1,7 +1,11 @@
+// in the case of uniquebool we can't use marshal due to return in template
+// details all methods instead
+//
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=append
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=bytesBuffer
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=BoolType -file=$GOFILE -gen=stringsBuilder
 //go:generate pregogen -type=BoolType -file=$GOFILE -gen=unmarshal
 package booltype
 
@@ -27,9 +31,7 @@ type BoolType3 struct {
 // representative example(s) of data stored in target application
 //
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=testAll
-//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=marshal
 //go:generate pregogen -type=BoolType3 -file=$GOFILE -gen=unmarshal
 var BoolType3_examples = []struct {
 	BoolType3
@@ -50,9 +52,7 @@ var BoolType3_examples = []struct {
 }
 
 //go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=append
-//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=BoolArrayType -file=$GOFILE -gen=marshal
 type BoolArrayType struct {
 	BoolArrayField []bool `json:"boolarrayfield"`
 }
@@ -87,9 +87,7 @@ type BoolArrayType3 struct {
 }
 
 //go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=BoolArrayType3 -file=$GOFILE -gen=marshal
 
 // representative example(s) of data stored in target application
 var BoolArrayType3_examples = []struct {
@@ -123,9 +121,7 @@ var BoolArrayType3_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerBoolType -file=$GOFILE -gen=marshal
 
 type PointerBoolType struct {
 	PointerBoolField *bool `json:"pointerboolfield"`
@@ -154,9 +150,7 @@ var PointerBoolType_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerBoolType3 -file=$GOFILE -gen=marshal
 type PointerBoolType3 struct {
 	PointerBoolField1 *bool `json:"pointerboolfield1"`
 	PointerBoolField2 *bool `json:"pointerboolfield2"`
@@ -191,9 +185,7 @@ var PointerBoolType3_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerBoolArrayType -file=$GOFILE -gen=marshal
 
 type PointerBoolArrayType struct {
 	PointerBoolField []*bool `json:"pointerboolfield"`
@@ -218,9 +210,7 @@ var PointerBoolArrayType_examples = []struct {
 }
 
 //go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=append
-//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=PointerBoolArrayType3 -file=$GOFILE -gen=marshal
 type PointerBoolArrayType3 struct {
 	PointerBoolArrayField1 []*bool `json:"pointerboolfield1"`
 	PointerBoolArrayField2 []*bool `json:"pointerboolfield2"`

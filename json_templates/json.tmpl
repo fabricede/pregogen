@@ -2,7 +2,7 @@
 // generate type: {{ .Gentype }}
 {{- if or (eq .Gentype "testMarshal") (eq .Gentype "testUnmarshal") (eq .Gentype "testAll") -}}
     {{ template "jsontest" . }}
-{{- else if or (eq .Gentype "append") (eq .Gentype "bytesBuffer") (eq .Gentype "plus") -}}
+{{- else if or (eq .Gentype "append") (eq .Gentype "bytesBuffer") (eq .Gentype "plus") (eq .Gentype "stringsBuilder") -}}
     {{ template "marshal" . }}
 {{- else if eq .Gentype "unmarshal" -}}
     {{ template "unmarshal" . }}

@@ -1,7 +1,6 @@
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=testMarshal
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=append
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=bytesBuffer
-//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=plus
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=testAll
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=YourType2 -file=$GOFILE -gen=unmarshal
 package mix3types
 
 import (
@@ -28,7 +27,7 @@ var YourType2_examples = []struct {
 		YourType2{
 			RuneField:  'b',
 			RunesField: []rune("123"),
-			DateField:  testTime,
+			DateField:  testTime.Round(0),
 		}, nil},
 }
 

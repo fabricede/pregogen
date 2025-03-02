@@ -55,12 +55,18 @@ func Seq(start, size int) []int {
 	return res
 }
 
-// Method gives action method specific translation in method (plus, append, or bytesBuffer)
+func GetMethods() []string {
+	return []string{"bytesBuffer", "stringsBuilder", "append", "plus"}
+}
+
+// Method gives action method specific translation in method
 // to avoid passing variables in subtemplate
 func Method(method, action, addition string) (string, error) {
 	switch method {
 	case "bytesBuffer":
 		return MethodBytesBuffer(action, addition)
+	case "stringsBuilder":
+		return MethodStringsBuilder(action, addition)
 	case "append":
 		return MethodAppend(action, addition)
 	case "plus":
@@ -68,11 +74,13 @@ func Method(method, action, addition string) (string, error) {
 	case "unique":
 		return MethodUnique(action, addition)
 	}
-	return "", fmt.Errorf("Unknown method: %v", method)
+	return "", fmt.Errorf("unknown method: %v", method)
 }
 
 func MethodAppend(action, addition string) (string, error) {
 	switch action {
+	case "include":
+		return "", nil
 	case "declareVar":
 		return "\n\tvar result []byte\n\t", nil
 	case "start":
@@ -86,11 +94,13 @@ func MethodAppend(action, addition string) (string, error) {
 	case "finalReturn":
 		return "\n\treturn result, nil", nil
 	}
-	return "", fmt.Errorf("Unknown action: %v", action)
+	return "", fmt.Errorf("unknown action: %v", action)
 }
 
 func MethodBytesBuffer(action, addition string) (string, error) {
 	switch action {
+	case "include":
+		return "\"bytes\"", nil
 	case "declareVar":
 		return "\n\tvar result bytes.Buffer\n\t", nil
 	case "start":
@@ -104,11 +114,33 @@ func MethodBytesBuffer(action, addition string) (string, error) {
 	case "finalReturn":
 		return "\n\treturn result.Bytes(), nil", nil
 	}
-	return "", fmt.Errorf("Unknown action: %v", action)
+	return "", fmt.Errorf("unknown action: %v", action)
+}
+
+func MethodStringsBuilder(action, addition string) (string, error) {
+	switch action {
+	case "include":
+		return "\"strings\"", nil
+	case "declareVar":
+		return "\n\tvar result strings.Builder\n\t", nil
+	case "start":
+		return "result.WriteString(" + addition, nil
+	case "stop":
+		return addition + ")\n\t", nil
+	case "firststart":
+		return "result.WriteString(" + addition, nil
+	case "firstend":
+		return addition + ")\n\t", nil
+	case "finalReturn":
+		return "\n\treturn []byte(result.String()), nil", nil
+	}
+	return "", fmt.Errorf("unknown action: %v", action)
 }
 
 func MethodPlus(action, addition string) (string, error) {
 	switch action {
+	case "include":
+		return "", nil
 	case "declareVar":
 		return "\n\tvar result string\n\t", nil
 	case "start":
@@ -122,11 +154,13 @@ func MethodPlus(action, addition string) (string, error) {
 	case "finalReturn":
 		return "\n\treturn []byte(result), nil", nil
 	}
-	return "", fmt.Errorf("Unknown action: %v", action)
+	return "", fmt.Errorf("unknown action: %v", action)
 }
 
 func MethodUnique(action, addition string) (string, error) {
 	switch action {
+	case "include":
+		return "", nil
 	case "declareVar":
 		return "", nil
 	case "start":
@@ -136,7 +170,7 @@ func MethodUnique(action, addition string) (string, error) {
 	case "finalReturn":
 		return "", nil
 	}
-	return "", fmt.Errorf("Unknown action: %v", action)
+	return "", fmt.Errorf("unknown action: %v", action)
 }
 
 // Return.
@@ -154,6 +188,7 @@ func templateFuncs() template.FuncMap {
 		"getArrayType":   GetArrayType,
 		"getPointerType": GetPointerType,
 		"isArray":        IsArray,
+		"getMethods":     GetMethods,
 		"method":         Method,
 		"return":         Return,
 	}
@@ -198,8 +233,8 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)
-		if !containsItem(*includes, "fmt") {
-			*includes = append(*includes, "fmt")
+		if !containsItem(*includes, "encoding/json") {
+			*includes = append(*includes, "encoding/json")
 		}
 	}
 }

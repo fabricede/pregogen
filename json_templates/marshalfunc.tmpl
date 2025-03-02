@@ -45,5 +45,13 @@
 {{- end -}}
 
 {{- define "othervalue" -}}
-    fmt.Sprint({{.Value}})
+    {{- method .Method .Start .Header }}{{.JSONName}}{{ method .Method .Stop "\"" -}}
+    tmp{{.Name}}, err := json.Marshal({{.Value}})
+    if err != nil {
+        return nil, err
+    }
+    {{ method .Method "start" ""}}string(tmp{{.Name}}){{ method .Method "stop" ""}}
+    {{ if eq .Last "true" -}}
+        {{ method .Method "start" "\"" }}{{ method .Method "stop" .Final }}
+    {{- end -}}
 {{- end -}}
