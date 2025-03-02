@@ -74,7 +74,12 @@
     if e{{.FieldName}} != nil {
         err = e{{.FieldName}}
     } else {
-        {{.ReceiverName}}.{{.FieldName}} = byte(df{{.FieldName}})
+        {{ if eq .Pointer "&" }}
+        dfbyte{{.FieldName}} := byte(df{{.FieldName}})
+        {{.ReceiverName}}.{{.FieldName}} = &dfbyte{{.FieldName}}
+        {{ else }}
+        {{.ReceiverName}}.{{.FieldName}} =byte(df{{.FieldName}})
+        {{ end }}
     }
 {{end}}
 
@@ -106,7 +111,11 @@
 {{end}}
 
 {{define "parseother"}}
-    fmt.Sprint({{.Value}})
+    var df{{.FieldName}} {{.FieldType}}
+    err = json.Unmarshal([]byte(sdata[field.begin:dataEnd+1]), &df{{.FieldName}})
+    if err == nil {
+        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
+    }
 {{end}}
 
 {{- define "parsebasic" -}}

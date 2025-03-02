@@ -5,30 +5,53 @@ package {{.Package}}
 {{ $imports := (len .Includes) }}
 {{- $lastIndex := sub (len .Fields) 1 -}}
 {{- $uniquebool := false -}}
-{{- $uniquearraybool := false -}}
 {{- $containsbyte := false -}}
-{{- $containsbytes := false -}}
+{{- $containsunsuported := false -}}
+{{- $containsdate := false -}}
 {{- range $i, $field := .Fields -}}
     {{- if and (eq .FieldType "bool") (eq $lastIndex $i) ( eq $i 0) }}
-        {{- $uniquebool = true -}}
-    {{- else if and (eq .FieldType "[]bool") (eq $lastIndex $i) ( eq $i 0) }}
-        {{- $uniquearraybool = true -}}
+        {{ $uniquebool = true }}
     {{- end -}}
-    {{- if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") }}
+    {{- if or (eq .FieldType "byte") (eq .FieldType "int8") (eq .FieldType "uint8") (eq .FieldType "*byte") (eq .FieldType "*int8") (eq .FieldType "*uint8") }}
         {{- $containsbyte = true -}}
-    {{- end -}}
-	{{- if or (eq .FieldType "[]byte") }}
-        {{- $containsbytes = true -}}
-    {{- end -}}
+	{{- else if or (eq .FieldType "string") (eq .FieldType "*string") }}
+	{{- else if or (eq .FieldType "[]string") (eq .FieldType "[]*string") }}
+	{{- else if or (eq .FieldType "time.Time") (eq .FieldType "*time.Time")}}
+		{{ $containsdate = true }}
+	{{- else if or (eq .FieldType "[]time.Time") (eq .FieldType "[]*time.Time") }}
+		{{ $containsdate = true }}
+	{{- else if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") }} 
+	{{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") }} 
+	{{- else if or (eq .FieldType "[]int") (eq .FieldType "[]int16") (eq .FieldType "[]int32") (eq .FieldType "[]int64") }} 
+	{{- else if or (eq .FieldType "[]uint") (eq .FieldType "[]uint16") (eq .FieldType "[]uint32") (eq .FieldType "[]uint64") }} 
+	{{- else if or (eq .FieldType "*int") (eq .FieldType "*int16") (eq .FieldType "*int32") (eq .FieldType "*int64") }} 
+	{{- else if or (eq .FieldType "*uint") (eq .FieldType "*uint16") (eq .FieldType "*uint32") (eq .FieldType "*uint64") }}
+	{{- else if or (eq .FieldType "[]*int") (eq .FieldType "[]*int16") (eq .FieldType "[]*int32") (eq .FieldType "[]*int64") }} 
+	{{- else if or (eq .FieldType "[]*uint") (eq .FieldType "[]*uint16") (eq .FieldType "[]*uint32") (eq .FieldType "[]*uint64") }}
+	{{- else if or (eq .FieldType "float32") (eq .FieldType "float64") }}
+	{{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") }}
+	{{- else if or (eq .FieldType "[]float32") (eq .FieldType "[]float64") }}
+	{{- else if or (eq .FieldType "[]*float32") (eq .FieldType "[]*float64") }}
+	{{- else if or (eq .FieldType "bool") (eq .FieldType "*bool") }}
+	{{- else if or (eq .FieldType "[]bool") (eq .FieldType "[]*bool") }}
+	{{- else if or (eq .FieldType "byte") (eq .FieldType "[]byte") (eq .FieldType "*byte") (eq .FieldType "[]*byte") }}
+	{{- else }}
+		{{- $containsunsuported = true -}}
+	{{- end -}}
 {{- end -}}
+
 {{- if $uniquebool -}}
-    {{ template "uniqueBool" . }}
-    {{ return }}
+	{{ template "uniqueBool" . }}
+	{{ return }}
 {{- end -}}
+
 import (
 	"strings"
 	{{ if $containsbyte -}}
 	"strconv"
+	{{- end }}
+	{{ if $containsdate -}}
+	"time"
 	{{- end }}
     {{ range $include := .Includes }}
     "{{$include}}"

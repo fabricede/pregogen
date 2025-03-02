@@ -401,9 +401,9 @@ var ByteArrayType3_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=PointerByteType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerByteType -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=PointerByteType -file=$GOFILE -gen=marshal
-
+//go:generate pregogen -type=PointerByteType -file=$GOFILE -gen=unmarshal
 type PointerByteType struct {
 	PointerByteField *byte `json:"pointerbytefield"`
 }

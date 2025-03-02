@@ -17,7 +17,7 @@
     {{- else if or (eq .FieldType "*float32") (eq .FieldType "*float64") -}}{{template "pointer" .}}
     {{- else if or (eq .FieldType "*int8") (eq .FieldType "*uint8") (eq .FieldType "*byte") -}}{{template "pointer" .}}
     {{- else if eq .FieldType "*time.Time" -}}{{template "pointer" .}}
-    {{- else -}}{{template "basic" .}}
+    {{- else -}}{{template "othervalue" .}}
     {{- end -}}
 {{end -}}
 

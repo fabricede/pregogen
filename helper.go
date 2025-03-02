@@ -233,8 +233,8 @@ func processFieldType(fieldType, fieldName string, includes *[]string) {
 	default:
 		// Handle other types
 		log.Printf("Field %s is of other type", fieldName)
-		if !containsItem(*includes, "fmt") {
-			*includes = append(*includes, "fmt")
+		if !containsItem(*includes, "encoding/json") {
+			*includes = append(*includes, "encoding/json")
 		}
 	}
 }
