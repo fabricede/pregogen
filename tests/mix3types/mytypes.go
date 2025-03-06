@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var testTime = time.Now()
+var testTime = time.Now().Round(0)
 
 // var convertTime, err = time.Parse(time.RFC3339, DateFieldFormat)
 
@@ -27,7 +27,7 @@ var YourType2_examples = []struct {
 		YourType2{
 			RuneField:  'b',
 			RunesField: []rune("123"),
-			DateField:  testTime.Round(0),
+			DateField:  testTime,
 		}, nil},
 }
 

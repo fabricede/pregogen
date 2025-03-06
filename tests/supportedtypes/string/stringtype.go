@@ -20,33 +20,6 @@ var StringType_examples = []struct {
 		}, nil},
 }
 
-//go:generate pregogen -type=DateType -file=$GOFILE -gen=testAll
-//go:generate pregogen -type=DateType -file=$GOFILE -gen=marshal
-//go:generate pregogen -type=DateType -file=$GOFILE -gen=unmarshal
-
-// Date is a time.Time in Go, but is a "string" type in terms of JSON
-type DateType struct {
-	DateField time.Time `json:"datefield"`
-}
-
-// DateFieldFormat is the format used to marshal/unmarshal the DateField
-var DateFieldFormat string = time.RFC3339Nano
-
-// testTime is a fixed time used for tests (use compiles time)
-var testTime = time.Now()
-
-// representative example of data stored in target application (size used for capacity)
-var DateType_examples = []struct {
-	DateType
-	want []byte
-}{
-	{
-		DateType{
-			// Round(0) is used to remove the monotonic clock part of the time
-			DateField: testTime.Round(0),
-		}, nil},
-}
-
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=testAll
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=marshal
 //go:generate pregogen -type=StringType3 -file=$GOFILE -gen=unmarshal
@@ -227,3 +200,115 @@ var PointerStringArrayType3_examples = []struct {
 			PointerStringArrayField3: nil,
 		}, nil},
 }
+
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=testAll
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=unmarshal
+
+// Date is a time.Time in Go, but is a "string" type in terms of JSON
+type DateType struct {
+	DateField time.Time `json:"datefield"`
+}
+
+// DateFieldFormat is the format used to marshal/unmarshal the DateField
+var DateFieldFormat string = time.RFC3339Nano
+
+// testTime is a fixed time used for tests (use compiles time)
+// Round(0) is used to remove the monotonic clock part of the time
+var testTime = time.Now().Round(0)
+
+// representative example of data stored in target application (size used for capacity)
+var DateType_examples = []struct {
+	DateType
+	want []byte
+}{
+	{
+		DateType{
+
+			DateField: testTime,
+		}, nil},
+}
+
+//----------------------------
+// Pointer Date
+//----------------------------
+
+// PointerDateType is a date type stored as a pointer.
+type PointerDateType struct {
+	DateField *time.Time `json:"datefield"`
+}
+
+var PointerDateType_examples = []struct {
+	PointerDateType
+	want []byte
+}{
+	{
+		PointerDateType{
+			DateField: &testTime,
+		}, nil,
+	},
+	{
+		PointerDateType{
+			DateField: nil,
+		}, nil,
+	},
+}
+
+//----------------------------
+// Array of Dates
+//----------------------------
+
+var DateFieldsFormat string = time.RFC3339Nano
+
+// DateArrayType is a slice of dates.
+type DateArrayType struct {
+	DateFields []time.Time `json:"datefields"`
+}
+
+var DateArrayType_examples = []struct {
+	DateArrayType
+	want []byte
+}{
+	{
+		DateArrayType{
+			DateFields: []time.Time{
+				testTime.Round(0),
+				testTime.Add(time.Hour).Round(0),
+			},
+		}, nil,
+	},
+}
+
+//----------------------------
+// Array of Pointer Dates
+//----------------------------
+
+// PointerDateArrayType is a slice of pointers to dates.
+type PointerDateArrayType struct {
+	DateFields []*time.Time `json:"datefields"`
+}
+
+var PointerDateArrayType_examples = []struct {
+	PointerDateArrayType
+	want []byte
+}{
+	{
+		PointerDateArrayType{
+			DateFields: []*time.Time{&testTime, nil, &testTime},
+		}, nil,
+	},
+}
+
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=testAll
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=unmarshal
+
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=testAll
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=PointerDateType -file=$GOFILE -gen=unmarshal
+
+//go:generate pregogen -type=DateArrayType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=DateArrayType -file=$GOFILE -gen=marshal
+
+//go:generate pregogen -type=PointerDateArrayType -file=$GOFILE -gen=testMarshal
+//go:generate pregogen -type=PointerDateArrayType -file=$GOFILE -gen=marshal
