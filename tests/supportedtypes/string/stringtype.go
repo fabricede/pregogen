@@ -3,6 +3,8 @@
 //go:generate pregogen -type=StringType -file=$GOFILE -gen=unmarshal
 package stringtype
 
+import "time"
+
 type StringType struct {
 	StringField string `json:"stringfield"`
 }
@@ -15,6 +17,33 @@ var StringType_examples = []struct {
 	{
 		StringType{
 			StringField: "hello",
+		}, nil},
+}
+
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=testAll
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=marshal
+//go:generate pregogen -type=DateType -file=$GOFILE -gen=unmarshal
+
+// Date is a time.Time in Go, but is a "string" type in terms of JSON
+type DateType struct {
+	DateField time.Time `json:"datefield"`
+}
+
+// DateFieldFormat is the format used to marshal/unmarshal the DateField
+var DateFieldFormat string = time.RFC3339Nano
+
+// testTime is a fixed time used for tests (use compiles time)
+var testTime = time.Now()
+
+// representative example of data stored in target application (size used for capacity)
+var DateType_examples = []struct {
+	DateType
+	want []byte
+}{
+	{
+		DateType{
+			// Round(0) is used to remove the monotonic clock part of the time
+			DateField: testTime.Round(0),
 		}, nil},
 }
 
@@ -86,7 +115,7 @@ type PointerStringType struct {
 	PointerStringField *string `json:"pointerstringfield"`
 }
 
-var int1 = "toto"
+var string1 = "toto"
 
 // representative example of data stored in target application
 var PointerStringType_examples = []struct {
@@ -95,7 +124,7 @@ var PointerStringType_examples = []struct {
 }{
 	{
 		PointerStringType{
-			PointerStringField: &int1,
+			PointerStringField: &string1,
 		}, nil},
 	{
 		PointerStringType{
@@ -112,8 +141,8 @@ type PointerStringType3 struct {
 	PointerStringField3 *string `json:"pointerstringfield3"`
 }
 
-var int2 = "tata"
-var int3 = "titi"
+var string2 = "tata"
+var string3 = "titi"
 
 // representative example(s) of data stored in target application
 var PointerStringType3_examples = []struct {
@@ -122,9 +151,9 @@ var PointerStringType3_examples = []struct {
 }{
 	{
 		PointerStringType3{
-			PointerStringField1: &int1,
+			PointerStringField1: &string1,
 			PointerStringField2: nil,
-			PointerStringField3: &int3,
+			PointerStringField3: &string3,
 		}, nil},
 	{
 		PointerStringType3{
@@ -135,7 +164,7 @@ var PointerStringType3_examples = []struct {
 	{
 		PointerStringType3{
 			PointerStringField1: nil,
-			PointerStringField2: &int2,
+			PointerStringField2: &string2,
 			PointerStringField3: nil,
 		}, nil},
 }
@@ -146,8 +175,8 @@ type PointerStringArrayType struct {
 	PointerStringField []*string `json:"pointerstringfield"`
 }
 
-var intarray1 []*string = []*string{&int1, nil, &int2}
-var intarray2 []*string = []*string{nil, nil, nil}
+var stringarray1 []*string = []*string{&string1, nil, &string2}
+var stringarray2 []*string = []*string{nil, nil, nil}
 
 // representative example of data stored in target application
 var PointerStringArrayType_examples = []struct {
@@ -156,11 +185,11 @@ var PointerStringArrayType_examples = []struct {
 }{
 	{
 		PointerStringArrayType{
-			PointerStringField: intarray1,
+			PointerStringField: stringarray1,
 		}, nil},
 	{
 		PointerStringArrayType{
-			PointerStringField: intarray2,
+			PointerStringField: stringarray2,
 		}, nil},
 }
 
@@ -172,7 +201,7 @@ type PointerStringArrayType3 struct {
 	PointerStringArrayField3 []*string `json:"pointerstringfield3"`
 }
 
-var intarray3 []*string = []*string{nil, &int3, nil}
+var stringarray3 []*string = []*string{nil, &string3, nil}
 
 // representative example(s) of data stored in target application
 var PointerStringArrayType3_examples = []struct {
@@ -181,9 +210,9 @@ var PointerStringArrayType3_examples = []struct {
 }{
 	{
 		PointerStringArrayType3{
-			PointerStringArrayField1: intarray1,
+			PointerStringArrayField1: stringarray1,
 			PointerStringArrayField2: nil,
-			PointerStringArrayField3: intarray3,
+			PointerStringArrayField3: stringarray3,
 		}, nil},
 	{
 		PointerStringArrayType3{
@@ -194,7 +223,7 @@ var PointerStringArrayType3_examples = []struct {
 	{
 		PointerStringArrayType3{
 			PointerStringArrayField1: nil,
-			PointerStringArrayField2: intarray2,
+			PointerStringArrayField2: stringarray2,
 			PointerStringArrayField3: nil,
 		}, nil},
 }
