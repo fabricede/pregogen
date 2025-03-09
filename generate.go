@@ -9,6 +9,7 @@ import (
 	"go/ast"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -41,16 +42,18 @@ func RunGenerator(typeName, fileName, genType string) error {
 	if err != nil {
 		return err
 	}
-	err = generateForStruct(node, typeName, genType)
+	// Pass the directory of the input file to generateForStruct
+	dir := filepath.Dir(fileName)
+	err = generateForStruct(node, typeName, genType, dir)
 	return err
 }
 
-func generateForStruct(node *ast.File, typeName, genType string) error {
+func generateForStruct(node *ast.File, typeName, genType, dir string) error {
 	ast.Inspect(node, func(n ast.Node) bool {
 		switch x := n.(type) {
 		case *ast.TypeSpec:
 			if x.Name.Name == typeName {
-				generateJSON(x, node.Name.Name, genType)
+				generateJSON(x, node.Name.Name, genType, dir)
 				return false
 			}
 		}
@@ -59,7 +62,7 @@ func generateForStruct(node *ast.File, typeName, genType string) error {
 	return nil
 }
 
-func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
+func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string, dir string) {
 	structType, ok := typeSpec.Type.(*ast.StructType)
 	if !ok {
 		log.Fatalf("%s is not a struct", typeSpec.Name.Name)
@@ -88,7 +91,7 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 	}
 
 	TypeName := typeSpec.Name.Name
-	name := fmt.Sprintf("generated_%s_marshal_json_%s.go", TypeName, gentype)
+	var name string
 	if gentype == "unmarshal" {
 		name = fmt.Sprintf("generated_%s_unmarshal_json.go", typeSpec.Name.Name)
 	} else if gentype == "testMarshal" || gentype == "testUnmarshal" || gentype == "testAll" {
@@ -96,11 +99,15 @@ func generateJSON(typeSpec *ast.TypeSpec, packageName string, gentype string) {
 	} else if gentype == "marshal" {
 		for _, method := range GetMethods() {
 			name = fmt.Sprintf("generated_%s_marshal_json_%s.go", TypeName, method)
-			processGentype(method, packageName, receiverName, TypeName, name, fields, includes)
+			filename := filepath.Join(dir, name)
+			processGentype(method, packageName, receiverName, TypeName, filename, fields, includes)
 		}
 		return
+	} else {
+		name = fmt.Sprintf("generated_%s_marshal_json_%s.go", TypeName, gentype)
 	}
-	processGentype(gentype, packageName, receiverName, TypeName, name, fields, includes)
+	filename := filepath.Join(dir, name)
+	processGentype(gentype, packageName, receiverName, TypeName, filename, fields, includes)
 }
 
 func processGentype(gentype, packageName, receiverName, TypeName, filename string, fields []FieldInfo, includes []string) {

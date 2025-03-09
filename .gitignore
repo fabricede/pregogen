@@ -6,3 +6,5 @@
 # Ignore executables
 pregogen
 pregogen.exe
+
+*.out

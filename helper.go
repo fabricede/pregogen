@@ -1,6 +1,7 @@
 package pregogen
 
 import (
+	"flag"
 	"fmt"
 	"go/ast"
 	"log"
@@ -173,8 +174,13 @@ func MethodUnique(action, addition string) (string, error) {
 	return "", fmt.Errorf("unknown action: %v", action)
 }
 
-// Return.
+// Return exits the program in normal operation, but panics during tests for testability
 func Return() error {
+	if flag.Lookup("test.v") != nil {
+		// We're in test mode, use panic for testability
+		panic("exit")
+	}
+	// Normal operation, use os.Exit
 	os.Exit(0)
 	return nil
 }
