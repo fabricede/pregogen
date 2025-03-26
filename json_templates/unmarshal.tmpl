@@ -72,7 +72,7 @@ func ({{.ReceiverName}} *{{.TypeName}}) UnmarshalJSON(data []byte) (err error) {
 
 	var orderedFields []OrderedField
 
-	// List the keys you expect. You can adjust the order or use any iteration order.
+	// List expected keys.
 	for _, key := range []string{ {{range $i, $field := .Fields}}"{{$field.JSONName}}",{{end}} } {
 		posField := strings.Index(sdata, key)
 		if posField != -1 {

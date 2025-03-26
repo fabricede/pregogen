@@ -21,110 +21,112 @@
 {{end -}}
 
 {{define "parsefloat32"}}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseFloat(sdata[field.begin:dataEnd+1], 32)
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        dffloat{{.FieldName}} := float32(df{{.FieldName}})
-        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}dffloat{{.FieldName}}
-    }
+    var dffloat{{.FieldName}} float64
+    dffloat{{.FieldName}}, err{{.FieldName}} = strconv.ParseFloat(sdata[field.begin:dataEnd+1], 32)
+    df{{.FieldName}} = float32(dffloat{{.FieldName}})
 {{end}}
 
 {{define "parsefloat64"}}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseFloat(sdata[field.begin:dataEnd+1], 64)
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
-    }
+    df{{.FieldName}}, err{{.FieldName}} = strconv.ParseFloat(sdata[field.begin:dataEnd+1], 64)
 {{end}}
 
 {{define "parseint"}}
-    {{ if or (eq .FieldType "int") (eq .FieldType "int32") (eq .FieldType "uint") (eq .FieldType "uint32") }}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 32)
-    {{ else if or (eq .FieldType "int16") (eq .FieldType "uint16") }}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 16)
-    {{ else if or (eq .FieldType "int64") (eq .FieldType "uint64") }}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
+    var dfint64{{.FieldName}} int64
+    dfint64{{.FieldName}}, err{{.FieldName}} = strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 64)
+    {{ if eq .FieldType "int" }}
+    df{{.FieldName}} = int(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "int16" }}
+    df{{.FieldName}} = int16(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "int32" }}
+    df{{.FieldName}} = int32(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "int64" }}
+    df{{.FieldName}} = int64(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "uint" }}
+    df{{.FieldName}} = uint(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "uint16" }}
+    df{{.FieldName}} = uint16(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "uint32" }}
+    df{{.FieldName}} = uint32(dfint64{{.FieldName}})
+    {{ else if eq .FieldType "uint64" }}
+    df{{.FieldName}} = uint64(dfint64{{.FieldName}})
     {{ end }}
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{ if eq .FieldType "int" }}
-        dfint{{.FieldName}} := int(df{{.FieldName}})
-        {{ else if eq .FieldType "int16" }}
-        dfint{{.FieldName}} := int16(df{{.FieldName}})
-        {{ else if eq .FieldType "int32" }}
-        dfint{{.FieldName}} := int32(df{{.FieldName}})
-        {{ else if eq .FieldType "int64" }}
-        dfint{{.FieldName}} := int64(df{{.FieldName}})
-        {{ else if eq .FieldType "uint" }}
-        dfint{{.FieldName}} := uint(df{{.FieldName}})
-        {{ else if eq .FieldType "uint16" }}
-        dfint{{.FieldName}} := uint16(df{{.FieldName}})
-        {{ else if eq .FieldType "uint32" }}
-        dfint{{.FieldName}} := uint32(df{{.FieldName}})
-        {{ else if eq .FieldType "uint64" }}
-        dfint{{.FieldName}} := uint64(df{{.FieldName}})
+{{end}}
+
+{{define "parseintbis"}}
+    pos := field.begin
+    var df{{.FieldName}} {{.FieldType}} = 0
+    df{{.FieldName}}isNegative := sdata[pos] == '-'
+    if df{{.FieldName}}isNegative {
+        {{ if or (eq .FieldType "uint64") (eq .FieldType "uint32") (eq .FieldType "uint16") (eq .FieldType "uint") }}
+        err = errors.New("invalid negative number")
+        {{ else }}
+        pos++
         {{ end }}
-        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}dfint{{.FieldName}}
+    }
+
+    {{ if or (eq .FieldType "uint64") (eq .FieldType "uint32") (eq .FieldType "uint16") (eq .FieldType "uint") }}
+    if err == nil {
+    {{ end }}
+        for pos < dataEnd+1 && sdata[pos] >= '0' && sdata[pos] <= '9' {
+            df{{.FieldName}} = df{{.FieldName}}*10 + int(sdata[pos]-'0')
+            pos++
+        }
+    {{ if or (eq .FieldType "uint64") (eq .FieldType "uint32") (eq .FieldType "uint16") (eq .FieldType "uint") }}
+    }
+    {{ end }}
+
+    {{ if or (eq .FieldType "uint64") (eq .FieldType "uint32") (eq .FieldType "uint16") (eq .FieldType "uint") }}
+    if err == nil && pos != field.begin {
+    {{ else }}
+    if pos == field.begin || (df{{.FieldName}}isNegative && pos == field.begin+1) {
+        err = errors.New("invalid number")
+    } else {
+    {{ end }}
+        if df{{.FieldName}}isNegative {
+            df{{.FieldName}} = -df{{.FieldName}}
+        }
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
+    {{ if or (eq .FieldType "uint64") (eq .FieldType "uint32") (eq .FieldType "uint16") (eq .FieldType "uint") }}
+    } else if err == nil {
+        err = errors.New("invalid number")
+    {{ end }}
     }
 {{end}}
 
 {{define "parsebool"}}
-    {{.ReceiverName}}.{{.FieldName}} = (sdata[field.begin:dataEnd+1] == "true")
+    df{{.FieldName}} = (sdata[field.begin:dataEnd+1] == "true")
 {{end}}
 
 {{define "parsebyte"}}
-    df{{.FieldName}}, e{{.FieldName}} := strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 8)
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{ if eq .Pointer "&" }}
-        dfbyte{{.FieldName}} := byte(df{{.FieldName}})
-        {{.ReceiverName}}.{{.FieldName}} = &dfbyte{{.FieldName}}
-        {{ else }}
-        {{.ReceiverName}}.{{.FieldName}} =byte(df{{.FieldName}})
-        {{ end }}
-    }
+    var dfbyte{{.FieldName}} int64
+    dfbyte{{.FieldName}}, err{{.FieldName}} = strconv.ParseInt(sdata[field.begin:dataEnd+1], 10, 8)
+    df{{.FieldName}} = byte(dfbyte{{.FieldName}})
 {{end}}
 
 {{define "parsetime"}}
-    df{{.FieldName}}, e{{.FieldName}} := time.Parse({{.FieldName}}Format, sdata[field.begin+1:dataEnd])
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
-    }
+    df{{.FieldName}}, err{{.FieldName}} = time.Parse({{.FieldName}}Format, sdata[field.begin+1:dataEnd])
 {{end}}
 
 {{define "parsestring"}}
-    {{ if eq .Pointer "&" }}
-    df{{.FieldName}} := sdata[field.begin+1 : dataEnd]
-    {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
-    {{ else }}
-    {{.ReceiverName}}.{{.FieldName}} = sdata[field.begin+1 : dataEnd]
-    {{ end }}
+    df{{.FieldName}} = sdata[field.begin+1 : dataEnd]
 {{end}}
 
 {{define "parsebase64"}}
-    df{{.FieldName}}, e{{.FieldName}} := base64.StdEncoding.DecodeString(sdata[field.begin+1:dataEnd])
-    if e{{.FieldName}} != nil {
-        err = e{{.FieldName}}
-    } else {
-        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
-    }
+    df{{.FieldName}}, err{{.FieldName}} = base64.StdEncoding.DecodeString(sdata[field.begin+1:dataEnd])
 {{end}}
 
 {{define "parseother"}}
-    var df{{.FieldName}} {{.FieldType}}
-    err = json.Unmarshal([]byte(sdata[field.begin:dataEnd+1]), &df{{.FieldName}})
-    if err == nil {
-        {{.ReceiverName}}.{{.FieldName}} = df{{.FieldName}}
-    }
+    err{{.FieldName}} = json.Unmarshal([]byte(sdata[field.begin:dataEnd+1]), &df{{.FieldName}})
 {{end}}
 
 {{- define "parsebasic" -}}
+    {{ if eq .Pointer "&" }}
+    {{ $pfieldType := (getPointerType .FieldType) }}
+    var df{{.FieldName}} {{$pfieldType}}
+    {{ else }}
+    var df{{.FieldName}} {{.FieldType}}
+    {{ end }}
+    var err{{.FieldName}} error
     {{- if or (eq .FieldType "int") (eq .FieldType "int16") (eq .FieldType "int32") (eq .FieldType "int64") -}}
         {{- template "parseint" .}}
     {{- else if or (eq .FieldType "uint") (eq .FieldType "uint16") (eq .FieldType "uint32") (eq .FieldType "uint64") -}}
@@ -146,6 +148,11 @@
     {{- else -}}
         {{- template "parseother" .}}
     {{- end -}}
+    if err{{.FieldName}} != nil {
+        err = err{{.FieldName}}
+    } else {
+        {{.ReceiverName}}.{{.FieldName}} = {{.Pointer}}df{{.FieldName}}
+    }
 {{- end -}}
 
 {{define "parsepointer"}}

@@ -4,7 +4,7 @@
 package inttype
 
 import (
-	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -71,8 +71,6 @@ type IntArrayType3 struct {
 
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=testMarshal
 //go:generate pregogen -type=IntArrayType3 -file=$GOFILE -gen=marshal
-
-// representative example(s) of data stored in target application
 var IntArrayType3_examples = []struct {
 	IntArrayType3
 	want []byte
@@ -206,54 +204,13 @@ var PointerIntArrayType3_examples = []struct {
 		}, nil},
 }
 
-func (p_receiver *PointerIntType3) UnmarshalJSON_v2(data []byte) error {
-	p_receiver.PointerIntField1 = nil
-	p_receiver.PointerIntField2 = nil
-	p_receiver.PointerIntField3 = nil
-
-	var objMap map[string]json.RawMessage
-	err := json.Unmarshal(data, &objMap)
-	if err != nil {
-		return err
-	}
-
-	for key, value := range objMap {
-		if key == "pointerintfield1" {
-			var valueInt int
-			err = json.Unmarshal(value, &valueInt)
-			if err != nil {
-				return err
-			}
-			p_receiver.PointerIntField1 = &valueInt
-		}
-		if key == "pointerintfield2" {
-			var valueInt int
-			err = json.Unmarshal(value, &valueInt)
-			if err != nil {
-				return err
-			}
-			p_receiver.PointerIntField2 = &valueInt
-		}
-		if key == "pointerintfield3" {
-			var valueInt int
-			err = json.Unmarshal(value, &valueInt)
-			if err != nil {
-				return err
-			}
-			p_receiver.PointerIntField3 = &valueInt
-		}
-	}
-
-	return nil
-}
-
 func (i_receiver *IntType) UnmarshalJSON_opt(data []byte) (err error) {
 	// UnmarshalJSON implements the json.Unmarshaler interface.
 	sdata := string(data)
 
 	//var orderedFields *OrderedField
 
-	// List the keys you expect. You can adjust the order or use any iteration order.
+	// List expected keys.
 	//for _, key := range []string{ "intfield", } {
 	posField := strings.Index(sdata, "intfield")
 	if posField != -1 {
@@ -301,4 +258,85 @@ func (i_receiver *IntType) UnmarshalJSON_opt(data []byte) (err error) {
 			}
 		}*/
 	return err
+}
+
+func parseNumber(data []byte) (num int, pos int, err error) {
+	isNegative := data[pos] == '-'
+	if isNegative {
+		pos++
+	}
+
+	start := pos
+	for pos < len(data) && data[pos] >= '0' && data[pos] <= '9' {
+		num = num*10 + int(data[pos]-'0')
+		pos++
+	}
+
+	if pos == start || (isNegative && pos == start+1) {
+		return 0, 0, errors.New("invalid number")
+	}
+	if isNegative {
+		num = -num
+	}
+
+	return num, pos, nil
+}
+
+func (i_receiver *IntArrayType) UnmarshalJSON_array(data []byte) (err error) {
+	// Skip whitespace and check for '['
+	pos := 0
+	for pos < len(data) && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+		pos++
+	}
+	if pos >= len(data) || data[pos] != '[' {
+		return errors.New("expected '['")
+	}
+	pos++
+
+	var result []int
+	for pos < len(data) {
+		// Skip whitespace
+		for pos < len(data) && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+			pos++
+		}
+
+		if pos >= len(data) {
+			return errors.New("unexpected end of data")
+		}
+
+		// Check for end of array
+		if data[pos] == ']' {
+			i_receiver.IntArrayField = result
+			return nil
+		}
+
+		// Parse number
+		num, newPos, err := parseNumber(data[pos:])
+		if err != nil {
+			return err
+		}
+		pos = newPos
+
+		result = append(result, num)
+
+		// Skip whitespace
+		for pos < len(data) && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+			pos++
+		}
+
+		// Expect comma or end of array
+		if pos >= len(data) {
+			return errors.New("unexpected end of data")
+		}
+		if data[pos] == ']' {
+			i_receiver.IntArrayField = result
+			return nil
+		}
+		if data[pos] != ',' {
+			return errors.New("expected ',' or ']'")
+		}
+		pos++
+	}
+
+	return errors.New("unexpected end of data")
 }

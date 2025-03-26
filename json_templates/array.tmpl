@@ -237,9 +237,9 @@
     {{- else if eq $arraytype "bool" -}}
         {{template "arraybool" .}}
     {{- else if or (eq $arraytype "int") (eq $arraytype "int16") (eq $arraytype "int32") (eq $arraytype "int64") -}}
-        {{template "arrayint" .}}
+        {{template "parsebasicarray" .}}
     {{- else if or (eq $arraytype "uint") (eq $arraytype "uint16") (eq $arraytype "uint32") (eq $arraytype "uint64") -}}
-        {{template "arrayint" .}}
+        {{template "parsebasicarray" .}}
     {{- else if or (eq $arraytype "float32") (eq $arraytype "float64") -}}
         {{template "arrayfloat" .}}
     {{- else if eq $arraytype "time.Time" -}}
@@ -252,3 +252,74 @@
         {{template "parsebasic" .}}
     {{- end -}}
 {{- end -}}
+
+{{define "parsebasicarray"}}
+    // Skip whitespace and check for '['
+	pos := 0
+    data := sdata[field.begin:dataEnd+1]
+    dataEnd = len(data)
+	for pos < dataEnd && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+		pos++
+	}
+	if pos >= dataEnd || data[pos] != '[' {
+		return errors.New("expected '['")
+	}
+	pos++
+
+	var result []int
+	for pos < dataEnd {
+		for pos < len(data) && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+			pos++
+		}
+
+		if pos >= dataEnd {
+			return errors.New("unexpected end of data")
+		}
+
+		// Check for end of array
+		if data[pos] == ']' {
+			i_receiver.IntArrayField = result
+			return nil
+		}
+
+		// Parse number
+		start := pos
+		isNegative := false
+		if data[pos] == '-' {
+			isNegative = true
+			pos++
+		}
+
+		var num int
+		for pos < dataEnd && data[pos] >= '0' && data[pos] <= '9' {
+			num = num*10 + int(data[pos]-'0')
+			pos++
+		}
+		if pos == start || (isNegative && pos == start+1) {
+			return errors.New("invalid number")
+		}
+		if isNegative {
+			num = -num
+		}
+
+		result = append(result, num)
+
+		// Skip whitespace
+		for pos < dataEnd && (data[pos] == ' ' || data[pos] == '\t' || data[pos] == '\n' || data[pos] == '\r') {
+			pos++
+		}
+
+		// Expect comma or end of array
+		if pos >= dataEnd {
+			return errors.New("unexpected end of data")
+		}
+		if data[pos] == ']' {
+			i_receiver.IntArrayField = result
+			return nil
+		}
+		if data[pos] != ',' {
+			return errors.New("expected ',' or ']'")
+		}
+		pos++
+    }
+{{end}}
